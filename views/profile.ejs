@@ -1,0 +1,8 @@
+<%- include('partials/header', { title: 'Your Profile', user: user }) %>
+
+    <h1>User Profile</h1>
+    <p>Welcome, <%= user.username %>!</p>
+    <p>Email: <%= user.email %></p>
+    <!-- Add more profile information as needed -->
+
+<%- include('partials/footer') %>

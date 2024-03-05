@@ -1,0 +1,10 @@
+<%- include('partials/header', { title: 'Home', user: user }) %>
+    <section>
+        <h2>Welcome to the Home Page</h2>
+        <% if (user) { %>
+            <p>Hello, <%= user.username %>. You are logged in.</p>
+        <% } else { %>
+            <p>You are not logged in. Please <a href="/login">Login</a>.</p>
+        <% } %>
+    </section>
+<%- include('partials/footer') %>

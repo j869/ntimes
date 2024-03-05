@@ -1,0 +1,818 @@
+--------------------------------------------------------
+--  DDL for Table PV_TS_TIME_T
+--------------------------------------------------------
+'  úsed to report 10 weekend days annual leave
+
+  CREATE TABLE "TMSHEET"."PV_TS_TIME_T" 
+   (	"WORK_DATE" DATE, 
+	"DAY_OF_WEEK" NUMBER(*,0), 
+	"DAY_NAME" VARCHAR2(16 CHAR), 
+	"MONTH_NUMBER" NUMBER(*,0), 
+	"MONTH_NAME" VARCHAR2(16 CHAR), 
+	"PERIOD_NUMBER" NUMBER(*,0), 
+	"YEAR" NUMBER(*,0), 
+	"FIN_YEAR" VARCHAR2(10 CHAR)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 262144 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+
+--------------------------------------------------------
+--  DDL for Index SYS_C0085426
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "TMSHEET"."SYS_C0085426" ON "TMSHEET"."TMSHEET_EXPORT" ("PROCESS_ORDER", "DUPLICATE") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Index SYS_IL0000611334C00044$$
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "TMSHEET"."SYS_IL0000611334C00044$$" ON "TMSHEET"."TMSHEET_EXPORT" (
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" 
+  PARALLEL (DEGREE 0 INSTANCES 0) ;
+
+
+--------------------------------------------------------
+--  DDL for Index SYS_MTABLE_00006605A_IND_1
+--------------------------------------------------------
+
+  CREATE INDEX "TMSHEET"."SYS_MTABLE_00006605A_IND_1" ON "TMSHEET"."TMSHEET_EXPORT" ("OBJECT_SCHEMA", "OBJECT_NAME", "OBJECT_TYPE") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 131072 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+
+--------------------------------------------------------
+--  DDL for Index SYS_MTABLE_00006605A_IND_2
+--------------------------------------------------------
+
+  CREATE INDEX "TMSHEET"."SYS_MTABLE_00006605A_IND_2" ON "TMSHEET"."TMSHEET_EXPORT" ("BASE_PROCESS_ORDER") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+
+--------------------------------------------------------
+--  DDL for DB Link PVAPEXAPPS
+--------------------------------------------------------
+
+  CREATE DATABASE LINK "PVAPEXAPPS"
+   CONNECT TO "APEXAPP" IDENTIFIED BY VALUES ':1'
+   USING '(DESCRIPTION =
+       (ADDRESS_LIST =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = mlapexovm1s.parks.vic.gov.au)(PORT = 1525))
+       )
+       (CONNECT_DATA =
+         (SID = APEX12PROD)
+       )
+     )';
+
+--------------------------------------------------------
+--  DDL for View XXPER_ORGANIZATIONS_CD_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."XXPER_ORGANIZATIONS_CD_MV" ("ORGANIZATION_ID", "ORGANIZATION_NAME", "ORGANIZATION_TYPE", "ORGANIZATION_STRUCTURE_ID", "NAME", "BUSINESS_GROUP_ID", "ORG_STRUCTURE_VERSION_ID", "VERSION_NUMBER", "DATE_FROM", "DATE_TO", "WORKUNIT_ID", "WORKUNIT", "DISTRICT_ID", "DISTRICT", "BRANCH_ID", "BRANCH", "REGION_ID", "REGION", "DIVISION_ID", "DIVISION") AS 
+  SELECT "ORGANIZATION_ID","ORGANIZATION_NAME","ORGANIZATION_TYPE","ORGANIZATION_STRUCTURE_ID","NAME","BUSINESS_GROUP_ID","ORG_STRUCTURE_VERSION_ID","VERSION_NUMBER","DATE_FROM","DATE_TO","WORKUNIT_ID","WORKUNIT","DISTRICT_ID","DISTRICT","BRANCH_ID","BRANCH","REGION_ID","REGION","DIVISION_ID","DIVISION" FROM spwadmin.xxper_organizations_cd_mv@APEX_TO_INFOWEBP
+;
+
+--------------------------------------------------------
+--  DDL for View XXPA_ORG_COST_CENTRE_MAPPING_V
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."XXPA_ORG_COST_CENTRE_MAPPING_V" ("ORGANIZATION_NAME", "COST_CENTRE") AS 
+  SELECT segment_value_lookup organization_name,  segment_value cost_centre 
+FROM pa.pa_segment_value_lookups@APEX_TO_ERPPROD
+;
+
+--------------------------------------------------------
+--  DDL for View PV_TM_OBIEE_EMPLOYEE_V
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_TM_OBIEE_EMPLOYEE_V" ("PERSON_ID", "OFFICE_ID", "DISTRICT_ID", "USER_LOGIN", "LAST_NAME", "MIDDLE_NAME", "FIRST_NAME", "PREF_NAME", "JOB_TITLE", "EMP_NO", "EMAIL", "OFFICE", "PARENT_ID", "PHONE", "FAX", "MOBILE", "TRUNK") AS 
+  SELECT "PERSON_ID","OFFICE_ID","DISTRICT_ID","USER_LOGIN","LAST_NAME","MIDDLE_NAME","FIRST_NAME","PREF_NAME","JOB_TITLE","EMP_NO","EMAIL","OFFICE","PARENT_ID","PHONE","FAX","MOBILE","TRUNK" FROM 
+(SELECT DISTINCT 
+ppf.person_id 
+,paaf.location_id office_id 
+,hr.organization_id district_id 
+--,'0' is_admin 
+,UPPER(fu.user_name) user_login 
+,ppf.last_name 
+,ppf.middle_names middle_name 
+,ppf.first_name 
+,ppf.known_as PREF_NAME 
+, CASE WHEN SUBSTR(pap.name,INSTR(pap.name,'.',1)+1, INSTR(pap.name, '.',INSTR(pap.name,'.',1),2)-7) IS NULL THEN RTRIM(SUBSTR(pap.name,8)) ELSE RTRIM(SUBSTR(pap.name,INSTR(pap.name,'.',1)+1, INSTR(pap.name,'.',INSTR(pap.name,'.',1),2)-7)) END job_title 
+--,' ' tie_line 
+--,' ' phone_prefix 
+--,' ' fax_prefix 
+,ppf.employee_number emp_no 
+,ppf.email_address email 
+--,ppf.last_updated_by last_change_login 
+,NVL(l.description,l.location_code) office 
+--,SPWADMIN.PV_GET_EMP_WORKING_DAYS_F(ppf.person_id) days 
+--,SPWADMIN.PV_GET_EMP_WORKING_LOCATION_F(ppf.person_id) working_location 
+--,l2.location_id orgnanization_location_id 
+--,NVL(l2.description,l2.location_code) orgnanization_location 
+--,PV_GET_EMP_ROSTER_WEEKEND_F(paaf.people_group_id) roster_weekend 
+FROM hr.per_all_people_f@APEX_TO_ERPPROD ppf 
+,hr.per_all_assignments_f@APEX_TO_ERPPROD paaf 
+,hr.hr_all_organization_units@APEX_TO_ERPPROD hr 
+,hr.hr_locations_all@APEX_TO_ERPPROD l 
+,hr.hr_locations_all@APEX_TO_ERPPROD l2 
+,applsys.fnd_user@APEX_TO_ERPPROD fu 
+,hr.per_all_positions@APEX_TO_ERPPROD pap 
+,hr.per_person_types_tl@APEX_TO_ERPPROD ppt 
+WHERE ppf.person_id=paaf.person_id 
+AND TRUNC(SYSDATE) BETWEEN paaf.effective_start_date AND paaf.effective_end_date 
+AND TRUNC(SYSDATE) BETWEEN ppf.effective_start_date AND ppf.effective_end_date 
+AND paaf.organization_id=hr.organization_id 
+AND paaf.location_id=l.location_id 
+AND hr.location_id=l2.location_id 
+AND ppf.person_id=fu.employee_id 
+AND NVL(fu.end_date,SYSDATE)>=SYSDATE 
+AND pap.position_id(+)=paaf.position_id 
+AND paaf.primary_flag='Y' 
+AND ppf.person_type_id=ppt.person_type_id 
+AND ppt.user_person_type<>'Ex-employee' 
+) a, 
+(SELECT  parent_id, 
+   MIN(DECODE(Phone_type,'W1',phone_number,NULL)) phone, 
+   MIN(DECODE(Phone_type,'WF',phone_number,NULL)) fax, 
+   MIN(DECODE(Phone_type,'W4',phone_number,NULL)) mobile, 
+   MIN(DECODE(Phone_type,'TR',phone_number,NULL)) trunk 
+FROM hr.per_phones@APEX_TO_ERPPROD 
+WHERE NVL(DATE_TO,SYSDATE) >= SYSDATE GROUP BY parent_id) b 
+WHERE a.person_id = b.parent_id(+)
+;
+
+--------------------------------------------------------
+--  DDL for View PV_PROGRAM_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_PROGRAM_MV" ("OUTPUT", "PROGRAM_NUMBER", "PROGRAM_NAME") AS 
+  SELECT parent_flex_value output 
+,flex_value program_number 
+,description program_name 
+FROM fnd_flex_value_children_v@APEX_TO_ERPPROD ffv 
+WHERE flex_value_set_id=1013730
+;
+
+--------------------------------------------------------
+--  DDL for View PV_OUTPUT_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_OUTPUT_MV" ("OUTPUT_ID", "OUTPUT_NUMBER", "OUTPUT_NAME", "DESCRIPTION") AS 
+  SELECT ffv.flex_value_id output_id 
+,ffv.flex_value output_number 
+,ffv.flex_value || ' '|| ffv.description output_name 
+,ffv.description description 
+FROM fnd_flex_value_sets@APEX_TO_ERPPROD ffvs, fnd_flex_values_vl@APEX_TO_ERPPROD ffv 
+WHERE ffvs.flex_value_set_id=ffv.flex_value_set_id 
+AND ffvs.flex_value_set_name = 'XXPER_OUTPUT_AREA' 
+AND ffv.enabled_flag='Y' 
+AND NVL(ffv.end_date_active,SYSDATE)>=SYSDATE
+;
+
+--------------------------------------------------------
+--  DDL for View PV_ORGANIZATION_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_ORGANIZATION_MV" ("ORGANIZATION_ID", "ORGANIZATION_NAME", "ORGANIZATION_TYPE", "COST_CENTRE", "ORG_LOCATION_ID", "ORGANIZATION_LOCATION", "DISTRICT_BRANCH_ID", "DISTRICT_BRANCH", "REGION_DIVISION_ID", "REGION_DIVISION") AS 
+  SELECT org.organization_id, 
+org.organization_name, 
+org.organization_type, 
+pcak.segment2 cost_centre, 
+l.location_id org_location_id, 
+l.description organization_location, 
+--workunit_id ric_id, 
+--workunit ric, 
+DECODE(district_id,NULL, branch_id, district_id) district_branch_id, 
+DECODE(district,NULL, branch, district) district_branch, 
+DECODE(region_id,NULL, division_id, region_id) region_division_id, 
+DECODE(region,NULL, division, region) region_division 
+FROM apps.xxper_organizations_ext_mv@APEX_TO_ERPPROD org, 
+apps.hr_all_organization_units@APEX_TO_ERPPROD hr, 
+apps.pay_cost_allocation_keyflex@APEX_TO_ERPPROD pcak, 
+apps.hr_locations_all@APEX_TO_ERPPROD l 
+WHERE org.organization_id=hr.organization_id 
+AND hr.cost_allocation_keyflex_id = pcak.cost_allocation_keyflex_id(+) 
+AND hr.location_id=l.location_id(+) 
+AND NVL(hr.date_to,SYSDATE)>=SYSDATE
+;
+
+--------------------------------------------------------
+--  DDL for View PV_LOCATION_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_LOCATION_MV" ("LOCATION_ID", "LOCATION_CODE", "DESCRIPTION") AS 
+  SELECT location_id, location_code, description 
+FROM hr.hr_locations_all@APEX_TO_ERPPROD
+;
+
+--------------------------------------------------------
+--  DDL for View PV_FUNDING_SOURCE_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_FUNDING_SOURCE_MV" ("FUND_SOURCE_ID", "FUND_SOURCE_NUMBER", "FUND_SOURCE_NAME", "DESCRIPTION") AS 
+  SELECT ffv.flex_value_id fund_source_id 
+,ffv.flex_value fund_source_number 
+,ffv.flex_value || ' '|| ffv.description fund_source_name 
+,ffv.description description 
+FROM fnd_flex_value_sets@APEX_TO_ERPPROD ffvs, fnd_flex_values_vl@APEX_TO_ERPPROD ffv 
+WHERE ffvs.flex_value_set_id=ffv.flex_value_set_id 
+AND ffvs.flex_value_set_name = 'XXGL_FUNDINGSOURCE' 
+AND ffv.enabled_flag='Y' 
+AND NVL(ffv.end_date_active,SYSDATE)>=SYSDATE
+;
+
+--------------------------------------------------------
+--  DDL for View PV_EMPLOYEE_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_EMPLOYEE_MV" ("PERSON_ID", "FULL_NAME", "LOCATION_ID", "LOCATION_CODE") AS 
+  SELECT ppf.person_id, full_name, hl.location_id, location_code 
+FROM per_all_people_f@APEX_TO_ERPPROD ppf, per_all_assignments_f@APEX_TO_ERPPROD paaf, hr_locations_all@APEX_TO_ERPPROD hl 
+WHERE ppf.person_id=paaf.person_id 
+AND TRUNC(SYSDATE) BETWEEN ppf.effective_start_date AND ppf.effective_end_date 
+AND TRUNC(SYSDATE) BETWEEN paaf.effective_start_date AND paaf.effective_end_date 
+AND paaf.location_id=hl.location_id
+;
+
+--------------------------------------------------------
+--  DDL for View PV_EMPLOYEE_HOURS_V
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_EMPLOYEE_HOURS_V" ("PERSON_ID", "EMPLOYEE_NUMBER", "FULL_NAME", "W1_DAY1_HOURS", "W1_DAY2_HOURS", "W1_DAY3_HOURS", "W1_DAY4_HOURS", "W1_DAY5_HOURS", "W1_DAY6_HOURS", "W1_DAY7_HOURS", "W2_DAY1_HOURS", "W2_DAY2_HOURS", "W2_DAY3_HOURS", "W2_DAY4_HOURS", "W2_DAY5_HOURS", "W2_DAY6_HOURS", "W2_DAY7_HOURS", "ROSTER_WEEKEND") AS 
+  SELECT p.person_id, p.employee_number, p.full_name 
+,CASE WHEN ac.segment1>0 THEN NVL(ac.segment1,0)  END W1_day1_hours 
+,CASE WHEN ac.segment2>0 THEN NVL(ac.segment2,0)  END W1_day2_hours 
+,CASE WHEN ac.segment3>0 THEN NVL(ac.segment3,0)  END W1_day3_hours 
+,CASE WHEN ac.segment4>0 THEN NVL(ac.segment4,0)  END W1_day4_hours 
+,CASE WHEN ac.segment5>0 THEN NVL(ac.segment5,0)  END W1_day5_hours 
+,CASE WHEN ac.segment6>0 THEN NVL(ac.segment6,0)  END W1_day6_hours 
+,CASE WHEN ac.segment7>0 THEN NVL(ac.segment7,0)  END W1_day7_hours 
+,CASE WHEN ac.segment8>0 THEN NVL(ac.segment8,0)  END W2_day1_hours 
+,CASE WHEN ac.segment9>0 THEN NVL(ac.segment9,0)  END W2_day2_hours 
+,CASE WHEN ac.segment10>0 THEN NVL(ac.segment10,0)  END W2_day3_hours 
+,CASE WHEN ac.segment11>0 THEN NVL(ac.segment11,0)  END W2_day4_hours 
+,CASE WHEN ac.segment12>0 THEN NVL(ac.segment12,0)  END W2_day5_hours 
+,CASE WHEN ac.segment13>0 THEN NVL(ac.segment13,0)  END W2_day6_hours 
+,CASE WHEN ac.segment14>0 THEN NVL(ac.segment14,0)  END W2_day7_hours 
+,(SELECT group_name FROM per_all_assignments_f@APEX_TO_ERPPROD paaf, pay_people_groups@APEX_TO_ERPPROD pp 
+WHERE paaf.people_group_id=pp.people_group_id 
+AND paaf.person_id=p.person_id--188 
+AND TRUNC(SYSDATE) BETWEEN TRUNC(effective_start_date) AND TRUNC(effective_end_date)) roster_weekend 
+FROM per_analysis_criteria@APEX_TO_ERPPROD ac, per_person_analyses@APEX_TO_ERPPROD pa, 
+per_all_people_f@APEX_TO_ERPPROD p 
+WHERE ac.analysis_criteria_id=pa.analysis_criteria_id 
+AND pa.person_id=p.person_id 
+AND ac.id_flex_num=50336 
+AND SYSDATE BETWEEN p.effective_start_date AND p.effective_end_date 
+AND SYSDATE BETWEEN NVL(ac.start_date_active,SYSDATE) AND NVL(ac.end_date_active,SYSDATE) 
+AND SYSDATE BETWEEN NVL(pa.date_from,SYSDATE) AND NVL(pa.date_to,SYSDATE)
+;
+
+--------------------------------------------------------
+--  DDL for View PV_EMPLOYEE_DETAILS_MV
+--------------------------------------------------------
+
+  CREATE OR REPLACE FORCE EDITIONABLE VIEW "TMSHEET"."PV_EMPLOYEE_DETAILS_MV" ("PERSON_ID", "OFFICE_ID", "DISTRICT_ID", "IS_ADMIN", "USER_LOGIN", "LAST_NAME", "MIDDLE_NAME", "FIRST_NAME", "PREF_NAME", "JOB_TITLE", "TIE_LINE", "PHONE_PREFIX", "FAX_PREFIX", "EMP_NO", "EMAIL", "LAST_CHANGE_LOGIN", "OFFICE", "DAYS", "WORKING_LOCATION", "PARENT_ID", "PHONE", "FAX", "MOBILE", "TRUNK") AS 
+  SELECT "PERSON_ID","OFFICE_ID","DISTRICT_ID","IS_ADMIN","USER_LOGIN","LAST_NAME","MIDDLE_NAME","FIRST_NAME","PREF_NAME","JOB_TITLE","TIE_LINE","PHONE_PREFIX","FAX_PREFIX","EMP_NO","EMAIL","LAST_CHANGE_LOGIN","OFFICE","DAYS","WORKING_LOCATION","PARENT_ID","PHONE","FAX","MOBILE","TRUNK" FROM spwadmin.people@APEX_TO_INFOWEBP
+UNION
+SELECT "PERSON_ID","OFFICE_ID","DISTRICT_ID","IS_ADMIN","USER_LOGIN","LAST_NAME","MIDDLE_NAME","FIRST_NAME","PREF_NAME","JOB_TITLE","TIE_LINE","PHONE_PREFIX","FAX_PREFIX","EMP_NO","EMAIL","LAST_CHANGE_LOGIN","OFFICE","DAYS","WORKING_LOCATION","PARENT_ID","PHONE","FAX","MOBILE","TRUNK" FROM SPWADMIN.EX_PEOPLE_MV@APEX_TO_INFOWEBP
+;
+
+--------------------------------------------------------
+--  DDL for Table TMSHEET_EXPORT
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."TMSHEET_EXPORT" 
+   (	"PROCESS_ORDER" NUMBER, 
+	"DUPLICATE" NUMBER, 
+	"DUMP_FILEID" NUMBER, 
+	"DUMP_POSITION" NUMBER, 
+	"DUMP_LENGTH" NUMBER, 
+	"DUMP_ORIG_LENGTH" NUMBER, 
+	"DUMP_ALLOCATION" NUMBER, 
+	"COMPLETED_ROWS" NUMBER, 
+	"ERROR_COUNT" NUMBER, 
+	"ELAPSED_TIME" NUMBER, 
+	"OBJECT_TYPE_PATH" VARCHAR2(200 BYTE), 
+	"OBJECT_PATH_SEQNO" NUMBER, 
+	"OBJECT_TYPE" VARCHAR2(30 BYTE), 
+	"IN_PROGRESS" CHAR(1 BYTE), 
+	"OBJECT_NAME" VARCHAR2(500 BYTE), 
+	"OBJECT_LONG_NAME" VARCHAR2(4000 BYTE), 
+	"OBJECT_SCHEMA" VARCHAR2(30 BYTE), 
+	"ORIGINAL_OBJECT_SCHEMA" VARCHAR2(30 BYTE), 
+	"ORIGINAL_OBJECT_NAME" VARCHAR2(4000 BYTE), 
+	"PARTITION_NAME" VARCHAR2(30 BYTE), 
+	"SUBPARTITION_NAME" VARCHAR2(30 BYTE), 
+	"FLAGS" NUMBER, 
+	"PROPERTY" NUMBER, 
+	"TRIGFLAG" NUMBER, 
+	"CREATION_LEVEL" NUMBER, 
+	"COMPLETION_TIME" DATE, 
+	"OBJECT_TABLESPACE" VARCHAR2(30 BYTE), 
+	"SIZE_ESTIMATE" NUMBER, 
+	"OBJECT_ROW" NUMBER, 
+	"PROCESSING_STATE" CHAR(1 BYTE), 
+	"PROCESSING_STATUS" CHAR(1 BYTE), 
+	"BASE_PROCESS_ORDER" NUMBER, 
+	"BASE_OBJECT_TYPE" VARCHAR2(30 BYTE), 
+	"BASE_OBJECT_NAME" VARCHAR2(30 BYTE), 
+	"BASE_OBJECT_SCHEMA" VARCHAR2(30 BYTE), 
+	"ANCESTOR_PROCESS_ORDER" NUMBER, 
+	"DOMAIN_PROCESS_ORDER" NUMBER, 
+	"PARALLELIZATION" NUMBER, 
+	"UNLOAD_METHOD" NUMBER, 
+	"LOAD_METHOD" NUMBER, 
+	"GRANULES" NUMBER, 
+	"SCN" NUMBER, 
+	"GRANTOR" VARCHAR2(30 BYTE), 
+	"XML_CLOB" CLOB, 
+	"PARENT_PROCESS_ORDER" NUMBER, 
+	"NAME" VARCHAR2(30 BYTE), 
+	"VALUE_T" VARCHAR2(4000 BYTE), 
+	"VALUE_N" NUMBER, 
+	"IS_DEFAULT" NUMBER, 
+	"FILE_TYPE" NUMBER, 
+	"USER_DIRECTORY" VARCHAR2(4000 BYTE), 
+	"USER_FILE_NAME" VARCHAR2(4000 BYTE), 
+	"FILE_NAME" VARCHAR2(4000 BYTE), 
+	"EXTEND_SIZE" NUMBER, 
+	"FILE_MAX_SIZE" NUMBER, 
+	"PROCESS_NAME" VARCHAR2(30 BYTE), 
+	"LAST_UPDATE" DATE, 
+	"WORK_ITEM" VARCHAR2(30 BYTE), 
+	"OBJECT_NUMBER" NUMBER, 
+	"COMPLETED_BYTES" NUMBER, 
+	"TOTAL_BYTES" NUMBER, 
+	"METADATA_IO" NUMBER, 
+	"DATA_IO" NUMBER, 
+	"CUMULATIVE_TIME" NUMBER, 
+	"PACKET_NUMBER" NUMBER, 
+	"OLD_VALUE" VARCHAR2(4000 BYTE), 
+	"SEED" NUMBER, 
+	"LAST_FILE" NUMBER, 
+	"USER_NAME" VARCHAR2(30 BYTE), 
+	"OPERATION" VARCHAR2(30 BYTE), 
+	"JOB_MODE" VARCHAR2(30 BYTE), 
+	"CONTROL_QUEUE" VARCHAR2(30 BYTE), 
+	"STATUS_QUEUE" VARCHAR2(30 BYTE), 
+	"REMOTE_LINK" VARCHAR2(4000 BYTE), 
+	"VERSION" NUMBER, 
+	"JOB_VERSION" VARCHAR2(30 BYTE), 
+	"DB_VERSION" VARCHAR2(30 BYTE), 
+	"TIMEZONE" VARCHAR2(64 BYTE), 
+	"STATE" VARCHAR2(30 BYTE), 
+	"PHASE" NUMBER, 
+	"GUID" RAW(16), 
+	"START_TIME" DATE, 
+	"BLOCK_SIZE" NUMBER, 
+	"METADATA_BUFFER_SIZE" NUMBER, 
+	"DATA_BUFFER_SIZE" NUMBER, 
+	"DEGREE" NUMBER, 
+	"PLATFORM" VARCHAR2(101 BYTE), 
+	"ABORT_STEP" NUMBER, 
+	"INSTANCE" VARCHAR2(60 BYTE), 
+	"CLUSTER_OK" NUMBER, 
+	"SERVICE_NAME" VARCHAR2(100 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 10 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 196608 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" 
+ LOB ("XML_CLOB") STORE AS BASICFILE (
+  TABLESPACE "PVTMSHEET" ENABLE STORAGE IN ROW CHUNK 8192 RETENTION 
+  NOCACHE LOGGING 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)) ;
+
+   COMMENT ON TABLE "TMSHEET"."TMSHEET_EXPORT"  IS 'Data Pump Master Table EXPORT                         SCHEMA                        ';
+--------------------------------------------------------
+--  DDL for Index SYS_MTABLE_00006605A_IND_1
+--------------------------------------------------------
+
+  CREATE INDEX "TMSHEET"."SYS_MTABLE_00006605A_IND_1" ON "TMSHEET"."TMSHEET_EXPORT" ("OBJECT_SCHEMA", "OBJECT_NAME", "OBJECT_TYPE") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 131072 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+--------------------------------------------------------
+--  DDL for Index SYS_MTABLE_00006605A_IND_2
+--------------------------------------------------------
+
+  CREATE INDEX "TMSHEET"."SYS_MTABLE_00006605A_IND_2" ON "TMSHEET"."TMSHEET_EXPORT" ("BASE_PROCESS_ORDER") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C0085426
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "TMSHEET"."SYS_C0085426" ON "TMSHEET"."TMSHEET_EXPORT" ("PROCESS_ORDER", "DUPLICATE") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+--------------------------------------------------------
+--  Constraints for Table TMSHEET_EXPORT
+--------------------------------------------------------
+
+  ALTER TABLE "TMSHEET"."TMSHEET_EXPORT" ADD UNIQUE ("PROCESS_ORDER", "DUPLICATE")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET"  ENABLE;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_WORKLIFE_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_WORKLIFE_T" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"LOCATION_ID" NUMBER(15,0), 
+	"HOURS_ACCRUED" NUMBER(6,2), 
+	"HOURS_IN_LIEU" NUMBER(6,2), 
+	"DAYS_PV_DUTY" NUMBER(3,0), 
+	"DAYS_ER_DUTY" NUMBER(3,0), 
+	"DAYS_OFF_DUTY" NUMBER(3,0), 
+	"PV_ROLE" VARCHAR2(128 BYTE), 
+	"ER_ROLE" VARCHAR2(128 BYTE), 
+	"DAYS_WE_DUTY" NUMBER(3,0), 
+	"DAYS_ROSTERED_OFF" NUMBER(3,0), 
+	"FINANCIAL_YEAR" VARCHAR2(10 BYTE), 
+	"HOURS_SPONSORED" NUMBER(6,2), 
+	"HOURS_OVERTIME" NUMBER(6,2), 
+	"PERIOD" NUMBER(2,0), 
+	"DAYS_ANNUAL_LEAVE" NUMBER(3,0), 
+	"DAYS_OTHER_LEAVE" NUMBER(3,0), 
+	"DAYS_RDO_BALANCE" NUMBER(3,0), 
+	"HOURS_AT_BALANCE" NUMBER(6,2)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 0 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 12582912 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_USER_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_USER_T" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"LAST_UPDATE" DATE, 
+	"AT_BALANCE" NUMBER(6,2), 
+	"RDO_BALANCE" NUMBER(2,0), 
+	"RDO_OPEN" NUMBER(2,0), 
+	"AT_OPEN" NUMBER(6,2), 
+	"START_DATE" DATE, 
+	"PASSWORD" VARCHAR2(64 BYTE), 
+	"FILE_LOCATION" VARCHAR2(256 BYTE), 
+	"LOCATION_ID" NUMBER(15,0)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 0 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 655360 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_TIMESHEET_T_MWATTINBKP
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_TIMESHEET_T_MWATTINBKP" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"WORK_DATE" DATE, 
+	"TIME_START" VARCHAR2(8 BYTE), 
+	"TIME_FINISH" VARCHAR2(8 BYTE), 
+	"TIME_LUNCH" VARCHAR2(8 BYTE), 
+	"TIME_EXTRA_BREAK" VARCHAR2(8 BYTE), 
+	"TIME_TOTAL" VARCHAR2(8 BYTE), 
+	"TIME_ACCRUED" VARCHAR2(8 BYTE), 
+	"TIME_TIL" VARCHAR2(8 BYTE), 
+	"TIME_LEAVE" VARCHAR2(8 BYTE), 
+	"TIME_OVERTIME" VARCHAR2(8 BYTE), 
+	"TIME_COMM_SVS" VARCHAR2(8 BYTE), 
+	"T_COMMENT" VARCHAR2(255 BYTE), 
+	"LOCATION_ID" NUMBER(10,0), 
+	"ACTIVITY" VARCHAR2(255 BYTE), 
+	"NOTES" VARCHAR2(255 BYTE), 
+	"ENTRY_DATE" DATE, 
+	"ON_DUTY" NUMBER(1,0), 
+	"DUTY_CATAGORY" NUMBER(1,0), 
+	"STATUS" VARCHAR2(10 BYTE), 
+	"RWE_DAY" NUMBER(1,0), 
+	"FUND_SRC" VARCHAR2(10 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_TIMESHEET_T_AM
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_TIMESHEET_T_AM" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"WORK_DATE" DATE, 
+	"TIME_START" VARCHAR2(8 BYTE), 
+	"TIME_FINISH" VARCHAR2(8 BYTE), 
+	"TIME_LUNCH" VARCHAR2(8 BYTE), 
+	"TIME_EXTRA_BREAK" VARCHAR2(8 BYTE), 
+	"TIME_TOTAL" VARCHAR2(8 BYTE), 
+	"TIME_ACCRUED" VARCHAR2(8 BYTE), 
+	"TIME_TIL" VARCHAR2(8 BYTE), 
+	"TIME_LEAVE" VARCHAR2(8 BYTE), 
+	"TIME_OVERTIME" VARCHAR2(8 BYTE), 
+	"TIME_COMM_SVS" VARCHAR2(8 BYTE), 
+	"T_COMMENT" VARCHAR2(255 BYTE), 
+	"LOCATION_ID" NUMBER(10,0), 
+	"ACTIVITY" VARCHAR2(255 BYTE), 
+	"NOTES" VARCHAR2(255 BYTE), 
+	"ENTRY_DATE" DATE, 
+	"ON_DUTY" NUMBER(1,0), 
+	"DUTY_CATAGORY" NUMBER(1,0), 
+	"STATUS" VARCHAR2(10 BYTE), 
+	"RWE_DAY" NUMBER(1,0), 
+	"FUND_SRC" VARCHAR2(10 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_TIMESHEET_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_TIMESHEET_T" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"WORK_DATE" DATE, 
+	"TIME_START" VARCHAR2(8 BYTE), 
+	"TIME_FINISH" VARCHAR2(8 BYTE), 
+	"TIME_LUNCH" VARCHAR2(8 BYTE), 
+	"TIME_EXTRA_BREAK" VARCHAR2(8 BYTE), 
+	"TIME_TOTAL" VARCHAR2(8 BYTE), 
+	"TIME_ACCRUED" VARCHAR2(8 BYTE), 
+	"TIME_TIL" VARCHAR2(8 BYTE), 
+	"TIME_LEAVE" VARCHAR2(8 BYTE), 
+	"TIME_OVERTIME" VARCHAR2(8 BYTE), 
+	"TIME_COMM_SVS" VARCHAR2(8 BYTE), 
+	"T_COMMENT" VARCHAR2(255 BYTE), 
+	"LOCATION_ID" NUMBER(10,0), 
+	"ACTIVITY" VARCHAR2(255 BYTE), 
+	"NOTES" VARCHAR2(255 BYTE), 
+	"ENTRY_DATE" DATE, 
+	"ON_DUTY" NUMBER(1,0), 
+	"DUTY_CATAGORY" NUMBER(1,0), 
+	"STATUS" VARCHAR2(10 BYTE), 
+	"RWE_DAY" NUMBER(1,0), 
+	"FUND_SRC" VARCHAR2(10 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 234881024 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_TIME_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_TIME_T" 
+   (	"WORK_DATE" DATE, 
+	"DAY_OF_WEEK" NUMBER(*,0), 
+	"DAY_NAME" VARCHAR2(16 CHAR), 
+	"MONTH_NUMBER" NUMBER(*,0), 
+	"MONTH_NAME" VARCHAR2(16 CHAR), 
+	"PERIOD_NUMBER" NUMBER(*,0), 
+	"YEAR" NUMBER(*,0), 
+	"FIN_YEAR" VARCHAR2(10 CHAR)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 262144 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_PUBLICHOLIDAYS_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_PUBLICHOLIDAYS_T" 
+   (	"HOLIDAYNAME" VARCHAR2(64 BYTE), 
+	"HOLIDAYDATE" DATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_PROGRAM_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_PROGRAM_T" 
+   (	"PROGRAM_NAME" VARCHAR2(255 BYTE), 
+	"PROGRAM_OUTPUT" VARCHAR2(15 BYTE), 
+	"PROGRAM_ID" VARCHAR2(15 BYTE), 
+	"MAP_TO" VARCHAR2(10 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 0 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_LABOUR_T_MWATTINBKP
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_LABOUR_T_MWATTINBKP" 
+   (	"HOURS" NUMBER(4,2), 
+	"LOCATION_ID" NUMBER(15,0), 
+	"PERSON_ID" NUMBER(10,0), 
+	"PROGRAM_ID" VARCHAR2(15 BYTE), 
+	"WORK_DATE" DATE, 
+	"ENTRY_DATE" DATE, 
+	"STATUS" VARCHAR2(15 BYTE), 
+	"FUND_SOURCE_NUMBER" VARCHAR2(150 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_LABOUR_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_LABOUR_T" 
+   (	"HOURS" NUMBER(4,2), 
+	"LOCATION_ID" NUMBER(15,0), 
+	"PERSON_ID" NUMBER(10,0), 
+	"PROGRAM_ID" VARCHAR2(15 BYTE), 
+	"WORK_DATE" DATE, 
+	"ENTRY_DATE" DATE, 
+	"STATUS" VARCHAR2(15 BYTE), 
+	"FUND_SOURCE_NUMBER" VARCHAR2(150 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 0 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 234881024 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+--------------------------------------------------------
+--  DDL for Table PV_TS_FUNDSOURCE_T
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."PV_TS_FUNDSOURCE_T" 
+   (	"FUND_SOURCE_ID" NUMBER(15,0), 
+	"FUND_SOURCE_NUMBER" VARCHAR2(150 BYTE), 
+	"FUND_SOURCE_NAME" VARCHAR2(391 BYTE), 
+	"DESCRIPTION" VARCHAR2(240 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+--------------------------------------------------------
+--  Constraints for Table PV_TS_FUNDSOURCE_T
+--------------------------------------------------------
+
+  ALTER TABLE "TMSHEET"."PV_TS_FUNDSOURCE_T" MODIFY ("FUND_SOURCE_ID" NOT NULL ENABLE);
+  ALTER TABLE "TMSHEET"."PV_TS_FUNDSOURCE_T" MODIFY ("FUND_SOURCE_NUMBER" NOT NULL ENABLE);
+
+--------------------------------------------------------
+--  DDL for Table BK_PV_TS_USER_T_20191216
+--------------------------------------------------------
+
+  CREATE TABLE "TMSHEET"."BK_PV_TS_USER_T_20191216" 
+   (	"PERSON_ID" NUMBER(10,0), 
+	"LAST_UPDATE" DATE, 
+	"AT_BALANCE" NUMBER(6,2), 
+	"RDO_BALANCE" NUMBER(2,0), 
+	"RDO_OPEN" NUMBER(2,0), 
+	"AT_OPEN" NUMBER(6,2), 
+	"START_DATE" DATE, 
+	"PASSWORD" VARCHAR2(64 BYTE), 
+	"FILE_LOCATION" VARCHAR2(256 BYTE), 
+	"LOCATION_ID" NUMBER(15,0)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 655360 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "PVTMSHEET" ;
+
+
+
+--------------------------------------------------------
+--  Timesheet!Admin
+--------------------------------------------------------
+Timesheet Information	
+Last Name	Maher
+First name	John
+Position	Analyst Business and Applications
+Fire Role	
+Workcentre	263
+AT Agreement	yes
+AT Carried	3.5
+Rostered Days	0
+RDO Carried	0
+Person ID	75318
+password	a
+Default Location	
+Nornal Start	
+Takes RDOs	no
+AT Balance	3.50
+Weekends Worked	0
+RDO Balance	0
+Auto Calculate Hours	yes
+Timesheet Mode	Year
+Current Period	2020-2021
+Advance Entry Days	14
+AT Max	0.40
+AT Limit (hours)	500
+RDO Minimum	0
+FundSource (PV)	000
+Timesheet Version	1.0
+Variance Option	hh:mm
+
+
+
+--------------------------------------------------------
+--  Timesheet!Admin
+--------------------------------------------------------
+Program List
+Program ID
+Map To
+Program Name
+
+Fund Source Number
+Fund Source Name
+
+WorkCentre Number
+WorkCentre List
+
+
+My Location List
+
+Period Table
+Start Date
+End Date
+
+Day
+Paid Hours
+
+Start Time
+Finish Time
+Extra Break
+
+

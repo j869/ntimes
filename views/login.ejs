@@ -1,0 +1,23 @@
+<%- include('partials/header', { title: 'Login', user: null }) %>
+    <section>
+        <h2>Login</h2>
+        <% if (locals.message) { %>
+            <p><%= message %></p>
+        <% } %>
+        <form action="/login" method="POST">
+            <div>
+                <label for="username">Email:</label>
+                <!-- <input type="text" id="username" name="username" required> -->
+                <input type="email" id="username" name="username" value="john@buildingbb.com.au" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+            
+        </form>
+        <a href="/register">Register</a>
+        
+    </section>
+<%- include('partials/footer') %>
