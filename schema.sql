@@ -5,15 +5,8 @@ CREATE DATABASE ntimes;
 CREATE SCHEMA public;
 
 -- Create users table
--- drop table users;
--- CREATE TABLE users (
---     user_id SERIAL PRIMARY KEY,
---     username VARCHAR(50) UNIQUE NOT NULL,
---     password VARCHAR(100) NOT NULL, -- Hashed password
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- );
-drop table users;
-CREATE TABLE users (
+drop table ts_user_t;
+CREATE TABLE ts_user_t (
     id SERIAL PRIMARY KEY,
     person_id INTEGER,                  -- (NUMBER(10,0))
     advance_entry_days INTEGER,         -- Timesheet!Admin("Advance Entry Days")
@@ -26,13 +19,11 @@ CREATE TABLE users (
     auto_calculate_hours BOOLEAN,       -- Timesheet!Admin("Auto Calculate Hours")
     current_period INTEGER,             -- Timesheet!Admin("Current Period")
     default_location VARCHAR(255),      -- Timesheet!Admin("Default Location")
-    email VARCHAR(255),                 -- email VARCHAR(255) NOT NULL UNIQUE, -- email for login
     fire_role VARCHAR(255),             -- Timesheet!Admin("Fire Role")
     fund_source VARCHAR(255),           -- Timesheet!Admin("FundSource (PV)")
     last_update DATE,                   -- (DATE)
     location_id BIGINT,                 -- (NUMBER(15,0))
     normal_start TIME,                  -- Timesheet!Admin("Normal Start")
-    password VARCHAR(64),               -- (VARCHAR2(64 BYTE))
     rdo_balance NUMERIC(6,2),           -- RDO Balance
     rdo_carried INTEGER,                -- Timesheet!Admin("RDO Carried")
     rdo_minimum NUMERIC(6,2),           -- Timesheet!Admin("RDO Minimum")
@@ -41,11 +32,23 @@ CREATE TABLE users (
     takes_rdos BOOLEAN,                 -- Timesheet!Admin("Takes RDOs")
     timesheet_mode VARCHAR(255),        -- Timesheet!Admin("Timesheet Mode")
     timesheet_version VARCHAR(255),     -- Timesheet!Admin("Timesheet Version")
-    verification_token VARCHAR(255),     -- crypto.randomBytes generated to validate email address
-    verified_email BOOLEAN,             --
     weekends_worked INTEGER,            -- Timesheet!Admin("Weekends Worked")
     workcentre VARCHAR(255),            -- Timesheet!Admin("Workcentre")
     file_location VARCHAR(256)          -- (VARCHAR2(256 BYTE))
+);
+
+
+-- table for login and authentication
+drop table users;
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(31),
+    email VARCHAR(255),                 -- email VARCHAR(255) NOT NULL UNIQUE, -- email for login
+    "password" VARCHAR(64),               -- (VARCHAR2(64 BYTE))
+    "role" VARCHAR(15), 
+    verification_token VARCHAR(255),     -- crypto.randomBytes generated to validate email address
+    verified_email BOOLEAN             --
+
 );
 
 

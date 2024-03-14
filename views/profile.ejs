@@ -1,8 +1,29 @@
-<%- include('partials/header', { title: 'Your Profile', user: user }) %>
+<%- include('partials/header', { title: 'Edit Profile', user : currentUser, messages: messages }) %>
 
-    <h1>User Profile</h1>
-    <p>Welcome, <%= user.username %>!</p>
-    <p>Email: <%= user.email %></p>
-    <!-- Add more profile information as needed -->
+<h1>Edit Profile</h1>
+<form id="editProfileForm" action="/editUser" method="POST">
+    <!-- Form fields for editing user details -->
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="<%= userData.username %>" required>
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="<%= userData.email %>" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="admin" <% if (userData.role === 'admin') { %> selected <% } %>>Admin</option>
+            <option value="user" <% if (userData.role === 'user') { %> selected <% } %>>User</option>
+        </select>
+    </div>
+    <button type="submit">Update Profile</button>
+</form>
 
 <%- include('partials/footer') %>
+

@@ -18,5 +18,19 @@
                 <% } %>
             </ul>
         </nav>
+        <% if (messages && messages.length > 0) { %>
+            <div class="alert alert-danger" role="alert">
+                <h3>Errors:</h3>
+                <ul>
+                    <% messages.forEach(message => { %>
+                        <li><%= message %></li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% } %>
+
     </header>
     <main>
+
+
+    

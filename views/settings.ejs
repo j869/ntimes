@@ -1,0 +1,56 @@
+
+    <%- include('partials/header', { title: 'Admin settings', user, messages:messages }) %>
+    <h1>User Records</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.id %></td>
+                    <td><%= user.username %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.password %></td>
+                    <td><%= user.role %></td>
+                    <td><a href="http://localhost:3000/users/<%= user.id %>">edit</a></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+
+
+    <h1>Add User</h1>
+    <form action="/addUser" method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+            </select>
+        </div>
+        <button type="submit">Add User</button>
+    </form>
+
+
+</body>
+</html>
