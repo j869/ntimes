@@ -1,14 +1,15 @@
+
+
 /* Reset some default browser styles */
 body,
 h1,
 h2,
 p,
-ul,
+ul,     /* removed a */
 li,
 form,
 input,
-textarea,
-a {
+textarea {
   margin: 0;
   padding: 0;
   border: none;
@@ -69,7 +70,7 @@ input:focus,
 textarea:focus {
   border-color: #007bff;
 }
-
+/* 
 a,
 button {
   text-decoration: none;
@@ -81,18 +82,18 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
-}
+} */
 
 button.full-width {
   display: block;
   text-align: center;
   width: 100%;
 }
-
+/* 
 a,
 button:hover {
   background-color: #0056b3;
-}
+} */
 
 ul {
   list-style-type: none;
@@ -106,19 +107,19 @@ li {
 li:last-child {
   border-bottom: none;
 }
-
+/* 
 a.edit {
   background-color: #007bff;
   /* margin-right: 10px; */
-}
-
+} */
+/* 
 a.delete {
   background-color: #e74c3c;
-}
-
+} */
+/* 
 a.delete:hover {
   background-color: #c0392b;
-}
+} */
 
 #newPostBtn {
   margin: 20px 0;

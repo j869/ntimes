@@ -13,7 +13,7 @@
     </div>
     <div>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" >  <!-- not required unless you want to reset the password -->
     </div>
     <div>
         <label for="role">Role:</label>
@@ -22,8 +22,16 @@
             <option value="user" <% if (userData.role === 'user') { %> selected <% } %>>User</option>
         </select>
     </div>
+    <div>
+        <label for="verification_token">Verification Token:</label>
+        <input type="text" id="verification_token" name="verification_token" value="<%= userData.verification_token %>" required>
+    </div>
+    <div>
+        <label for="verified_email">Verified Email:</label>
+        <input type="checkbox" id="verified_email" name="verified_email" <% if (userData.verified_email) { %> checked <% } %>>
+    </div>    
     <button type="submit">Update Profile</button>
 </form>
 
-<%- include('partials/footer') %>
+<%- include('partials/footer', {user : currentUser}) %>
 

@@ -1,3 +1,7 @@
+//--------------------------------------
+//----  Program setup and dependancies
+//--------------------------------------
+//#region imports
 import express from "express";
 import session from "express-session";
 import passport from "passport";
@@ -11,6 +15,7 @@ import env from "dotenv";
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import flash from 'express-flash';
+import { error } from "console";
 
 const app = express();
 const API_URL = "http://localhost:4000";
@@ -31,16 +36,16 @@ app.use(express.static("public"));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
-// db.connect();
+// Pass the config object to all EJS templates
+const config = {
+    baseUrl: process.env.BASE_URL    // 'http://localhost:3000'
+};
+app.use((req, res, next) => {
+    res.locals.config = config;
+    next();
+});
 
-
+//#region logging not used any more
 // // Middleware to log connections
 // app.use((req, res, next) => {
 //     // Define an inner async function to use await
@@ -101,30 +106,24 @@ app.use(passport.session());
 //     }
 //     return [browser, os];
 // }
+//#endregion
 
-
-
-
-
-
-
-
-//--------------------------------
-//----  Define routes
-//-------------------------------
-// app.get('/', (req, res) => {
-//     res.render('home.ejs', { user: req.user, title: 'Home', body: '' }); 
-// });
+//#endregion
 app.get('/', (req, res) => {
-    console.log("Default route: Rendering login page...");
+    const username = req.user && req.user.username ? " for " + req.user.username : "";
+    console.log("z9    Default route: Rendering login page" + username);
     res.render('home.ejs', { user: req.user, title: 'Home', body: '' }); 
 });
 
 
 
+//--------------------------------
+//----  Authenticated users
+//-------------------------------
+
 app.get("/users/:id", isAuthenticated, async (req, res) => {
     console.log("v1      Protected route: Fetching user data...", req.params);
-    if (req.isAuthenticated()) {
+    // if (req.isAuthenticated()) {
         try {
             console.log(`v2      ${API_URL}/users/${req.params.id}`)
             const response = await axios.get(`${API_URL}/users/${req.params.id}`);
@@ -139,13 +138,18 @@ app.get("/users/:id", isAuthenticated, async (req, res) => {
             res.status(500).send("Error fetching user data");
             console.log("v7 ")
         }
-    } else {
-        res.redirect("/login");
-    }
+    // } else {
+    //     res.redirect("/login");
+    // }
     console.log("v9 ")
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
+    console.log("p1    ", req.user)
+    res.render('profile.ejs', { user: req.user });
+});
+
+app.get('/timesheets', isAuthenticated, (req, res) => {
     console.log("p1    ", req.user)
     res.render('profile.ejs', { user: req.user });
 });
@@ -176,66 +180,64 @@ app.get('/users', isAdmin, async (req, res) => {
 //     res.render('settings', { users: result.data });
 // });
 
+
+
+
 app.post('/addUser', isAdmin, [
-    //body('username').notEmpty().withMessage('Username is required'),
+    // Validate request body
+    body('username').notEmpty().withMessage('Username is required'),
     body('email').isEmail().withMessage('Invalid email format'),
     body('password').notEmpty().withMessage('Password is required'),
-    //body('role').notEmpty().withMessage('Role is required'),
+    body('role').notEmpty().withMessage('Role is required'),
 ], async (req, res) => {
-    console.log("au01    ", req.user);
-    const errors = validationResult(req);
-    console.log("au03    ");
-    if (!errors.isEmpty()) {
-        //req.flash('messages', errors.array()); 
-        //req.flash('message', 'test()'); 
-        //return res.status(400).json({ errors: errors.array() });
-        console.log("au04 ", errors)
-        req.flash('error', errors.array());
-        return res.redirect('/users');
-//        return res.render("settings.ejs", {user:req.user, messages : errors.array()});        
-    }
-
-    const { username, email, password, role } = req.body;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    console.log('au05    hashedPassword',hashedPassword);
-
-    // Generate a verification token
-    const verificationToken = generateToken();
-    console.log("au07    ", verificationToken);
-
-
-    console.log("au09    ");
-
     try {
-        // Insert a new user record into the users table with the verification token
-        const result = await axios.post(`${API_URL}/users`, {username, email, hashedPassword, verificationToken : "created by " + req.user.username, "role" : "user" });
-        // const result = await db.query(
-        //     "INSERT INTO users (email, password, verification_token) VALUES ($1, $2, $3) RETURNING *",
-        //     [email, hashedPassword, verificationToken]
-        // );
-        //const response = await axios.post(`${API_URL}/users`, req.body);
-        console.log("added user.  returned this: ", result.data);
-        res.redirect('/users');
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        res.status(500).send("Error fetching user data");
-    }
+        console.log("addUser.post.1")
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log("addUser.post.2")
+            req.flash('error', errors.array());
+            return res.redirect('/users');
+        }
 
+        const { username, email, password, role } = req.body;
+        const userData = {
+            username,
+            email,
+            password,
+            role,
+            verificationToken: 'added by ' + req.user.username,
+            verified_email: true,
+        };
+        console.log("addUser.post.3")
+
+        // Register the user using the registerUser function
+        const userID = await registerUser(userData);
+        console.log("addUser.post.4")
+
+        req.flash('success', 'User added successfully');
+        console.log("addUser.post.9")
+        return res.redirect('/users');
+    } catch (error) {
+        console.error("addUser.post.8    Error adding user:", error);
+        res.status(500).send("Error adding user");
+    }
 });
+
+
 //#endregion
 
 
 
-//--------------------------------
-//---  Authorisation
-//-------------------------------
+//-------------------------------------------------
+//---  Passport code and authorisation middleware
+//-------------------------------------------------
 //#region Authorisation
 
 app.get('/login', (req, res) => {
     console.log("li1");
     const errors = req.flash('error');
     console.log("li2     ", errors);
-    res.render('login.ejs', { messages: errors });
+    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
 });
 
 // app.post('/login', passport.authenticate('local', {
@@ -243,7 +245,7 @@ app.get('/login', (req, res) => {
 //     failureRedirect: '/login'
 // }));
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/users',
+    successRedirect: '/',
     failureRedirect: '/',
     failureFlash: true
 }));
@@ -259,103 +261,144 @@ app.get('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
     console.log("r1")
-    res.render('register.ejs',  { messages: req.flash('error') }); 
+    res.render('register.ejs',  {title : 'Register', user: req.user,  messages: req.flash('error') }); 
 });
+
+const registerUser = async (userData) => {
+    try {
+        let { username, email, password, role, verificationToken, verified_email } = userData;
+        console.log("ru1 ", userData)
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        console.log("ru2 ", hashedPassword);
+
+        // Generate a verification token
+        if (!verificationToken) {
+            verificationToken = generateToken();
+            console.log("ru3 ", verificationToken)
+        }
+        if (verified_email !== true ) {
+            verified_email = null;
+            console.log("ru4   verified_email=null");
+        }
+        if (!username && !email) {
+            throw new Error("Must have username or email");
+        }
+        if (!email) {
+            email = username;
+        }
+        if (!username) {
+            username = email;
+        }
+        // if (!role) {
+        //     role = "user"
+        // }
+        if (!email || !password) {
+            throw new Error("Email and password are required.");
+        }
+
+        // Insert a new user record into the users table with the verification token
+        const result = await axios.post(`${API_URL}/users`, {
+            username,
+            email,
+            'password': hashedPassword,
+            role,
+            verificationToken,
+            verified_email
+        });
+        
+        // Extract the newly inserted user_id from the result
+        const userID = result.data.id;
+        console.log("ru5 ", userID)
+
+        // Send verification email
+        const transporter = nodemailer.createTransport({
+            host: 'cp-wc64.per01.ds.network',
+            port: 587,
+            secure: false,
+            requireTLS: true,
+            auth: {
+                user: process.env.SMTP_EMAIL,
+                pass: process.env.SMTP_PASSWORD
+            }
+        });
+
+        await transporter.sendMail({
+            from: 'john@buildingbb.com.au',
+            to: email,
+            subject: 'Please verify your email address',
+            text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
+        });
+        console.log("ru9 success ");
+
+        return userID;
+    } catch (error) {
+        if (error.response && error.response.status === 400) {
+            // Email already registered
+            console.log("ru7 ")
+            throw new Error('Email already registered');
+        } else {
+            console.log("ru8 ")
+            throw error; // Other errors
+        }
+    }
+};
 
 // Handler for registration form submission
 app.post('/register', async (req, res) => {
     try {
-        console.log("reg1     ", req.body)
-        const { email, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        // Generate a verification token
-        const verificationToken = generateToken();
-        console.log("reg2")
-
-        // Insert a new user record into the users table with the verification token
-        const result = await axios.post(`${API_URL}/users`, {'username' : email, email, 'password' : hashedPassword, verificationToken, "role" : "user" });
-        // const result = await db.query(
-        //     "INSERT INTO users (email, password, verification_token) VALUES ($1, $2, $3) RETURNING *",
-        //     [email, hashedPassword, verificationToken]
-        // );
-        if (result.status === 201) { 
-            console.log("reg2.1    User added successfully")
-        }
-        console.log("reg2.2    ")
-        // Extract the newly inserted user_id from the result
-        const userID = result.data.id;
-        console.log("reg2.5    ", userID)
-        
-        console.log("reg3")
-        try {
-            // Send verification email
-            console.log("reg4")
-            const transporter = nodemailer.createTransport({
-                host: 'cp-wc64.per01.ds.network', // alternate host server is required instead of mail.buildingbb.com.au
-                port: 587, // Port for secure SMTP
-                secure: false, // Set to true if your SMTP server requires TLS
-                requireTLS: true, 
-                auth: {
-                    user: process.env.SMTP_EMAIL, // Your email username
-                    pass: process.env.SMTP_PASSWORD // Your email password or application-specific password
-                }
-                    // Set SSL/TLS protocol version and options
-                // secureOptions: {
-                //     secureProtocol: 'TLSv1_2_method',
-                // }
-            });
-            console.log("reg5")
-            await transporter.sendMail({
-                from: 'john@buildingbb.com.au',
-                to: email, 
-                subject: 'Please verify your email address',
-                text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
-                //text: `Click the following link to verify your email address: http://yourwebsite.com/verify?token=${verificationToken}`
-            });
-            console.log("reg6")
-        } catch (error) {
-            console.log("reg7")
-            console.error('Error sending email:', error);
-        }
-        
-
-        
-        res.send(`User registered successfully. Please check your email for verification.`);
-        console.log("reg9   ", userID)
-        return userID;
+        let { email, password } = req.body;
+        console.log("gp1   ", req.body);
+        await registerUser({ email, password, role: 'user' });
+        req.flash('success', 'User registered successfully. Please check your email for verification.');
+        console.log("gp9 success");
+        return res.redirect('/login');
     } catch (error) {
-        if (error.response.status === 400 ) {
-            console.log("reg91")
-            return res.render("register.ejs", {messages : ['this email is already registered']});
+        if (error.message === 'Email already registered') {
+            console.log("gp8 already reg'd");
+            return res.render("register.ejs", { messages: ['This email is already registered'], title: 'Register' });
+        } else {
+            console.log("gp7 db error");
+            console.error('Error during registration:', error);
+            return res.status(500).send('Error registering user');
         }
-        
-        console.log("reg99")
-        console.error('Error during registration:', error);
-        res.status(500).send('Error registering user');
     }
 });
 
+
 // Route for handling email verification
 app.get('/verify', async (req, res) => {
-    console.log("ve1")
+    console.log("ve1");
     try {
         const { token } = req.query;
-        console.log("ve2")
+        console.log("ve2");
 
         // Update the user's email verification status in the database
         console.log(`ve3    Fetching user: ${API_URL}/verify/${token}`);
         const result = await axios.put(`${API_URL}/verify/${token}`);
-        console.log("ve8");
-        req.flash('error', 'Email verified successfully. You can now log in');
-        console.log("ve9");
-        return res.redirect("/login");
+
+        // Check if the email verification was successful
+        if (result.status === 200) {
+            console.log("ve4");
+            req.flash('success', 'Email verified successfully. You can now log in');
+            console.log("ve5 success");
+            return res.redirect("/login");
+        } else if (result.status === 409) {
+            console.log("ve6 Email has already been verified");
+            req.flash('error', 'Email has already been verified');
+            return res.redirect("/login"); // Redirect to the login page or handle as appropriate
+        } else {
+            console.log("ve7 unknown error");
+            req.flash('error', 'Error verifying email');
+            return res.redirect("/login"); // Redirect to the login page or handle as appropriate
+        }
     } catch (error) {
-        console.log("ve99")
+        console.log("ve9");
         console.error('Error verifying email:', error);
-        return res.status(500).send('Error verifying email');
+        req.flash('error', 'Error verifying email');
+        return res.redirect("/login"); // Redirect to the login page or handle as appropriate
     }
 });
+
 
 // varify email on user registration
 function generateToken() {
@@ -387,7 +430,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
             const emailVerified = user.verified_email;
             console.log("ps4")
             if (!emailVerified) {
-                console.log("ps5");
+                console.log("ps5     email has not been verified - login failed");
                 return cb(null, false, { message: 'Email has not been verified.' });                
             }
 
@@ -443,7 +486,9 @@ cb(null, user);
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
+    console.log("iauth1");
     if (req.isAuthenticated()) {
+        console.log("iauth1");
         return next();
     }
     res.redirect('/login');
@@ -451,9 +496,12 @@ function isAuthenticated(req, res, next) {
 
 
 function isAdmin(req, res, next) {
+    console.log("iad1")
     if (req.user && req.user.role === 'admin') {
+        console.log("iad2")
         return next();
     } else {
+        console.log("iad3")
         return res.status(403).json({ message: 'Permission denied' });
     }
 }

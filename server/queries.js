@@ -42,24 +42,25 @@ const getUserByUsername = (req, res) => {
     pool.query("SELECT * FROM users WHERE username = '"+ req.params.username + "';", (error, result) => {
         console.log("h2")
         if (error) {
-            console.log("h3")
+            console.log("h3 db error")
             throw error
         }
         if (result.rows.length === 0) {
-          console.log("h4")
+          console.log("h4 No user found")
           //throw new Error('No user found');
           res.status(404).json({ message: 'No user found' });
           return;
         }
         if (result.rows.length > 1) {
-          console.log("h5")
+          console.log("h5 several users with matching usernames")
           //test if result returns more than one row and throw an error
           throw new Error('Multiple users found');
           //the above will crash the server... instead use...
           res.status(500).json({ error: 'Multiple users found' });
           return;
         }
-        console.log("h6")
+        //success case. return data
+        console.log("h6 success")
         res.status(200).json(result.rows);
     });
 };
@@ -67,12 +68,12 @@ const getUserByUsername = (req, res) => {
 
 const createUser = (req, res) => {
   console.log("k1 ");
-  const { username, email, password, role, verificationToken } = req.body;
-  console.log("k2");
+  const { username, email, password, role, verificationToken, verified_email } = req.body;
+  console.log("k2", req.body);
 
   pool.query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
       if (error) {
-          console.log("k3");
+          console.log("k3 error");
           console.error('Error checking email:', error);
           return res.status(500).json({ message: 'Internal Server Error' });
       }
@@ -82,18 +83,17 @@ const createUser = (req, res) => {
       }
 
       console.log("k5");
-      const query = 'INSERT INTO users (username, email, password, role, verification_token) VALUES ($1, $2, $3, $4, $5) RETURNING id';
-      const values = [username, email, password, role, verificationToken];
+      const query = 'INSERT INTO users (username, email, password, role, verification_token, verified_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
+      const values = [username, email, password, role, verificationToken, verified_email];
       pool.query(query, values, (error, result) => {
 
           if (error) {
-              console.log("k6");
-              console.error('Error inserting user:', error);
+              console.error('k6 Error inserting user:', error);
               return res.status(500).json({ message: 'Error adding user to the database' });
           }
           console.log("k7");
           const userId = result.rows[0].id;
-          console.log("k9");
+          console.log("k9 success");
           return res.status(201).json({ id: userId, message: `Added user with ID: ${userId}` });
       });
   });
@@ -151,30 +151,48 @@ const updateUser = (request, response) => {
 const verifyUserEmail = (req, res) => {
   console.log("vue1    ", req.params)
   const token = req.params.token
- // const { name, email } = request.body
+  // const { name, email } = request.body
 
- console.log("vue2     ", token)
- pool.query(
-    'UPDATE users SET verified_email = true WHERE verification_token = $1 AND verified_email IS NULL RETURNING id',
+  console.log("vue2     ", token)
+  pool.query(
+    'SELECT id, verified_email FROM users WHERE verification_token = $1 ',
     [token],
     (error, results) => {
       if (error) {
-        console.log("vue3");
-        console.error("Error executing query:", error);
+        console.error("vue3   Error executing query:", error);
         return res.status(500).send('Error verifying token');
       }
-      
-      if (results.rows.length === 0) {
-        console.log("vue4");
-        console.log("No rows updated");
-        return res.status(404).send('could not find an un-verified token');
+      if (results.rows[0].verified_email === true) {
+        console.log("vue4    email has already been verified");
+        return res.status(409).send('Email has already been verified');
       }
-      const userId = results.rows[0].id; 
-      console.log(`vue9      User(${userId}) activated with verified email.`);
-      res.status(200).send(`User(${userId}) activated with verified email.`);
+
+      if (results.rows.length === 0) {
+        console.log("vue5  No unverified token found");
+        return res.status(404).send('Could not find an unverified token');
+      }
+
+      const userId = results.rows[0].id;
+
+      // Now that we've confirmed the token is valid and the email is not yet verified,
+      // proceed with updating the database to mark the email as verified
+      pool.query(
+        'UPDATE users SET verified_email = true WHERE id = $1',
+        [userId],
+        (error, updateResult) => {
+          if (error) {
+            console.error("Error executing update query:", error);
+            return res.status(500).send('Error updating user email verification status');
+          }
+
+          console.log(`vue9    User(${userId}) activated with verified email.`);
+          res.status(200).send(`User(${userId}) activated with verified email.`);
+        }
+      );
     }
-  )
+  );
 }
+
 
 
 const deleteUser = (request, response) => {
