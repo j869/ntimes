@@ -111,7 +111,7 @@ app.use((req, res, next) => {
 //#endregion
 app.get('/', (req, res) => {
     const username = req.user && req.user.username ? " for " + req.user.username : "";
-    console.log("z9    Default route: Rendering login page" + username);
+    console.log("z9    Home. User is " + username);
     res.render('home.ejs', { user: req.user, title: 'Home', body: '' }); 
 });
 
@@ -141,17 +141,28 @@ app.get("/users/:id", isAuthenticated, async (req, res) => {
     // } else {
     //     res.redirect("/login");
     // }
-    console.log("v9 ")
+    console.log("v9 user " + req.params.id + " returned ok")
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
-    console.log("p1    ", req.user)
+    console.log("p1    profile.ejs", req.user)
     res.render('profile.ejs', { user: req.user });
 });
 
-app.get('/timesheets', isAuthenticated, (req, res) => {
-    console.log("p1    ", req.user)
-    res.render('profile.ejs', { user: req.user });
+
+
+app.get('/time', isAuthenticated, async (req, res) => {
+    console.log(`t1    ${API_URL}/timesheets/${req.user.id}`)
+
+    const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
+    const errors = req.flash('error');
+    console.log("t2    ", errors)
+    const messages = errors.map(error => error.msg);
+    console.log("t3    got " +  result.data.length + " timesheets ")
+    res.render('timesheet/main.ejs', { user: req.user, tableData: result.data, messages: messages });
+    console.log("t9  returned users timesheets ")
+
+
 });
 
 
@@ -170,7 +181,7 @@ app.get('/users', isAdmin, async (req, res) => {
     const messages = errors.map(error => error.msg);
     console.log("u3    ", messages)
     res.render('settings.ejs', { user: req.user, users: result.data, messages: messages });
-    console.log("u9")
+    console.log("u9  all users displayed on screen ")
 });
 
 // add new user with admin rights
@@ -191,10 +202,10 @@ app.post('/addUser', isAdmin, [
     body('role').notEmpty().withMessage('Role is required'),
 ], async (req, res) => {
     try {
-        console.log("addUser.post.1")
+        console.log("pau1   add user ", req.body)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log("addUser.post.2")
+            console.log("pau2")
             req.flash('error', errors.array());
             return res.redirect('/users');
         }
@@ -208,17 +219,17 @@ app.post('/addUser', isAdmin, [
             verificationToken: 'added by ' + req.user.username,
             verified_email: true,
         };
-        console.log("addUser.post.3")
+        console.log("pau3")
 
         // Register the user using the registerUser function
         const userID = await registerUser(userData);
-        console.log("addUser.post.4")
+        console.log("pau4")
 
         req.flash('success', 'User added successfully');
-        console.log("addUser.post.9")
+        console.log("pau9")
         return res.redirect('/users');
     } catch (error) {
-        console.error("addUser.post.8    Error adding user:", error);
+        console.error("pau8    Error adding user:", error);
         res.status(500).send("Error adding user");
     }
 });
@@ -234,9 +245,9 @@ app.post('/addUser', isAdmin, [
 //#region Authorisation
 
 app.get('/login', (req, res) => {
-    console.log("li1");
+    console.log("li1     get login route");
     const errors = req.flash('error');
-    console.log("li2     ", errors);
+    console.log("li2     messages : ", errors);
     res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
 });
 
@@ -260,9 +271,10 @@ app.get('/logout', (req, res) => {
 
 
 app.get('/register', (req, res) => {
-    console.log("r1")
+    console.log("r1");
     res.render('register.ejs',  {title : 'Register', user: req.user,  messages: req.flash('error') }); 
 });
+
 
 const registerUser = async (userData) => {
     try {
@@ -328,7 +340,7 @@ const registerUser = async (userData) => {
             subject: 'Please verify your email address',
             text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
         });
-        console.log("ru9 success ");
+        console.log("ru9 user registered. check your email ");
 
         return userID;
     } catch (error) {
@@ -380,7 +392,7 @@ app.get('/verify', async (req, res) => {
         if (result.status === 200) {
             console.log("ve4");
             req.flash('success', 'Email verified successfully. You can now log in');
-            console.log("ve5 success");
+            console.log("ve5 Email verified successfully. You can now log in");
             return res.redirect("/login");
         } else if (result.status === 409) {
             console.log("ve6 Email has already been verified");
@@ -408,7 +420,7 @@ function generateToken() {
 
 // Passport configuration
 passport.use("local", new Strategy(async function verify(username, password, cb) {
-    console.log("LocalStrategy: Authenticating user...");
+    console.log("ps0    LocalStrategy: Authenticating user...");
 
         try {
             //const result = await db.query("SELECT password, verified_email FROM users WHERE email = $1 ", [                username,            ]);
@@ -460,8 +472,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
 
             // Check for status 404 User not found
             if (err.response.status === 404) {
-                console.log("ps14")
-                console.log("Cannot find this username in the user table.");
+                console.log("ps14    Cannot find this username in the user table.");
                 return cb(null, false, { message: 'User not found.' });
             } else {
                 console.log("ps15")
@@ -486,11 +497,12 @@ cb(null, user);
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
-    console.log("iauth1");
+    console.log("iau1");
     if (req.isAuthenticated()) {
-        console.log("iauth1");
+        console.log("iau2    user is authenticated");
         return next();
     }
+    console.log("iau9    user is not authenticated");
     res.redirect('/login');
 }
 
@@ -498,10 +510,10 @@ function isAuthenticated(req, res, next) {
 function isAdmin(req, res, next) {
     console.log("iad1")
     if (req.user && req.user.role === 'admin') {
-        console.log("iad2")
+        console.log("iad2    user is not admin")
         return next();
     } else {
-        console.log("iad3")
+        console.log("iad3   user is admin")
         return res.status(403).json({ message: 'Permission denied' });
     }
 }

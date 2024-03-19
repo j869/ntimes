@@ -1,6 +1,65 @@
-<%- include('partials/header', { title: 'Edit Profile', user, messages: messages }) %>
+<%- include('../partials/header', { title: 'Edit Profile', user, messages: messages }) %>
 
-<h1>not finsihed</h1>
-
-<%- include('partials/footer') %>
+<div class="table-responsive">
+  <table class="table">
+      <thead>
+          <tr>
+              <th scope="col">#</th>
+              <th scope="col">Username</th>
+              <th scope="col">Work Date</th>
+              <th scope="col">Time Start</th>
+              <th scope="col">Time Finish</th>
+              <th scope="col">Time Lunch</th>
+              <th scope="col">Time Extra Break</th>
+              <th scope="col">Time Total</th>
+              <th scope="col">Time Accrued</th>
+              <th scope="col">Time Til</th>
+              <th scope="col">Time Leave</th>
+              <th scope="col">Time Overtime</th>
+              <th scope="col">Time Comm Svs</th>
+              <th scope="col">Comment</th>
+              <th scope="col">Location ID</th>
+              <th scope="col">Activity</th>
+              <th scope="col">Notes</th>
+              <th scope="col">Entry Date</th>
+              <th scope="col">On Duty</th>
+              <th scope="col">Duty Category</th>
+              <th scope="col">Status</th>
+              <th scope="col">RWE Day</th>
+              <th scope="col">Fund Source</th>
+          </tr>
+      </thead>
+      <tbody>
+          <% tableData.forEach((timesheet, index) => { %>
+              <tr>
+                  <th scope="row"><%= index + 1 %></th>
+                  <td><%= timesheet.username %></td>
+                  <td><%= timesheet.work_date %></td>
+                  <td><%= timesheet.time_start %></td>
+                  <td><%= timesheet.time_finish %></td>
+                  <td><%= timesheet.time_lunch %></td>
+                  <td><%= timesheet.time_extra_break %></td>
+                  <td><%= timesheet.time_total %></td>
+                  <td><%= timesheet.time_accrued %></td>
+                  <td><%= timesheet.time_til %></td>
+                  <td><%= timesheet.time_leave %></td>
+                  <td><%= timesheet.time_overtime %></td>
+                  <td><%= timesheet.time_comm_svs %></td>
+                  <td><%= timesheet.t_comment %></td>
+                  <td><%= timesheet.location_id %></td>
+                  <td><%= timesheet.activity %></td>
+                  <td><%= timesheet.notes %></td>
+                  <td><%= timesheet.entry_date %></td>
+                  <td><%= timesheet.on_duty %></td>
+                  <td><%= timesheet.duty_catagory %></td>
+                  <td><%= timesheet.status %></td>
+                  <td><%= timesheet.rwe_day %></td>
+                  <td><%= timesheet.fund_src %></td>
+              </tr>
+          <% }); %>
+      </tbody>
+  </table>
+</div>
+  
+<%- include('../partials/footer') %>
 

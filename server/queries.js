@@ -16,6 +16,36 @@ export const pool = new Pool({         //const pool = new Pool({
 
 //#endregion
 
+const getCurrentYearTimesheetsForUser = (req, res) => {
+  // Extract username or person_id from request, assuming it's available in req.params
+  console.log("cyt1   ", req.params)
+  const personID  = req.params.id;
+
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  console.log("cyt3   currentYear : " + currentYear);
+
+  // Construct the SQL query to fetch timesheets for the current year and specific user
+  const query = `
+      SELECT *
+      FROM ts_timesheet_t
+      WHERE EXTRACT(YEAR FROM work_date) = $1
+      AND person_id = $2;
+  `;
+  console.log("cyt5   " + "SELECT * FROM ts_timesheet_t WHERE EXTRACT(YEAR FROM work_date) = " + currentYear + " AND person_id = "+ personID + ");");
+  // Execute the query with currentYear and username as parameters
+  pool.query(query, [currentYear, personID], (error, result) => {
+      if (error) {
+          console.error("Error querying timesheets:", error);
+          res.status(500).json({ error: 'Error querying timesheets' });
+          return;
+      }
+      console.log("cyt9   returning " + result.rows.length + " records ");
+      res.status(200).json(result.rows);
+  });
+};
+
+
 const getUsers = (request, response) => {
     pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
         if (error) {
@@ -60,7 +90,7 @@ const getUserByUsername = (req, res) => {
           return;
         }
         //success case. return data
-        console.log("h6 success")
+        console.log("h6 success ")
         res.status(200).json(result.rows);
     });
 };
@@ -213,6 +243,7 @@ export {
   getUsers,
   getUserById,
   getUserByUsername,
+  getCurrentYearTimesheetsForUser,
   createUser,
   updateUser,
   verifyUserEmail, 
