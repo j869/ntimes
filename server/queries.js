@@ -16,6 +16,11 @@ export const pool = new Pool({         //const pool = new Pool({
 
 //#endregion
 
+
+//--------------------------------
+//----  ts_timesheet_t 
+//-------------------------------
+
 const getCurrentYearTimesheetsForUser = (req, res) => {
   // Extract username or person_id from request, assuming it's available in req.params
   console.log("cyt1   ", req.params)
@@ -46,15 +51,19 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 };
 
 
+//--------------------------------
+//----  users
+//-------------------------------
+
 const getUsers = (request, response) => {
-    pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
-        if (error) {
-          console.log(error);
-        throw error
-        }
-        //console.log("SELECT * FROM users ORDER BY id ASC", results.rows)
-        response.status(200).json(results.rows)
-    })
+  pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
+      if (error) {
+        console.log(error);
+      throw error
+      }
+      //console.log("SELECT * FROM users ORDER BY id ASC", results.rows)
+      response.status(200).json(results.rows)
+  })
 }
 
 const getUserById = (request, response) => {
@@ -68,67 +77,32 @@ const getUserById = (request, response) => {
 }
     
 const getUserByUsername = (req, res) => {
-    console.log("h1     SELECT * FROM users WHERE username = '"+ req.params.username + "';");
-    pool.query("SELECT * FROM users WHERE username = '"+ req.params.username + "';", (error, result) => {
-        console.log("h2")
-        if (error) {
-            console.log("h3 db error")
-            throw error
-        }
-        if (result.rows.length === 0) {
-          console.log("h4 No user found")
-          //throw new Error('No user found');
-          res.status(404).json({ message: 'No user found' });
-          return;
-        }
-        if (result.rows.length > 1) {
-          console.log("h5 several users with matching usernames")
-          //test if result returns more than one row and throw an error
-          throw new Error('Multiple users found');
-          //the above will crash the server... instead use...
-          res.status(500).json({ error: 'Multiple users found' });
-          return;
-        }
-        //success case. return data
-        console.log("h6 success ")
-        res.status(200).json(result.rows);
-    });
-};
-
-
-const createUser = (req, res) => {
-  console.log("k1 ");
-  const { username, email, password, role, verificationToken, verified_email } = req.body;
-  console.log("k2", req.body);
-
-  pool.query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
+  console.log("h1     SELECT * FROM users WHERE username = '"+ req.params.username + "';");
+  pool.query("SELECT * FROM users WHERE username = '"+ req.params.username + "';", (error, result) => {
+      console.log("h2")
       if (error) {
-          console.log("k3 error");
-          console.error('Error checking email:', error);
-          return res.status(500).json({ message: 'Internal Server Error' });
+          console.log("h3 db error")
+          throw error
       }
-      if (result.rows.length !== 0) {
-          console.error('k4     email already exists:', email);
-          return res.status(400).json({ message: `Email ${email} already exists` });
+      if (result.rows.length === 0) {
+        console.log("h4 No user found")
+        //throw new Error('No user found');
+        res.status(404).json({ messages: ['No user found'] });
+        return;
       }
-
-      console.log("k5");
-      const query = 'INSERT INTO users (username, email, password, role, verification_token, verified_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
-      const values = [username, email, password, role, verificationToken, verified_email];
-      pool.query(query, values, (error, result) => {
-
-          if (error) {
-              console.error('k6 Error inserting user:', error);
-              return res.status(500).json({ message: 'Error adding user to the database' });
-          }
-          console.log("k7");
-          const userId = result.rows[0].id;
-          console.log("k9 success");
-          return res.status(201).json({ id: userId, message: `Added user with ID: ${userId}` });
-      });
+      if (result.rows.length > 1) {
+        console.log("h5 several users with matching usernames")
+        //test if result returns more than one row and throw an error
+        throw new Error('Multiple users found');
+        //the above will crash the server... instead use...
+        res.status(500).json({ error: 'Multiple users found' });
+        return;
+      }
+      //success case. return data
+      console.log("h9 user returned ok ")
+      res.status(200).json(result.rows);
   });
 };
-
 
 const updateUser = (request, response) => {
   const id = parseInt(request.params.id);
@@ -176,7 +150,38 @@ const updateUser = (request, response) => {
   console.log("uu9   ")
 };
 
+const createUser = (req, res) => {
+  console.log("k1 ");
+  const { username, email, password, role, verificationToken, verified_email } = req.body;
+  console.log("k2", req.body);
 
+  pool.query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
+      if (error) {
+          console.log("k3 error");
+          console.error('Error checking email:', error);
+          return res.status(500).json({ messages: ['Internal Server Error'] });
+      }
+      if (result.rows.length !== 0) {
+          console.error('k4     email already exists:', email);
+          return res.status(400).json({ messages: [`Email ${email} already exists`] });
+      }
+
+      console.log("k5");
+      const query = 'INSERT INTO users (username, email, password, role, verification_token, verified_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id';
+      const values = [username, email, password, role, verificationToken, verified_email];
+      pool.query(query, values, (error, result) => {
+
+          if (error) {
+              console.error('k6 Error inserting user:', error);
+              return res.status(500).json({ messages: ['Error adding user to the database'] });
+          }
+          console.log("k7");
+          const userId = result.rows[0].id;
+          console.log("k9 successfully created user");
+          return res.status(201).json({ id: userId, messages: [`Added user with ID: ${userId}`] });
+      });
+  });
+};
 
 const verifyUserEmail = (req, res) => {
   console.log("vue1    ", req.params)
@@ -223,18 +228,16 @@ const verifyUserEmail = (req, res) => {
   );
 }
 
-
-
 const deleteUser = (request, response) => {
-    const id = parseInt(request.params.id)
-  
-    pool.query('DELETE FROM users WHERE id = $1', [id], (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).send(`User deleted with ID: ${id}`)
-    })
-}
+  const id = parseInt(request.params.id)
+
+  pool.query('DELETE FROM users WHERE id = $1', [id], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).send(`User deleted with ID: ${id}`)
+  })
+}   //unused. no delete route as ov 20Mar
 
 
 

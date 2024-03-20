@@ -47,7 +47,6 @@
 </head>
 <body>
 
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">numbat</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,13 +77,21 @@
             </ul>
         </div>
     </nav>
+
+    <main>
     
+        <% if (locals.messages && locals.messages.length > 0) { %>
+            <% if (messages.length > 0) { %>
+                <% messages.forEach(msg => { %>
+                    <div class="alert alert-primary" role="alert">
+                        <%= msg %>
+                    </div>
+                <% }) %>
+            <% } %>   
+        <% } %>
     
-              <main>
-    
-                <% if (locals.message) { %>
-                    <p><%= message %></p>
-                <% } %>
+
+
     
 
     <div class="jumbotron centered">

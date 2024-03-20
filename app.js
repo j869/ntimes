@@ -22,6 +22,15 @@ const API_URL = "http://localhost:4000";
 // let baseURL = "";
 const saltRounds = 10;
 env.config();
+if (process.env.SESSION_SECRET) {
+    console.log('en1    npm middleware loaded ok');
+} else {
+    console.log('en9    you must run nodemon from Documents/ntimes/  : ', process.cwd());
+    console.log('       rm -R node_modules');
+    console.log('       npm cache clean --force');
+    console.log('       npm i');
+}
+
 
 app.use(
   session({
@@ -109,18 +118,17 @@ app.use((req, res, next) => {
 //#endregion
 
 //#endregion
+
 app.get('/', (req, res) => {
-    const username = req.user && req.user.username ? " for " + req.user.username : "";
+    const username = req.user && req.user.username ? " for " + req.user.username : "[]";
     console.log("z9    Home. User is " + username);
     res.render('home.ejs', { user: req.user, title: 'Home', body: '' }); 
 });
 
-
-
 //--------------------------------
 //----  Authenticated users
 //-------------------------------
-
+//#region regular users
 app.get("/users/:id", isAuthenticated, async (req, res) => {
     console.log("v1      Protected route: Fetching user data...", req.params);
     // if (req.isAuthenticated()) {
@@ -156,15 +164,32 @@ app.get('/time', isAuthenticated, async (req, res) => {
 
     const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
     const errors = req.flash('error');
-    console.log("t2    ", errors)
+    console.log("t2    ", result.data)
     const messages = errors.map(error => error.msg);
     console.log("t3    got " +  result.data.length + " timesheets ")
-    res.render('timesheet/main.ejs', { user: req.user, tableData: result.data, messages: messages });
+
+        // Filter the result.data array to include only the required fields
+        const filteredData = result.data.map(entry => ({
+            work_date: entry['work_date'],
+            time_start: entry['time_start'],
+            time_finish: entry['time_finish'],
+            time_total: entry['time_total'],
+            time_accrued: entry['time_accrued'],
+            time_til: entry['time_til'],
+            time_leave: entry['time_leave'],
+            time_overtime: entry['time_overtime'],
+            time_comm_svs: entry['time_comm_svs'],
+            comment: entry['t_comment'],
+            location_id: entry['location_id'],
+            activity: entry['activity'],
+            notes: entry['notes']
+        }));
+    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: messages });
     console.log("t9  returned users timesheets ")
 
 
 });
-
+//#endregion
 
 
 
@@ -192,10 +217,19 @@ app.get('/users', isAdmin, async (req, res) => {
 // });
 
 
-
+// Custom validation middleware to limit character count
+const characterLimit = (field, limit) => {
+    return body(field).custom((value) => {
+        if (value.length > limit) {
+            throw new Error(`${field} is too long`);
+        }
+        return true;
+    });
+};
 
 app.post('/addUser', isAdmin, [
     // Validate request body
+    characterLimit('username', 31).withMessage('Username must be less than 31 characters'),
     body('username').notEmpty().withMessage('Username is required'),
     body('email').isEmail().withMessage('Invalid email format'),
     body('password').notEmpty().withMessage('Password is required'),
@@ -246,21 +280,19 @@ app.post('/addUser', isAdmin, [
 
 app.get('/login', (req, res) => {
     console.log("li1     get login route");
-    const errors = req.flash('error');
-    console.log("li2     messages : ", errors);
-    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
+    // const errors = req.flash('error');
+    // console.log("li2     messages : ", errors);
+    // res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
+    console.log("li9     ");
+    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: req.flash('error') });
+
 });
 
-// app.post('/login', passport.authenticate('local', {
-//     successRedirect: '/profile',
-//     failureRedirect: '/login'
-// }));
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/',
     failureFlash: true
 }));
-
 
 app.get('/logout', (req, res) => {
     console.log("lo1")
@@ -269,12 +301,10 @@ app.get('/logout', (req, res) => {
     });
 });
 
-
 app.get('/register', (req, res) => {
     console.log("r1");
     res.render('register.ejs',  {title : 'Register', user: req.user,  messages: req.flash('error') }); 
 });
-
 
 const registerUser = async (userData) => {
     try {
@@ -340,7 +370,8 @@ const registerUser = async (userData) => {
             subject: 'Please verify your email address',
             text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
         });
-        console.log("ru9 user registered. check your email ");
+        // req.flash('error', 'Registration successful. Please check your email for verification.');
+        console.log("ru6 user registered. check your email ");
 
         return userID;
     } catch (error) {
@@ -348,8 +379,10 @@ const registerUser = async (userData) => {
             // Email already registered
             console.log("ru7 ")
             throw new Error('Email already registered');
-        } else {
+        } else if (error.response && error.response.status === 500) {
             console.log("ru8 ")
+        } else {
+            console.log("ru9 ")
             throw error; // Other errors
         }
     }
@@ -361,13 +394,13 @@ app.post('/register', async (req, res) => {
         let { email, password } = req.body;
         console.log("gp1   ", req.body);
         await registerUser({ email, password, role: 'user' });
-        req.flash('success', 'User registered successfully. Please check your email for verification.');
-        console.log("gp9 success");
-        return res.redirect('/login');
+        req.flash('error', 'User registered successfully. Please check your email for verification.');
+        console.log("gp9 registered user ok");
+        res.redirect('/login');
     } catch (error) {
         if (error.message === 'Email already registered') {
             console.log("gp8 already reg'd");
-            return res.render("register.ejs", { messages: ['This email is already registered'], title: 'Register' });
+            return res.render("register.ejs", { user : req.user, messages: ['This email is already registered'], title: 'Register' });
         } else {
             console.log("gp7 db error");
             console.error('Error during registration:', error);
@@ -391,7 +424,7 @@ app.get('/verify', async (req, res) => {
         // Check if the email verification was successful
         if (result.status === 200) {
             console.log("ve4");
-            req.flash('success', 'Email verified successfully. You can now log in');
+            req.flash('error', 'Email verified successfully. You can now log in');
             console.log("ve5 Email verified successfully. You can now log in");
             return res.redirect("/login");
         } else if (result.status === 409) {
@@ -435,7 +468,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
             // Check if user exists
             // if (!user) {
             //     console.log("ps3")
-            //     return cb(null, false, { message: 'Incorrect username.' });
+            //     return cb(null, false, { messages: 'Incorrect username.' });
             // }
 
             //check if user is verified
@@ -443,7 +476,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
             console.log("ps4")
             if (!emailVerified) {
                 console.log("ps5     email has not been verified - login failed");
-                return cb(null, false, { message: 'Email has not been verified.' });                
+                return cb(null, false, { messages: 'Email has not been verified.' });                
             }
 
             // Compare passwords
@@ -453,15 +486,15 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
                 console.log("ps7");
                 if (err) {
                     console.log("ps8");
-                    return cb(null, false, { message: 'Error comparing passwords.' });   
+                    return cb(null, false, { messages: ['Error comparing passwords.'] });   
                 } else {
                     console.log("ps9");
                     if (valid) {
-                        console.log("ps10");
-                        return cb(null, user, { message: 'Success.' });
+                        console.log("ps10 password correct");
+                        return cb(null, user, { messages: ['Success.'] });
                     } else {
                         console.log("ps11");
-                        return cb(null, false, { message: 'Incorrect password.' });
+                        return cb(null, false, { messages: ['Incorrect password.'] });
                     }
                 }
             });
@@ -473,7 +506,7 @@ passport.use("local", new Strategy(async function verify(username, password, cb)
             // Check for status 404 User not found
             if (err.response.status === 404) {
                 console.log("ps14    Cannot find this username in the user table.");
-                return cb(null, false, { message: 'User not found.' });
+                return cb(null, false, { messages: ['User not found.'] });
             } else {
                 console.log("ps15")
                 console.error("Error during authentication:", err);
@@ -514,7 +547,7 @@ function isAdmin(req, res, next) {
         return next();
     } else {
         console.log("iad3   user is admin")
-        return res.status(403).json({ message: 'Permission denied' });
+        return res.status(403).json({ messages: ['Permission denied'] });
     }
 }
 

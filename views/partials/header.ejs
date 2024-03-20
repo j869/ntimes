@@ -61,7 +61,13 @@
 
 
           <main>
-
-            <% if (locals.message) { %>
-                <p><%= message %></p>
+            <% if (locals.messages && locals.messages.length > 0) { %>
+                <% if (messages.length > 0) { %>
+                    <% messages.forEach(msg => { %>
+                        <div class="alert alert-primary" role="alert">
+                            <%= msg %>
+                        </div>
+                    <% }) %>
+                <% } %>   
             <% } %>
+        
