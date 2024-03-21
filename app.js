@@ -129,33 +129,6 @@ app.get('/', (req, res) => {
 //----  Authenticated users
 //-------------------------------
 //#region regular users
-app.get("/users/:id", isAuthenticated, async (req, res) => {
-    console.log("v1      Protected route: Fetching user data...", req.params);
-    // if (req.isAuthenticated()) {
-        try {
-            console.log(`v2      ${API_URL}/users/${req.params.id}`)
-            const response = await axios.get(`${API_URL}/users/${req.params.id}`);
-            console.log("v3    ", response.data[0]);
-            //res.send(response.data);
-            const errors = req.flash('error');
-            const messages = errors.map(error => error.msg);
-            res.render("profile.ejs", { title : 'Edit Profile', currentUser : req.user, userData : response.data[0], messages})
-            console.log("v4 ")
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-            res.status(500).send("Error fetching user data");
-            console.log("v7 ")
-        }
-    // } else {
-    //     res.redirect("/login");
-    // }
-    console.log("v9 user " + req.params.id + " returned ok")
-});
-
-app.get('/profile', isAuthenticated, (req, res) => {
-    console.log("p1    profile.ejs", req.user)
-    res.render('profile.ejs', { user: req.user });
-});
 
 
 
@@ -163,14 +136,21 @@ app.get('/time', isAuthenticated, async (req, res) => {
     console.log(`t1    ${API_URL}/timesheets/${req.user.id}`)
 
     const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
-    const errors = req.flash('error');
-    console.log("t2    ", result.data)
-    const messages = errors.map(error => error.msg);
-    console.log("t3    got " +  result.data.length + " timesheets ")
+    console.log("t2    got " +  result.data.length + " timesheets ")
+
+    const flashMessages = req.flash('messages');
+    console.log("t3   ", flashMessages)
+    // const messages = flashMessages.map(message => message.msg);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    };
 
         // Filter the result.data array to include only the required fields
         const filteredData = result.data.map(entry => ({
-            work_date: entry['work_date'],
+            work_date: formatDate(entry['work_date']),
             time_start: entry['time_start'],
             time_finish: entry['time_finish'],
             time_total: entry['time_total'],
@@ -184,12 +164,54 @@ app.get('/time', isAuthenticated, async (req, res) => {
             activity: entry['activity'],
             notes: entry['notes']
         }));
-    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: messages });
+    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: flashMessages });
     console.log("t9  returned users timesheets ")
 
 
 });
+
+app.get('/timesheetEntry', isAuthenticated, async (req, res) => {
+    console.log(`y1`);
+
+    res.render('timesheet/recordHours.ejs', {user : req.user, title : 'Enter Timesheet', messages : req.flash('messages')})
+
+});
+
+app.post('/timesheetEntry', isAuthenticated, async (req, res) => {
+    console.log("n1 ", req.body);
+
+    try {
+        const { work_date, time_start, time_finish, time_total, location_id, activity, comment, notes } = req.body;
+
+        // Insert a new timesheet 
+        console.log(`n2      ${API_URL}/timesheets`)
+        const result = await axios.post(`${API_URL}/timesheets`, {
+            person_id : req.user.id,
+            work_date,
+            time_start,
+            time_finish,
+            time_total,
+            location_id,
+            activity,
+            comment,
+            notes
+        });
+        console.log("n3   res.status: ", result.status)
+
+        console.log("n9    New timesheet created");
+
+        req.flash('messages', 'Thank you for entering your timesheet');
+        return res.redirect('/time');
+    } catch (error) {
+        console.error("n8     Error creating timesheet:", error);
+        req.flash('messages', 'An error occurred while creating the timesheet - the timesheet was not saved');
+        return res.redirect('/time');
+    }
+});
 //#endregion
+
+
+
 
 
 
@@ -201,7 +223,7 @@ app.get('/time', isAuthenticated, async (req, res) => {
 app.get('/users', isAdmin, async (req, res) => {
     console.log("u1    Admin route: Rendering settings page...");
     const result = await axios.get(`${API_URL}/users`);
-    const errors = req.flash('error');
+    const errors = req.flash('messages');
     console.log("u2    ", errors)
     const messages = errors.map(error => error.msg);
     console.log("u3    ", messages)
@@ -209,13 +231,30 @@ app.get('/users', isAdmin, async (req, res) => {
     console.log("u9  all users displayed on screen ")
 });
 
-// add new user with admin rights
-// app.get('/users', async (req, res) => {
-//     console.log("Admin route: Rendering settings page...");
-//     const result = await axios.get(`${API_URL}/users`);
-//     res.render('settings', { users: result.data });
-// });
-
+app.get("/users/:id", isAuthenticated, async (req, res) => {
+    console.log("v1      Protected route: Fetching user data...", req.params);
+    // if (req.isAuthenticated()) {
+        try {
+            console.log(`v2      ${API_URL}/users/${req.params.id}`)
+            const response = await axios.get(`${API_URL}/users/${req.params.id}`);
+            const q = response.data[0];
+            const { password, ...userData } = q;     //remove password from being sent
+            console.log("v3    ", userData);
+            //res.send(response.data);
+            const errors = req.flash('messages');
+            const messages = errors.map(error => error.msg);
+            res.render("profile.ejs", { title : 'Edit Profile', user : req.user, userData, messages})
+            console.log("v4 ")
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            res.status(500).send("Error fetching user data");
+            console.log("v7 ")
+        }
+    // } else {
+    //     res.redirect("/login");
+    // }
+    console.log("v9 user " + req.params.id + " returned ok")
+});
 
 // Custom validation middleware to limit character count
 const characterLimit = (field, limit) => {
@@ -226,6 +265,7 @@ const characterLimit = (field, limit) => {
         return true;
     });
 };
+
 
 app.post('/addUser', isAdmin, [
     // Validate request body
@@ -240,7 +280,7 @@ app.post('/addUser', isAdmin, [
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             console.log("pau2")
-            req.flash('error', errors.array());
+            req.flash('messages', errors.array());
             return res.redirect('/users');
         }
 
@@ -259,7 +299,7 @@ app.post('/addUser', isAdmin, [
         const userID = await registerUser(userData);
         console.log("pau4")
 
-        req.flash('success', 'User added successfully');
+        req.flash('messages', 'User added successfully');
         console.log("pau9")
         return res.redirect('/users');
     } catch (error) {
@@ -269,7 +309,56 @@ app.post('/addUser', isAdmin, [
 });
 
 
+// app.get("/editUser", isAdmin, async (req, res) => {
+//     console.log(`e1`);
+//     res.render('profile.ejs', {user : req.user, title : 'Edit User', messages : req.flash('messages')})
+// })
+
+
+app.post("/editUser", isAdmin, async (req, res) => {
+    console.log('p1     Request Body:', req.body);
+
+    try {
+
+        const { userID, username, email, password, role } = req.body;
+        let userData = {
+            userID, 
+            username,
+            email,
+            password,
+            role,
+            verificationToken: 'updated by ' + req.user.username,
+            verified_email: true,
+        };
+        console.log("p2   ", userData);
+
+        if (password === '') {
+            const { password, ...rest } = userData;     //remove password from being sent
+            userData = rest;
+        }
+        console.log(`p3      ${API_URL}/users/${userID}`, userData);
+
+       // const userID = await registerUser(userData);   // Register the user using the registerUser function
+        const result = await axios.put(`${API_URL}/users/${userID}`, userData);
+        console.log("p4")
+
+        console.log('p9 Updated user:', result.data);
+
+        req.flash('messages', 'User updated. Skipped email verification. Ensure that the correct email was used.');
+        res.status(200).send('User information updated successfully');
+    } catch (error) {
+        console.error('Error updating user information:', error);
+        res.status(500).send('Internal server error');
+    }
+});
+
+
+
 //#endregion
+
+
+
+
 
 
 
@@ -280,11 +369,11 @@ app.post('/addUser', isAdmin, [
 
 app.get('/login', (req, res) => {
     console.log("li1     get login route");
-    // const errors = req.flash('error');
+    // const errors = req.flash('messages');
     // console.log("li2     messages : ", errors);
     // res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
     console.log("li9     ");
-    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: req.flash('error') });
+    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: req.flash('messages') });
 
 });
 
@@ -303,7 +392,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
     console.log("r1");
-    res.render('register.ejs',  {title : 'Register', user: req.user,  messages: req.flash('error') }); 
+    res.render('register.ejs',  {title : 'Register', user: req.user,  messages: req.flash('messages') }); 
 });
 
 const registerUser = async (userData) => {
@@ -353,25 +442,27 @@ const registerUser = async (userData) => {
         console.log("ru5 ", userID)
 
         // Send verification email
-        const transporter = nodemailer.createTransport({
-            host: 'cp-wc64.per01.ds.network',
-            port: 587,
-            secure: false,
-            requireTLS: true,
-            auth: {
-                user: process.env.SMTP_EMAIL,
-                pass: process.env.SMTP_PASSWORD
-            }
-        });
+        if (verified_email !== true ) {
+            const transporter = nodemailer.createTransport({
+                host: 'cp-wc64.per01.ds.network',
+                port: 587,
+                secure: false,
+                requireTLS: true,
+                auth: {
+                    user: process.env.SMTP_EMAIL,
+                    pass: process.env.SMTP_PASSWORD
+                }
+            });
 
-        await transporter.sendMail({
-            from: 'john@buildingbb.com.au',
-            to: email,
-            subject: 'Please verify your email address',
-            text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
-        });
-        // req.flash('error', 'Registration successful. Please check your email for verification.');
-        console.log("ru6 user registered. check your email ");
+            await transporter.sendMail({
+                from: 'john@buildingbb.com.au',
+                to: email,
+                subject: 'Please verify your email address',
+                text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
+            });
+            req.flash('messages', 'Registration successful. Please check your email for verification.');
+            console.log("ru6 user registered. check your email ");
+        }
 
         return userID;
     } catch (error) {
@@ -394,7 +485,7 @@ app.post('/register', async (req, res) => {
         let { email, password } = req.body;
         console.log("gp1   ", req.body);
         await registerUser({ email, password, role: 'user' });
-        req.flash('error', 'User registered successfully. Please check your email for verification.');
+        req.flash('messages', 'User registered successfully. Please check your email for verification.');
         console.log("gp9 registered user ok");
         res.redirect('/login');
     } catch (error) {
@@ -424,22 +515,22 @@ app.get('/verify', async (req, res) => {
         // Check if the email verification was successful
         if (result.status === 200) {
             console.log("ve4");
-            req.flash('error', 'Email verified successfully. You can now log in');
+            req.flash('messages', 'Email verified successfully. You can now log in');
             console.log("ve5 Email verified successfully. You can now log in");
             return res.redirect("/login");
         } else if (result.status === 409) {
             console.log("ve6 Email has already been verified");
-            req.flash('error', 'Email has already been verified');
+            req.flash('messages', 'Email has already been verified');
             return res.redirect("/login"); // Redirect to the login page or handle as appropriate
         } else {
             console.log("ve7 unknown error");
-            req.flash('error', 'Error verifying email');
+            req.flash('messages', 'Error verifying email');
             return res.redirect("/login"); // Redirect to the login page or handle as appropriate
         }
     } catch (error) {
         console.log("ve9");
         console.error('Error verifying email:', error);
-        req.flash('error', 'Error verifying email');
+        req.flash('messages', 'Error verifying email');
         return res.redirect("/login"); // Redirect to the login page or handle as appropriate
     }
 });
@@ -553,6 +644,10 @@ function isAdmin(req, res, next) {
 
 
 //#endregion
+
+
+
+
 
 
 

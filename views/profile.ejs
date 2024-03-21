@@ -1,8 +1,12 @@
-<%- include('partials/header', { title: 'Edit Profile', user : currentUser, messages: messages }) %>
+<%- include('partials/header', { title: 'Edit Profile', user, messages: messages }) %>
 
 <h1>Edit Profile</h1>
 <form id="editProfileForm" action="/editUser" method="POST">
     <!-- Form fields for editing user details -->
+    <div>
+        <!-- <label for="userID">userID:</label> -->
+        <input type="number" id="userID" name="userID" value="<%= userData.id %>" hidden>
+    </div>    
     <div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" value="<%= userData.username %>" required>

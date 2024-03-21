@@ -1,0 +1,210 @@
+<%- include('../partials/header', { title: 'Edit Profile', user, messages: messages }) %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <form id="timesheetForm" action="/timesheetEntry" method="POST">
+                <div class="form-group">
+                    <label for="work_date">Work Date:</label>
+                    <input type="date" id="work_date" name="work_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="time_start">Time Start:</label>
+                    <input type="time" id="time_start" name="time_start" class="form-control" required value="09:00">
+                </div>
+                <div class="form-group">
+                    <label for="time_finish">Time Finish:</label>
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:00"> 
+                </div>
+                <div class="form-group">
+                    <label for="time_total">Time Total:</label>
+                    <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly value="08:00">
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <label for="location_id">Location:</label>
+                    <select id="location_id" name="location_id" class="form-control">
+                        <option value="1" selected>Office</option>
+                        <option value="2">Home</option>
+                        <option value="3">Patrol</option>
+                        <option value="4">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="activity">Activity:</label>
+                    <input type="text" id="activity" name="activity" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" name="comment" class="form-control" rows="4" cols="50"></textarea>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<div class="container calculated">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Flexitime -->
+            <div class="form-group">
+                <label for="flexi_accrued">Accrue Flexi:</label>
+                <input type="time" id="flexi_accrued" name="flexi_accrued" class="form-control calculated-field" step="3600">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- TIL -->
+            <div class="form-group">
+                <label for="time_til">Accrue TIL:</label>
+                <input type="time" id="time_til" name="time_til" class="form-control calculated-field" >
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Overtime -->
+            <div class="form-group">
+                <label for="time_overtime">Overtime:</label>
+                <input type="time" id="time_overtime" name="time_overtime" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Flexitime -->
+            <div class="form-group">
+                <label for="flexi_taken">Utilise Flexi:</label>
+                <input type="time" id="flexi_taken" name="flexi_taken" class="form-control calculated-field">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- TIL -->
+            <div class="form-group">
+                <label for="time_til">Utilise TIL:</label>
+                <input type="time" id="time_til" name="time_til" class="form-control calculated-field" >
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Leave -->
+            <div class="form-group">
+                <label for="time_leave">Leave:</label>
+                <input type="time" id="time_leave" name="time_leave" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+        const workDateInput = document.getElementById('work_date');
+        workDateInput.value = currentDate;
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const timeStartInput = document.getElementById('time_start');
+        const timeFinishInput = document.getElementById('time_finish');
+        const timeTotalInput = document.getElementById('time_total');
+
+        timeStartInput.addEventListener('input', calculateTimeTotal);
+        timeFinishInput.addEventListener('input', calculateTimeTotal);
+
+        function calculateTimeTotal() {
+            const timeStart = timeStartInput.value;
+            const timeFinish = timeFinishInput.value;
+
+            if (timeStart && timeFinish) {
+                const startTime = new Date('1970-01-01 ' + timeStart);
+                const finishTime = new Date('1970-01-01 ' + timeFinish);
+                const timeDifference = finishTime - startTime;
+
+                const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const formattedHours = hours.toString().padStart(2, '0');
+                const formattedMinutes = minutes.toString().padStart(2, '0');
+
+                const formattedTimeTotal = `${formattedHours}:${formattedMinutes}`;
+
+                timeTotalInput.value = formattedTimeTotal;
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const timeStartInput = document.getElementById('time_start');
+    const timeFinishInput = document.getElementById('time_finish');
+    const timeTotalInput = document.getElementById('time_total');
+    const commentInput = document.getElementById('comment');
+    const flexiAccruedInput = document.getElementById('flexi_accrued');
+    const flexiTakenInput = document.getElementById('flexi_taken');
+
+    // Function to calculate time total
+    function calculateTimeTotal() {
+        const timeStart = timeStartInput.value;
+        const timeFinish = timeFinishInput.value;
+
+        if (timeStart && timeFinish) {
+            const startTime = new Date('1970-01-01 ' + timeStart);
+            const finishTime = new Date('1970-01-01 ' + timeFinish);
+            const timeDifference = finishTime - startTime;
+
+            // Calculate Time Total
+            const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const formattedHours = hours.toString().padStart(2, '0');
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+            const formattedTimeTotal = `${formattedHours}:${formattedMinutes}`;
+            timeTotalInput.value = formattedTimeTotal;
+
+            // Calculate Flexitime
+            const timeTotalHours = parseInt(formattedHours, 10);
+            const timeTotalMinutes = parseInt(formattedMinutes, 10);
+            const totalHours = timeTotalHours + timeTotalMinutes / 60;
+            const flexitimeHours = totalHours - 8;
+            console.log('flexitimeHours:' + flexitimeHours + ' totalHours: ' + totalHours);
+            const flexitimeFormattedHours = Math.abs(flexitimeHours).toFixed(0).padStart(2, '0');
+            const flexitimeFormattedMinutes = Math.abs(Math.round((flexitimeHours - flexitimeFormattedHours) * 60)).toString().padStart(2, '0');
+            const formattedFlexitime = `${flexitimeHours < 0 ? '-' : ''}${flexitimeFormattedHours}:${flexitimeFormattedMinutes}`;
+
+            
+            console.log('formattedFlexitime:' + formattedFlexitime + ' hours: ' + hours);
+            if (flexitimeHours < 0) {
+                flexiTakenInput.value = formattedFlexitime;
+            } else {
+                flexiAccruedInput.value = formattedFlexitime;
+            }
+            
+
+
+
+            // If time total is not 8 hours, make the comment field required and show Flexitime
+            if (formattedTimeTotal !== '08:00') {
+                commentInput.required = true;
+                flexiAccruedInput.parentElement.style.display = 'block';
+                console.log('Comment field is now required.');
+            } else {
+                commentInput.required = false;
+                flexiAccruedInput.parentElement.style.display = 'none';
+                console.log('Comment field is not required.');
+            }
+        }
+    }
+
+    // Listen for changes in the time start and time finish inputs
+    timeStartInput.addEventListener('input', calculateTimeTotal);
+    timeFinishInput.addEventListener('input', calculateTimeTotal);
+});
+
+</script>

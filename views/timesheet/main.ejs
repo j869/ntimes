@@ -1,55 +1,71 @@
 <%- include('../partials/header', { title: 'Edit Profile', user, messages: messages }) %>
 
-<div class="table-responsive">
-  <table class="table">
-      <thead>
-          <tr>
-              <th scope="col">#</th>
-              <th scope="col">Work Date</th>
-              <th scope="col">Time Start</th>
-              <th scope="col">Time Finish</th>
-              <th scope="col">Time Total</th>
-              <th scope="col">Time Accrued</th>
-              <th scope="col">Time Til</th>
-              <th scope="col">Time Leave</th>
-              <th scope="col">Time Overtime</th>
-              <th scope="col">Time Comm Svs</th>
-              <th scope="col">Comment</th>
-              <th scope="col">Location ID</th>
-              <th scope="col">Activity</th>
-              <th scope="col">Notes</th>
-          </tr>
-      </thead>
-      <tbody>
-          <% tableData.forEach((timesheet, index) => { %>
-              <tr>
-                  <th scope="row"><%= index + 1 %></th>
-                  <td><%= formatDate(timesheet.work_date) %></td>
-                  <td><%= timesheet.time_start %></td>
-                  <td><%= timesheet.time_finish %></td>
-                  <td><%= timesheet.time_total %></td>
-                  <td><%= timesheet.time_accrued %></td>
-                  <td><%= timesheet.time_til %></td>
-                  <td><%= timesheet.time_leave %></td>
-                  <td><%= timesheet.time_overtime %></td>
-                  <td><%= timesheet.time_comm_svs %></td>
-                  <td><%= timesheet.comment %></td>
-                  <td><%= timesheet.location_id %></td>
-                  <td><%= timesheet.activity %></td>
-                  <td><%= timesheet.notes %></td>
-              </tr>
-          <% }); %>
-      </tbody>
-  </table>
-</div>
+<div class="container">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Work Date</th>
+                    <th scope="col">Time Start</th>
+                    <th scope="col">Time Finish</th>
+                    <th scope="col">Time Total</th>
+                    <th scope="col" class="hidden">Time Accrued</th>
+                    <th scope="col" class="hidden">Time Til</th>
+                    <th scope="col" class="hidden">Time Leave</th>
+                    <th scope="col" class="hidden">Time Overtime</th>
+                    <th scope="col" class="hidden">Time Comm Svs</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Location ID</th>
+                    <th scope="col">Activity</th>
+                    <th scope="col">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% tableData.forEach((timesheet, index) => { %>
+                    <tr>
+                        <th scope="row"><%= index + 1 %></th>
+                        <td><%= timesheet.work_date %></td>
+                        <td><%= timesheet.time_start %></td>
+                        <td><%= timesheet.time_finish %></td>
+                        <td><%= timesheet.time_total %></td>
+                        <td class="hidden"><%= timesheet.time_accrued %></td>
+                        <td class="hidden"><%= timesheet.time_til %></td>
+                        <td class="hidden"><%= timesheet.time_leave %></td>
+                        <td class="hidden"><%= timesheet.time_overtime %></td>
+                        <td class="hidden"><%= timesheet.time_comm_svs %></td>
+                        <td><%= timesheet.comment %></td>
+                        <td><%= timesheet.location_id %></td>
+                        <td><%= timesheet.activity %></td>
+                        <td><%= timesheet.notes %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-end">
+      <div class="col-auto">
+          <a href="/timesheetEntry" class="btn btn-primary" id="addTimesheetBtn"><i class="fas fa-plus"></i> Enter Timesheet</a>
+      </div>
+    </div>
+    
+  </div>
+
 
 <%- include('../partials/footer') %>
 
 <script>
-  // Function to format date as dd-mmm-yyyy
-  function formatDate(dateString) {
-    const date = new Date(dateString);
-    const options = { day: '2-digit', month: 'short', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-  }
+    // CSS class to hide columns
+    const hideColumns = () => {
+        const hiddenColumns = document.querySelectorAll('.hidden');
+        hiddenColumns.forEach(column => {
+            column.style.display = 'none';
+        });
+    };
+
+    // Hide columns on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        hideColumns();
+    });
 </script>

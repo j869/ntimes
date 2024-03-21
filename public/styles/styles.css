@@ -1,19 +1,17 @@
 
-body {
-  background-color: #E8ECEF;
+
+
+.readonly {
+  background-color: #d0d0d3; /* Faint grey background */
+  cursor: not-allowed; /* Disable cursor */
+  opacity: 0.6; /* Reduce opacity */
 }
 
-.centered {
-    padding-top: 200px;
-    text-align: center;
+.calculated-field {
+  background-color: #f0fc82; /* Grey background */
+  border: 1px solid; /* Default border */
+  border-color: green; /* Green border color */
+  cursor: not-allowed; /* Disable cursor */
+  opacity: 0.6; /* Reduce opacity */  
 }
 
-.secret-text {
-  text-align: center;
-  font-size: 2rem;
-  color: #fff;
-  background-color: #000;
-}
-
-
-  
