@@ -50,29 +50,64 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
   });
 };
 
+const createTimesheet = (req, res) => {
+  console.log("ct1");
+
+  // Extract data from the request body
+  const { person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes } = req.body;
+
+  console.log("ct2    ", req.body);
+  // Construct the SQL query
+  const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+                 RETURNING id`;
+
+  // Define the values to be inserted
+  const values = [person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes];
+
+  // Execute the query
+  console.log(`ct3      
+                 INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes) 
+                 VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_accrued}', '${time_til}', '${time_leave}', '${time_overtime}', '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}')
+                 RETURNING id`);
+  pool.query(query, values, (error, result) => {
+      if (error) {
+          console.error('Error creating timesheet:', error);
+          return res.status(500).json({ error: 'Error creating timesheet' });
+      }
+      console.log("ct4");
+      const timesheetId = result.rows[0].id;
+      console.log("ct9 Successfully created timesheet with ID:", timesheetId);
+      return res.status(201).json({ id: timesheetId, message: `Added timesheet with ID ${timesheetId}` });
+  });
+};
+
+
+
 
 //--------------------------------
 //----  users
 //-------------------------------
+//#region users table
 
-const getUsers = (request, response) => {
+const getUsers = (req, res) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
       if (error) {
         console.log(error);
       throw error
       }
       //console.log("SELECT * FROM users ORDER BY id ASC", results.rows)
-      response.status(200).json(results.rows)
+      res.status(200).json(results.rows)
   })
 }
 
-const getUserById = (request, response) => {
-    const id = parseInt(request.params.id)
+const getUserById = (req, res) => {
+    const id = parseInt(req.params.id)
     pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
         if (error) {
         throw error
         }
-        response.status(200).json(results.rows)
+        res.status(200).json(results.rows)
 })
 }
     
@@ -104,36 +139,52 @@ const getUserByUsername = (req, res) => {
   });
 };
 
-const updateUser = (request, response) => {
-  const id = parseInt(request.params.id);
-  const { username, email, role, verified_email, password } = request.body;
+const updateUser = (req, res) => {
+  console.log("uu1  " + req.params.id + "  ", req.body)
+  const id = parseInt(req.params.id);
+  const { username, email, role, verified_email, password } = req.body;
   const updateFields = [];
   const values = [];
 
+  let paramIndex = 1; // Start indexing from 1
+
   if (username) {
-      updateFields.push('username = $1');
+      updateFields.push(`username = $${paramIndex}`);
       values.push(username);
+      paramIndex++;
   }
   if (email) {
-      updateFields.push('email = $2');
+      updateFields.push(`email = $${paramIndex}`);
       values.push(email);
+      paramIndex++;
   }
   if (password) {
-    updateFields.push('password = $3');
-    values.push(password);
+      updateFields.push(`password = $${paramIndex}`);
+      values.push(password);
+      paramIndex++;
   }
-    if (role) {
-      updateFields.push('role = $4');
+  if (role) {
+      updateFields.push(`role = $${paramIndex}`);
       values.push(role);
+      paramIndex++;
   }
   if (verified_email !== undefined) {
-      updateFields.push('verified_email = $5');
+      updateFields.push(`verified_email = $${paramIndex}`);
       values.push(verified_email);
+      paramIndex++;
   }
-
   values.push(id); // Add id to the end of the values array
 
   const setClause = updateFields.join(', '); // Join update fields with comma
+  const nonParamQuery = `UPDATE users SET ${setClause} WHERE id = ${id}`;
+  console.log("Non-parametized SQL Query:", nonParamQuery);
+  // Replace $1 through $5 with actual values
+  const valuesString = values.join(', '); // Join values with comma
+  const replacedQuery = nonParamQuery.replace(/\$\d+/g, (match) => {
+      return valuesString.split(',')[parseInt(match.slice(1)) - 1];
+  });
+  console.log("Replaced SQL Query:", replacedQuery);
+  
   console.log(`uu6     UPDATE users SET ${setClause} WHERE id = $${values.length}`);
   console.log("uu7     ", values);
   pool.query(
@@ -144,7 +195,7 @@ const updateUser = (request, response) => {
               console.log("uu8   ")
               throw error;
           }
-          response.status(200).send(`User(${id}) modified successfully`);
+          res.status(200).send(`User(${id}) modified successfully`);
       }
   );
   console.log("uu9   ")
@@ -186,7 +237,7 @@ const createUser = (req, res) => {
 const verifyUserEmail = (req, res) => {
   console.log("vue1    ", req.params)
   const token = req.params.token
-  // const { name, email } = request.body
+  // const { name, email } = req.body
 
   console.log("vue2     ", token)
   pool.query(
@@ -228,18 +279,18 @@ const verifyUserEmail = (req, res) => {
   );
 }
 
-const deleteUser = (request, response) => {
-  const id = parseInt(request.params.id)
+const deleteUser = (req, res) => {
+  const id = parseInt(req.params.id)
 
   pool.query('DELETE FROM users WHERE id = $1', [id], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(200).send(`User deleted with ID: ${id}`)
+    res.status(200).send(`User deleted with ID: ${id}`)
   })
 }   //unused. no delete route as ov 20Mar
 
-
+//#endregion
 
 
 export {
@@ -251,4 +302,5 @@ export {
   updateUser,
   verifyUserEmail, 
   deleteUser,
+  createTimesheet, 
 };
