@@ -71,3 +71,8 @@
                 <% } %>   
             <% } %>
         
+            <% if (typeof messages !== 'undefined' && messages.error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= messages.error %>
+                </div>
+            <% } %>

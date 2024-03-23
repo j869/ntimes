@@ -223,11 +223,11 @@ app.post('/timesheetEntry', isAuthenticated, async (req, res) => {
 app.get('/users', isAdmin, async (req, res) => {
     console.log("u1    Admin route: Rendering settings page...");
     const result = await axios.get(`${API_URL}/users`);
-    const errors = req.flash('messages');
-    console.log("u2    ", errors)
-    const messages = errors.map(error => error.msg);
-    console.log("u3    ", messages)
-    res.render('settings.ejs', { user: req.user, users: result.data, messages: messages });
+    // const errors = req.flash('messages');
+    // console.log("u2    ", errors)
+    // const messages = errors.map(error => error.msg);
+    // console.log("u3    ", messages)
+    res.render('settings.ejs', { user: req.user, users: result.data, messages: req.flash('messages') });
     console.log("u9  all users displayed on screen ")
 });
 
@@ -266,7 +266,6 @@ const characterLimit = (field, limit) => {
     });
 };
 
-
 app.post('/addUser', isAdmin, [
     // Validate request body
     characterLimit('username', 31).withMessage('Username must be less than 31 characters'),
@@ -280,7 +279,7 @@ app.post('/addUser', isAdmin, [
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             console.log("pau2")
-            req.flash('messages', errors.array());
+            //req.flash('messages', errors.array());
             return res.redirect('/users');
         }
 
@@ -307,13 +306,6 @@ app.post('/addUser', isAdmin, [
         res.status(500).send("Error adding user");
     }
 });
-
-
-// app.get("/editUser", isAdmin, async (req, res) => {
-//     console.log(`e1`);
-//     res.render('profile.ejs', {user : req.user, title : 'Edit User', messages : req.flash('messages')})
-// })
-
 
 app.post("/editUser", isAdmin, async (req, res) => {
     console.log('p1     Request Body:', req.body);
@@ -377,11 +369,19 @@ app.get('/login', (req, res) => {
 
 });
 
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/',
-    failureFlash: true
-}));
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { return next(err); }
+        if (!user) {
+            req.flash('messages', 'Invalid username or password. Please try again.');
+            return res.redirect('/login');
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
 
 app.get('/logout', (req, res) => {
     console.log("lo1")
@@ -460,7 +460,6 @@ const registerUser = async (userData) => {
                 subject: 'Please verify your email address',
                 text: `Click the following link to verify your email address: ${process.env.BASE_URL}/verify?token=${verificationToken}`
             });
-            req.flash('messages', 'Registration successful. Please check your email for verification.');
             console.log("ru6 user registered. check your email ");
         }
 
@@ -485,7 +484,8 @@ app.post('/register', async (req, res) => {
         let { email, password } = req.body;
         console.log("gp1   ", req.body);
         await registerUser({ email, password, role: 'user' });
-        req.flash('messages', 'User registered successfully. Please check your email for verification.');
+        //req.flash('messages', 'User registered successfully. Please check your email for verification.');
+        req.flash('messages', 'Registration successful. Please check your email for verification.');
         console.log("gp9 registered user ok");
         res.redirect('/login');
     } catch (error) {
@@ -499,7 +499,6 @@ app.post('/register', async (req, res) => {
         }
     }
 });
-
 
 // Route for handling email verification
 app.get('/verify', async (req, res) => {
@@ -534,7 +533,6 @@ app.get('/verify', async (req, res) => {
         return res.redirect("/login"); // Redirect to the login page or handle as appropriate
     }
 });
-
 
 // varify email on user registration
 function generateToken() {
@@ -616,8 +614,6 @@ cb(null, user);
 passport.deserializeUser((user, cb) => {
 cb(null, user);
 });
-  
-
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
@@ -629,7 +625,6 @@ function isAuthenticated(req, res, next) {
     console.log("iau9    user is not authenticated");
     res.redirect('/login');
 }
-
 
 function isAdmin(req, res, next) {
     console.log("iad1")

@@ -8,7 +8,7 @@
 }
 
 .calculated-field {
-  background-color: #f0fc82; /* Grey background */
+  background-color: #f0fc82 !important; /* Grey background */
   border: 1px solid; /* Default border */
   border-color: green; /* Green border color */
   cursor: not-allowed; /* Disable cursor */
