@@ -1,10 +1,7 @@
-//#region middleware
-
-//import { Pool } from 'pg';
 import pg from "pg";
 import env from "dotenv";
+//#region middleware
 env.config();
-
 const { Pool } = pg;
 export const pool = new Pool({         //const pool = new Pool({
   user: process.env.PG_USER || 'me',
@@ -20,7 +17,7 @@ export const pool = new Pool({         //const pool = new Pool({
 //--------------------------------
 //----  ts_timesheet_t 
 //-------------------------------
-
+//#region ts_timesheet_t
 const getCurrentYearTimesheetsForUser = (req, res) => {
   // Extract username or person_id from request, assuming it's available in req.params
   console.log("cyt1   ", req.params)
@@ -32,10 +29,16 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 
   // Construct the SQL query to fetch timesheets for the current year and specific user
   const query = `
-      SELECT *
-      FROM ts_timesheet_t
-      WHERE EXTRACT(YEAR FROM work_date) = $1
-      AND person_id = $2;
+      SELECT dates.date AS work_date, ts_timesheet_t.*
+      FROM generate_series(
+          DATE '$1-01-01',
+          DATE '$1-12-31',
+          INTERVAL '1 day'
+      ) AS dates(date)
+      LEFT JOIN ts_timesheet_t ON ts_timesheet_t.work_date = dates.date AND ts_timesheet_t.person_id = $2
+      WHERE EXTRACT(YEAR FROM dates.date) = $1
+      ORDER BY dates.date, ts_timesheet_t.id;
+  
   `;
   console.log("cyt5   " + "SELECT * FROM ts_timesheet_t WHERE EXTRACT(YEAR FROM work_date) = " + currentYear + " AND person_id = "+ personID + ");");
   // Execute the query with currentYear and username as parameters
@@ -45,6 +48,7 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
           res.status(500).json({ error: 'Error querying timesheets' });
           return;
       }
+      console.log("cyt91    ", result.rows[1]);
       console.log("cyt9   returning " + result.rows.length + " records ");
       res.status(200).json(result.rows);
   });
@@ -52,35 +56,104 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 
 const createTimesheet = (req, res) => {
   console.log("ct1");
+  const { person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, status, on_duty } = req.body;
 
-  // Extract data from the request body
-  const { person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes } = req.body;
+  pool.query('DELETE FROM ts_timesheet_t WHERE work_date = $1', [work_date], (error, results) => {
+    if (error) {
+      throw error
+    }
 
-  console.log("ct2    ", req.body);
-  // Construct the SQL query
-  const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes) 
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
-                 RETURNING id`;
 
-  // Define the values to be inserted
-  const values = [person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes];
+    console.log("ct2    ", req.body);
+    // Construct the SQL query
+    const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, "status", on_duty) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24) 
+    RETURNING id`;
+  
+    // Define the values to be inserted
+    const values = [person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, status, on_duty];
+  
+    // Execute the query
+    console.log(`ct3      
+    INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, "status", on_duty) 
+    VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_flexi}', '${time_til}', '${time_leave}', ${time_overtime}, '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}', '${time_lunch}', '${time_extra_break}', '${fund_src}', '${variance}', '${variance_type}', '${entry_date}', ${duty_catagory}, '${status}', ${on_duty})
+    RETURNING id`);
+    pool.query(query, values, (error, result) => {
+        if (error) {
+            console.error('Error creating timesheet:', error);
+            return res.status(500).json({ error: 'Error creating timesheet' });
+        }
+        console.log("ct4");
+        const timesheetId = result.rows[0].id;
+        console.log("ct9 Successfully created timesheet with ID:", timesheetId);
+        return res.status(201).json({ id: timesheetId, message: `Added timesheet with ID ${timesheetId}` });
+    });
+  
 
-  // Execute the query
-  console.log(`ct3      
-                 INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_accrued, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes) 
-                 VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_accrued}', '${time_til}', '${time_leave}', '${time_overtime}', '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}')
-                 RETURNING id`);
-  pool.query(query, values, (error, result) => {
-      if (error) {
-          console.error('Error creating timesheet:', error);
-          return res.status(500).json({ error: 'Error creating timesheet' });
-      }
-      console.log("ct4");
-      const timesheetId = result.rows[0].id;
-      console.log("ct9 Successfully created timesheet with ID:", timesheetId);
-      return res.status(201).json({ id: timesheetId, message: `Added timesheet with ID ${timesheetId}` });
-  });
+  })  
+
 };
+
+const deleteTimesheet = (req, res) => {
+  console.log("d1  ", req.params);
+  const timesheetID = parseInt(req.params.id)
+
+  try {
+
+    pool.query('DELETE FROM ts_timesheet_t WHERE id = $1', [timesheetID], (error, results) => {
+      if (error) {
+        throw error
+      }
+      res.status(200).send(`Timesheet deleted with ID: ${timesheetID}`)
+      console.log('d5  ')
+    })
+
+
+  } catch (error) {
+      console.error('d8   Error deleting timesheet:', error);
+      throw error; // Throw error for handling in upper layers
+  }  
+};
+
+const updateTimesheetStatus = (req, res) => {
+  console.log("ud1   " + req.params.id + " ", req.body);
+  const timesheetID = parseInt(req.params.id)
+  let newStatus = req.body.status
+
+  try {
+    let oldStatus;
+    pool.query("SELECT status FROM ts_timesheet_t WHERE id = $1", [timesheetID], (error, result) => {
+      if (error) {
+          console.error("ud3   Error querying timesheets:", error);
+      }
+      console.log("ud4 ", result.rows);
+      oldStatus = result.rows[0].status;
+      if (newStatus == oldStatus) { 
+        newStatus = 'entered'   // toggle status, if it is already approved
+       }   
+      console.log("ud5   ", newStatus)
+
+      pool.query('UPDATE ts_timesheet_t SET status = $1 WHERE id = $2', [newStatus, timesheetID], (error, results) => {
+        console.log("ud6    ");
+        if (error) {
+          console.log("ud7    ");
+          throw error
+        }
+        res.status(200).send(`Set Timesheet(${timesheetID}) to status : ${newStatus}`)
+        console.log('ud9  ')
+      })      
+    });
+
+
+
+
+  } catch (error) {
+      console.error('ud8   Error deleting timesheet:', error);
+      throw error; // Throw error for handling in upper layers
+  }  
+
+};
+//#endregion
 
 
 
@@ -303,4 +376,6 @@ export {
   verifyUserEmail, 
   deleteUser,
   createTimesheet, 
+  deleteTimesheet, 
+  updateTimesheetStatus, 
 };

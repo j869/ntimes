@@ -8,10 +8,15 @@
 }
 
 .calculated-field {
-  background-color: #f0fc82 !important; /* Grey background */
+  background-color: #f0fc82 !important; /*  */
   border: 1px solid; /* Default border */
   border-color: green; /* Green border color */
   cursor: not-allowed; /* Disable cursor */
   opacity: 0.6; /* Reduce opacity */  
+}
+
+.mandatory {
+  background-color: #ffb2b2 !important; /*  */
+  border: 2px solid red; /* Red border */
 }
 

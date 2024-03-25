@@ -2,36 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import * as db from './queries.js';
-
+//#region middleware
 const port = 4000
-//const db = require('./queries')
-
-//Handling CORS issues
 const app = express();
-app.use(cors())
-
-// //Dont use CORS
-// const express = require('express')
-// const app = express()
-
-//bodyParser middleware
+app.use(cors())             //Handling CORS issues
 app.use(bodyParser.json())
 app.use(
 bodyParser.urlencoded({
     extended: true,
 })
 )
+//#endregion
 
-// // Error-handling Middleware
-// app.use((err, req, res, next) => {
-//     console.error('Error:', err.message);
-//     res.status(500).send('Internal Server Error');
-// });
-// example of error handling middleware
-// app.use((req, res, next) => {
-//     const error = new Error('Something went wrong');
-//     next(error);
-// });
 
 
 app.get('/users', db.getUsers)
@@ -43,7 +25,9 @@ app.put('/verify/:token', db.verifyUserEmail)
 app.delete('/users/:id', db.deleteUser)
 
 app.get('/timesheets/:id', db.getCurrentYearTimesheetsForUser)
-app.post('/timesheets', db.createTimesheet)
+app.put('/timesheets', db.createTimesheet)
+app.post('/timesheets/:id/updateStatus', db.updateTimesheetStatus)
+app.delete('/timesheets/:id', db.deleteTimesheet)
 
 
 

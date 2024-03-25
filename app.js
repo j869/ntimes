@@ -138,9 +138,9 @@ app.get('/time', isAuthenticated, async (req, res) => {
     const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
     console.log("t2    got " +  result.data.length + " timesheets ")
 
-    const flashMessages = req.flash('messages');
-    console.log("t3   ", flashMessages)
-    // const messages = flashMessages.map(message => message.msg);
+    // const flashMessages = req.flash('messages');
+    // console.log("t3   ", flashMessages)
+    // // const messages = flashMessages.map(message => message.msg);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -150,6 +150,7 @@ app.get('/time', isAuthenticated, async (req, res) => {
 
         // Filter the result.data array to include only the required fields
         const filteredData = result.data.map(entry => ({
+            id: entry['id'],
             work_date: formatDate(entry['work_date']),
             time_start: entry['time_start'],
             time_finish: entry['time_finish'],
@@ -162,52 +163,169 @@ app.get('/time', isAuthenticated, async (req, res) => {
             comment: entry['t_comment'],
             location_id: entry['location_id'],
             activity: entry['activity'],
-            notes: entry['notes']
+            notes: entry['notes'],
+            status: entry['status']
         }));
-    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: flashMessages });
+    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: req.flash('messages') });
     console.log("t9  returned users timesheets ")
 
 
 });
 
 app.get('/timesheetEntry', isAuthenticated, async (req, res) => {
-    console.log(`y1`);
-
-    res.render('timesheet/recordHours.ejs', {user : req.user, title : 'Enter Timesheet', messages : req.flash('messages')})
+    console.log(`y1   `, req.query.date);
+    
+    const date = req.query.date; // Pick up the date from the URL parameter
+    res.render('timesheet/recordHours.ejs', {forDate : date, user : req.user, title : 'Enter Timesheet', messages : req.flash('messages')})
 
 });
 
-app.post('/timesheetEntry', isAuthenticated, async (req, res) => {
-    console.log("n1 ", req.body);
+// Custom validation function for time format (hh:mm)
+const isValidTimeFormat = (value) => {
+    return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
+};
+
+app.post('/timesheetEntry', isAuthenticated, [
+    // Validate request body
+    body('work_date').optional().isISO8601().toDate().withMessage('Invalid date format'),
+    body('time_start').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_start (hh:mm)'),
+    body('time_finish').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_finish (hh:mm)'),
+    body('time_lunch').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_lunch (hh:mm)'),
+    body('time_extra_break').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_extra_break (hh:mm)'),
+    //body('time_total').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_total (hh:mm)'),      //calculated field
+    body('location_id').optional().isInt().withMessage('Invalid entry for location_id'),
+    body('fund_src').optional().isString().withMessage('Invalid string format for fund_src'),
+    body('activity').optional().isString().isLength({ max: 30 }).withMessage('Activity must be less than 31 characters'),
+    body('comment').optional().isString().withMessage('Invalid string format for comment'),
+    body('variance').optional().isString().withMessage('Invalid string format for variance'),
+    body('notes').optional().isString().withMessage('Invalid string format for notes'),
+    // body('flexi_accrued').optional().isNumeric().withMessage('Invalid numeric format for flexi_accrued'),
+    // body('flexi_taken').optional().isNumeric().withMessage('Invalid numeric format for flexi_taken'),
+    // body('til_accrued').optional().isNumeric().withMessage('Invalid numeric format for til_accrued'),
+    // body('til_taken').optional().isNumeric().withMessage('Invalid numeric format for til_taken')
+], async (req, res) => {
+    console.log("n10 ", req.body);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.flash('messages', errors.array().map(error => error.msg));
+        return res.redirect('/time');
+    }
 
     try {
-        const { work_date, time_start, time_finish, time_total, location_id, activity, comment, notes } = req.body;
+        const { work_date, time_start, time_finish, time_lunch, time_extra_break, time_total, location_id, fund_src, activity, comment, variance, notes, flexi_accrued, flexi_taken, til_accrued, til_taken } = req.body;
+        let { variance_type, time_leave, time_overtime } =  req.body;   
+
+        console.log('n15   variance', variance)
+        if (variance === '') {
+            variance_type = '';    // timesheet has no variance, tidy up data set
+            console.log('n16   variance_type', variance_type)
+        } 
+        const currentDate = new Date();
+        
+        //set calculated fields
+        let time_total_numeric = parseFloat(time_total);
+        let flexi_accrued_numeric = flexi_accrued.trim() !== '' ? parseFloat(flexi_accrued) : 0;
+        let flexi_taken_numeric = flexi_taken.trim() !== '' ? parseFloat(flexi_taken) : 0;
+        let til_accrued_numeric = til_accrued.trim() !== '' ? parseFloat(til_accrued) : 0;
+        let til_taken_numeric = til_taken.trim() !== '' ? parseFloat(til_taken) : 0;
+        let time_leave_numeric = time_leave.trim() !== '' ? parseFloat(time_leave) : 0;
+        let time_overtime_numeric = time_overtime.trim() !== '' ? parseFloat(time_overtime) : 0;
+        const on_duty = activity.startsWith("Rest Day") ? 0 : 1;
+
+        let time_flexi = null;
+        let time_til = null;
+        time_leave = null;
+        time_overtime = null;
+        if (variance_type === 'flexi') {
+            time_flexi = flexi_accrued_numeric - flexi_taken_numeric;
+            console.log('n21 ' + time_flexi + ' ' + flexi_accrued_numeric + ' ' + flexi_taken_numeric)
+        } else if (variance_type === 'til') {
+            time_til = til_accrued_numeric - til_taken_numeric;
+            console.log('n22  ', time_til )
+        } else if (variance_type === 'leave') {
+            time_leave = time_leave_numeric;
+            console.log('n23  ', time_leave )
+        } else if (variance_type === 'overtime') {
+            time_overtime = time_overtime_numeric;
+            console.log('n24  ', time_overtime )
+        }    else {
+            console.log('n25   mixed not working' )   // mixed is not completed
+        }
 
         // Insert a new timesheet 
-        console.log(`n2      ${API_URL}/timesheets`)
-        const result = await axios.post(`${API_URL}/timesheets`, {
-            person_id : req.user.id,
+        console.log('n26  ', req.user);
+        console.log(`n27      ${API_URL}/timesheets`)
+        const result = await axios.put(`${API_URL}/timesheets`, {
+            person_id: req.user.id,
+            username : req.user.username,
             work_date,
             time_start,
             time_finish,
+            time_lunch,
+            time_extra_break,
             time_total,
             location_id,
+            fund_src,
             activity,
-            comment,
-            notes
+            t_comment : comment,
+            entry_date : currentDate,
+            variance,
+            variance_type,
+            notes,
+            time_flexi,
+            time_til,
+            time_leave,
+            time_overtime,
+            on_duty,       // 1 for work day, 0 if activity name begins with "Rest Day", ie. "Rest Day (Planned Burning)".
+            duty_category : null,
+            'status' : 'entered',
+            rwe_day : null     //
         });
-        console.log("n3   res.status: ", result.status)
+        console.log("n30   res.status: ", result.status)
 
-        console.log("n9    New timesheet created");
+        console.log("n90    New timesheet created");
 
         req.flash('messages', 'Thank you for entering your timesheet');
         return res.redirect('/time');
     } catch (error) {
-        console.error("n8     Error creating timesheet:", error);
+        console.error("n80     Error creating timesheet:", error);
         req.flash('messages', 'An error occurred while creating the timesheet - the timesheet was not saved');
         return res.redirect('/time');
     }
 });
+
+app.get('/deleteTimesheet/:id', async (req, res) => {
+    console.log('de1  ');
+    const timesheetId = req.params.id;
+    try {
+        console.log(`de3    ${API_URL}/timesheets/${timesheetId}`);
+        const response = await axios.delete(`${API_URL}/timesheets/${timesheetId}`);
+        
+        console.log('de9  Timesheet deleted successfully:', response.data);
+        return res.redirect('/time');
+    } catch (error) {
+        console.error('de8  Error deleting timesheet:', error.response ? error.response.data : error.message);
+    }    
+});
+
+app.get('/approveTimesheet/:id', async (req, res) => {
+    console.log('ap1  ', req.body);
+    const timesheetId = req.params.id;
+    const newStatus = 'approved';
+    try {
+        //const response = await axios.post(`${API_URL}/timesheets/${timesheetId}`);
+        console.log(`ap3       ${API_URL}/timesheets/${timesheetId}/updateStatus`);
+        const response = await axios.post(`${API_URL}/timesheets/${timesheetId}/updateStatus`, { status: newStatus });
+        
+        console.log('ap9     Timesheet updated successfully:', response.data);
+        return res.redirect('/time');
+    } catch (error) {
+        console.error('ap8      Error updating timesheet:', error.response ? error.response.data : error.message);
+    }    
+});
+
+
+
 //#endregion
 
 
@@ -378,7 +496,7 @@ app.post('/login', function(req, res, next) {
         }
         req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.redirect('/');
+            return res.redirect('/time');
         });
     })(req, res, next);
 });

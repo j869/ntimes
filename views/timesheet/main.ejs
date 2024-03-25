@@ -8,11 +8,11 @@
         </div>
       </div>
   
-    <div class="table-responsive">
-        <table class="table">
+      <div class="table-responsive">
+        <table class="table" id="timesheetTable">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" class="hidden">#</th>
                     <th scope="col">Work Date</th>
                     <th scope="col">Time Start</th>
                     <th scope="col">Time Finish</th>
@@ -23,16 +23,18 @@
                     <th scope="col" class="hidden">Time Overtime</th>
                     <th scope="col" class="hidden">Time Comm Svs</th>
                     <th scope="col">Comment</th>
-                    <th scope="col">Location ID</th>
+                    <th scope="col" class="hidden">Location ID</th>
                     <th scope="col">Activity</th>
-                    <th scope="col">Notes</th>
+                    <th scope="col" class="hidden">Notes</th>
+                    <th scope="col">Actions</th> 
                 </tr>
             </thead>
+
             <tbody>
                 <% tableData.forEach((timesheet, index) => { %>
-                    <tr>
-                        <th scope="row"><%= index + 1 %></th>
-                        <td><%= timesheet.work_date %></td>
+                    <tr class="<%= timesheet.status === 'approved' ? 'table-success' : '' %>">
+                        <th class="hidden" scope="row"><%= index + 1 %></th>
+                        <td class="work-date"><%= timesheet.work_date %></td>
                         <td><%= timesheet.time_start %></td>
                         <td><%= timesheet.time_finish %></td>
                         <td><%= timesheet.time_total %></td>
@@ -42,9 +44,17 @@
                         <td class="hidden"><%= timesheet.time_overtime %></td>
                         <td class="hidden"><%= timesheet.time_comm_svs %></td>
                         <td><%= timesheet.comment %></td>
-                        <td><%= timesheet.location_id %></td>
+                        <td class="hidden"><%= timesheet.location_id %></td>
                         <td><%= timesheet.activity %></td>
-                        <td><%= timesheet.notes %></td>
+                        <td class="hidden"><%= timesheet.notes %></td>
+                        <% if (timesheet.id) { %>
+                            <td> <!-- Added buttons for actions -->
+                                <a href="/deleteTimesheet/<%= timesheet.id %>">Delete</a>
+                                <a href="/approveTimesheet/<%= timesheet.id %>">Approve</a>
+                            </td>
+                        <% } else { %>
+                            <td>&nbsp;</td>
+                        <% } %>               
                     </tr>
                 <% }); %>
             </tbody>
@@ -58,6 +68,7 @@
 <%- include('../partials/footer') %>
 
 <script>
+
     // CSS class to hide columns
     const hideColumns = () => {
         const hiddenColumns = document.querySelectorAll('.hidden');
@@ -70,4 +81,26 @@
     document.addEventListener('DOMContentLoaded', () => {
         hideColumns();
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('timesheetTable');
+        table.addEventListener('click', (event) => {
+            const target = event.target.closest('tr');
+            const dateCell = target.querySelector('.work-date'); 
+            if (dateCell) {
+            const dateString = dateCell.textContent.trim();
+            const dateParts = dateString.split(' '); // Split the date string by space
+                if (dateParts.length === 3) {
+                    const monthStr = dateParts[0].substring(0, 3); // Get the first 3 characters of the month
+                    const day = dateParts[1].slice(0, -1); // Remove the comma from the day
+                    const year = dateParts[2];
+                    // Convert month abbreviation to month number
+                    const month = new Date(Date.parse(monthStr + ' 1, 2022')).getMonth() + 1;
+                    // Format the date as 'YYYYMMDD'
+                    const formattedDate = `${year}${month.toString().padStart(2, '0')}${day.padStart(2, '0')}`;
+                    window.location.href = `/timesheetEntry?date=${formattedDate}`;
+                }
+            }
+        });
+    });    
 </script>
