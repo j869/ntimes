@@ -55,29 +55,28 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 };
 
 const createTimesheet = (req, res) => {
-  console.log("ct1");
-  const { person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, status, on_duty } = req.body;
+  console.log("ct1   ", req.body);
+  const { person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, rwe_day, duty_category, status, on_duty } = req.body;
 
   pool.query('DELETE FROM ts_timesheet_t WHERE work_date = $1', [work_date], (error, results) => {
     if (error) {
       throw error
     }
-
-
     console.log("ct2    ", req.body);
-    // Construct the SQL query
-    const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, "status", on_duty) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24) 
+
+    //Build SQL
+    const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_category, "status", on_duty, rwe_day) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25) 
     RETURNING id`;
+    const values = [person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_category, status, on_duty, rwe_day];
   
-    // Define the values to be inserted
-    const values = [person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, status, on_duty];
-  
-    // Execute the query
+    // Log the SQL
     console.log(`ct3      
-    INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_catagory, "status", on_duty) 
-    VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_flexi}', '${time_til}', '${time_leave}', ${time_overtime}, '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}', '${time_lunch}', '${time_extra_break}', '${fund_src}', '${variance}', '${variance_type}', '${entry_date}', ${duty_catagory}, '${status}', ${on_duty})
+    INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_category, "status", on_duty, rwe_day) 
+    VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_flexi}', '${time_til}', '${time_leave}', ${time_overtime}, '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}', '${time_lunch}', '${time_extra_break}', '${fund_src}', '${variance}', '${variance_type}', '${entry_date}', ${duty_category}, '${status}', ${on_duty}, ${rwe_day})
     RETURNING id`);
+
+    // Execute the query
     pool.query(query, values, (error, result) => {
         if (error) {
             console.error('Error creating timesheet:', error);
@@ -321,16 +320,16 @@ const verifyUserEmail = (req, res) => {
         console.error("vue3   Error executing query:", error);
         return res.status(500).send('Error verifying token');
       }
-      if (results.rows[0].verified_email === true) {
-        console.log("vue4    email has already been verified");
-        return res.status(409).send('Email has already been verified');
-      }
 
       if (results.rows.length === 0) {
         console.log("vue5  No unverified token found");
         return res.status(404).send('Could not find an unverified token');
       }
 
+      if (results.rows[0].verified_email === true) {
+        console.log("vue4    email has already been verified");
+        return res.status(409).send('Email has already been verified');
+      }      
       const userId = results.rows[0].id;
 
       // Now that we've confirmed the token is valid and the email is not yet verified,

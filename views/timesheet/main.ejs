@@ -1,12 +1,15 @@
-<%- include('../partials/header', { title: 'Edit Profile', user, messages: messages }) %>
+<%- include('../partials/header', { title, user, messages: messages }) %>
 
 <div class="container">
 
     <div class="row ">
         <div class="col-auto">
-            <a href="/timesheetEntry" class="btn btn-primary" id="addTimesheetBtn"><i class="fas fa-plus"></i> Enter Timesheet</a>
+            <a href="/timesheetEntry" class="btn btn-primary" id="addTimesheetBtn"><i class="fas fa-plus"></i> PV Timesheet</a>
         </div>
-      </div>
+        <div class="col-auto">
+            <a href="/emergencyEntry" class="btn btn-danger" id="addEmergencyBtn"><i class="fas fa-plus"></i> Emergency</a>
+        </div>
+    </div>
   
       <div class="table-responsive">
         <table class="table" id="timesheetTable">

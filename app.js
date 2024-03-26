@@ -166,7 +166,7 @@ app.get('/time', isAuthenticated, async (req, res) => {
             notes: entry['notes'],
             status: entry['status']
         }));
-    res.render('timesheet/main.ejs', { user: req.user, tableData: filteredData, messages: req.flash('messages') });
+    res.render('timesheet/main.ejs', { title : 'Numbat Timekeeper', user: req.user, tableData: filteredData, messages: req.flash('messages') });
     console.log("t9  returned users timesheets ")
 
 
@@ -289,6 +289,70 @@ app.post('/timesheetEntry', isAuthenticated, [
         return res.redirect('/time');
     } catch (error) {
         console.error("n80     Error creating timesheet:", error);
+        req.flash('messages', 'An error occurred while creating the timesheet - the timesheet was not saved');
+        return res.redirect('/time');
+    }
+});
+
+app.get('/emergencyEntry', isAuthenticated, async (req, res) => {
+    console.log(`yg1   `, req.query.date);
+    res.render('timesheet/emergencyResponse.ejs', {user : req.user, title : 'Enter Timesheet', messages : req.flash('messages')})
+});
+
+app.post('/emergencyEntry', isAuthenticated, [
+    // Validate request body
+    body('work_date').optional().isISO8601().toDate().withMessage('Invalid date format'),
+    body('activity').optional().isString().isLength({ max: 30 }).withMessage('Activity must be less than 31 characters'),
+    body('comment').optional().isString().withMessage('Invalid string format for comment'),    
+    body('notes').optional().isString().withMessage('Invalid string format for notes'),   
+], async (req, res) => {
+    console.log("eg1 ", req.body);     
+    const errors = validationResult(req);
+    const currentDate = new Date();
+    if (!errors.isEmpty()) {
+        req.flash('messages', errors.array().map(error => error.msg));
+        return res.redirect('/time');
+    }
+
+    try {
+        let { work_date, time_start, time_finish, time_lunch, time_extra_break, time_total, location_id, fund_src, activity, comment, variance, notes, flexi_accrued, flexi_taken, til_accrued, til_taken, pvWorkDay, commencedWork } = req.body;
+        const onDuty = activity.startsWith("Rest Day") ? 0 : 1;
+        let rweCol;
+        console.log('eg22   ')
+        
+        if (pvWorkDay && commencedWork) {
+            rweCol = 1;
+            comment = "Rostered Workday";
+            console.log('eg25   ' + rweCol)
+        }
+        if (comment == "no IRIS entry" && !activity.startsWith("Rest Day")) {
+            console.log('eg28   ')
+            req.flash('messages', 'We redirected because there was no IRIS entry. Suggest you enter "Bushfire Readiness" in the activity column');
+            return res.redirect("/timesheetEntry")
+        }
+        console.log(`eg50      ${API_URL}/timesheets`)
+        const result = await axios.put(`${API_URL}/timesheets`, {
+            person_id: req.user.id,
+            username : req.user.username,
+            work_date,
+            location_id : null,     //set to the users home location, but add 'Emergency Readiness / Response' to the description
+            fund_src : '000',    //always find 000 for emergency
+            activity,
+            t_comment : comment,
+            entry_date : currentDate,
+            notes,
+            on_duty :  onDuty,       // 1 for work day, 0 if activity name begins with "Rest Day", ie. "Rest Day (Planned Burning)".
+            duty_category : 2,      // Cells(CurRow, categoryCol) = 2  'Emergency Response
+            'status' : 'entered',
+            rwe_day : rweCol          //  If CheckBox1 And CheckBox2 Then Cells(CurRow, RWECol) = 1
+        });
+        console.log("eg70   res.status: ", result.status)
+
+        console.log("eg90    New timesheet created");
+        req.flash('messages', 'Thank you for entering your timesheet');
+        return res.redirect('/time');    
+    } catch {
+        console.error("eg80     Error creating timesheet:", error);
         req.flash('messages', 'An error occurred while creating the timesheet - the timesheet was not saved');
         return res.redirect('/time');
     }

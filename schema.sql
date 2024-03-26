@@ -132,21 +132,23 @@ CREATE TABLE ts_timesheet_t (
     time_lunch VARCHAR(8),
     time_extra_break VARCHAR(8),
     time_total VARCHAR(8),
-    time_accrued VARCHAR(8),
-    time_til VARCHAR(8),
-    time_leave VARCHAR(8),
-    time_overtime VARCHAR(8),
-    time_comm_svs VARCHAR(8),
-    t_comment VARCHAR(255),
+    time_flexi numeric(12, 4) ,
+    time_til numeric(12, 4) ,
+    time_leave numeric(12, 4) ,
+    time_overtime numeric(12, 4) ,
+    time_comm_svs numeric(12, 4) ,
+    t_comment TEXT,
     location_id INTEGER,
     activity VARCHAR(255),
-    notes VARCHAR(255),
+    notes TEXT,
     entry_date DATE,
     on_duty SMALLINT,
-    duty_catagory SMALLINT,
+    duty_catagory SMALLINT,       -- 2:fire, 
     "status" VARCHAR(10),
-    rwe_day SMALLINT,
-    fund_src VARCHAR(10)
+    rwe_day SMALLINT,           -- will be 1 in the following circumstances: (i) if it was a normal work day, and you got called to a fire, 
+    fund_src VARCHAR(10),
+    variance VARCHAR(255),
+    variance_type VARCHAR(255)
 );
 
 INSERT INTO ts_timesheet_t ("person_id", "work_date", "time_start", "time_finish", "time_lunch", "time_extra_break", "time_total", "time_accrued", "time_til", "time_leave", "time_overtime", "time_comm_svs", "t_comment", "location_id", "activity", "notes", "entry_date", "on_duty", "duty_catagory", "status", "rwe_day", "fund_src") 

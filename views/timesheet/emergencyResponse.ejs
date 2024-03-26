@@ -1,0 +1,78 @@
+<%- include('../partials/header', { title, user, messages: messages }) %>
+
+
+
+
+    <form id="emergencyForm" action="/emergencyEntry" method="POST">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="work_date">Work Date:</label>
+                        <input type="date" id="work_date" name="work_date" class="form-control" required oninvalid="this.setCustomValidity('Enter the day you worked')" oninput="this.setCustomValidity('')">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="comment">My work was recorded by a timekeeper</label>
+                        <select id="comment" name="comment" class="form-control" required>
+                            <option value="Time recorded in IRIS">Yes</option>
+                            <option value="no IRIS entry" Selected>No</option>
+                        </select>                    
+                    </div>                    
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="activity">Activity:</label>
+                        <select id="activity" name="activity" class="form-control" required>
+                            <option value="">Select Activity</option>
+                            <option value="Bushfire Response">Bushfire Response</option>
+                            <option value="Bushfire Readiness">Bushfire Readiness</option>
+                            <option value="Bushfire Prevention">Bushfire Prevention</option>
+                            <option value="Communications & Engagement">Communications & Engagement</option>
+                            <option value="Bushfire Emergency Recovery">Bushfire Emergency Recovery</option>
+                            <option value="Planned Burning">Planned Burning</option>
+                            <option value="Storm Mitigation">Storm Mitigation</option>
+                            <option value="Flood Mitigation">Flood Mitigation</option>
+                            <option value="Animal/Plant/Insect plague Management">Animal/Plant/Insect plague Management</option>
+                            <option value="Non-Bushfire Emergency Recovery">Non-Bushfire Emergency Recovery</option>
+                            <option value="Marine Emergency">Marine Emergency</option>
+                            <option value="Yard Standby">Yard Standby</option>
+                            <option value="Rest Day (Planned Burning)">Rest Day (Planned Burning)</option>
+                            <option value="Rest Day (Bushfire)">Rest Day (Bushfire)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-9">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="pvWorkDay" name="pvWorkDay">
+                        <label class="form-check-label" for="pvWorkDay"> I was rostered to work for Parks Victoria on this day.</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="commencedWork" name="commencedWork">
+                        <label class="form-check-label" for="commencedWork"> I had commenced duty for Parks Victoria on this day?</label>
+                    </div>
+                </div>  
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="notes">Notes:</label>
+                        <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </form>
+    
+    
+<%- include('../partials/footer') %>
