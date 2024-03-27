@@ -125,6 +125,9 @@ app.get('/', (req, res) => {
     res.render('home.ejs', { user: req.user, title: 'Home', body: '' }); 
 });
 
+
+
+
 //--------------------------------
 //----  Authenticated users
 //-------------------------------
@@ -295,9 +298,33 @@ app.post('/timesheetEntry', isAuthenticated, [
 });
 
 app.get('/emergencyEntry', isAuthenticated, async (req, res) => {
-    console.log(`yg1   `, req.query.date);
-    res.render('timesheet/emergencyResponse.ejs', {user : req.user, title : 'Enter Timesheet', messages : req.flash('messages')})
+    console.log(`yg1   `);
+
+    let formData = {}; // Declare formData before assigning values to it
+
+    try {
+        const result = await axios.get(`${API_URL}/rdo/${req.user.id}`);
+        console.log("yg2    user RDO ",  result.data);
+        
+        formData = {
+            RDO: result.data[0].is_eligible,
+        };
+    } catch (error) {
+        console.error("Error fetching RDO:", error);
+        // Handle error appropriately, e.g., set formData.RDO to some default value
+        formData = {
+            RDO: null, // Set RDO to some default value or handle error case appropriately
+        };
+    }
+
+    res.render('timesheet/emergencyResponse.ejs', {
+        formData,
+        user: req.user,
+        title: 'Enter Timesheet',
+        messages: req.flash('messages')
+    });
 });
+
 
 app.post('/emergencyEntry', isAuthenticated, [
     // Validate request body
@@ -327,7 +354,7 @@ app.post('/emergencyEntry', isAuthenticated, [
         }
         if (comment == "no IRIS entry" && !activity.startsWith("Rest Day")) {
             console.log('eg28   ')
-            req.flash('messages', 'We redirected because there was no IRIS entry. Suggest you enter "Bushfire Readiness" in the activity column');
+            req.flash('messages', 'We redirected you because you nominated that the timekeeper did not record the work day. Choose an activity like "Bushfire Readiness" from the activity column');
             return res.redirect("/timesheetEntry")
         }
         console.log(`eg50      ${API_URL}/timesheets`)
@@ -358,6 +385,59 @@ app.post('/emergencyEntry', isAuthenticated, [
     }
 });
 
+app.get('/plannedLeave', isAuthenticated, (req, res) => {
+    // Render the leavePlanned.ejs file
+    res.render('timesheet/leavePlanned.ejs', { title: 'Leave Request', user: req.user, messages: req.flash('messages') });
+});
+
+app.post('/plannedLeave', isAuthenticated, [
+    // Validate request body
+    body('work_date').optional().isISO8601().toDate().withMessage('Invalid date format'),
+    body('num_days').isInt({ min: 1 }).withMessage('Number of days must be a positive integer'),
+    body('leave_approved').isIn(['true', 'false']).withMessage('Is your leave approved?'),
+    body('notes').optional().isString().withMessage('Invalid string format for notes'),   
+], async (req, res) => {
+    console.log("pl1   ", req.body);
+    const errors = validationResult(req);
+    const currentDate = new Date();
+    if (!errors.isEmpty()) {
+        req.flash('messages', errors.array().map(error => error.msg));
+        return res.redirect('/time');
+    }
+
+    try {    
+        const { num_days, leave_approved, notes } =  req.body;   
+        let workDate = new Date(req.body.work_date); // Start date for leave
+
+        console.log(`pl4      ${API_URL}/timesheets`)
+        for (let i = 0; i < num_days; i++) {
+            //console.log(`pl5    Adding record for ${workDate.toLocaleDateString()}`);
+            const result = await axios.put(`${API_URL}/timesheets`, {
+                person_id: req.user.id,
+                username: req.user.username,
+                work_date: workDate.toISOString(), // Convert to ISO string
+                activity: 'Approved Leave',
+                entry_date: currentDate.toISOString(), // Convert to ISO string
+                notes,
+                on_duty: 0, // Off duty
+                duty_category: 3, // Approved leave
+                status: 'entered',
+            });
+            console.log(`pl6     Date=${workDate.toLocaleDateString()}: Status=${result.status === 201 ? 'success(201)' : 'error(' + result.status + ')'}`);
+
+            // Increment work_date for the next day
+            workDate.setDate(workDate.getDate() + 1);
+        }
+
+        console.log("pl9   ");
+        res.redirect('/time');
+    } catch {
+        console.error("pl8     Error creating timesheet:", error);
+        req.flash('messages', 'An error occurred while creating the timesheet - the timesheet was not saved');
+        return res.redirect('/time');
+    }
+});
+
 app.get('/deleteTimesheet/:id', async (req, res) => {
     console.log('de1  ');
     const timesheetId = req.params.id;
@@ -377,12 +457,15 @@ app.get('/approveTimesheet/:id', async (req, res) => {
     const timesheetId = req.params.id;
     const newStatus = 'approved';
     try {
+        //const scrollY = req.query.scrollY || 0; // Store the current scroll position
+
         //const response = await axios.post(`${API_URL}/timesheets/${timesheetId}`);
         console.log(`ap3       ${API_URL}/timesheets/${timesheetId}/updateStatus`);
         const response = await axios.post(`${API_URL}/timesheets/${timesheetId}/updateStatus`, { status: newStatus });
         
         console.log('ap9     Timesheet updated successfully:', response.data);
-        return res.redirect('/time');
+        //return res.redirect(`/time?scrollY=${scrollY}`);
+        return res.redirect(`/time`);
     } catch (error) {
         console.error('ap8      Error updating timesheet:', error.response ? error.response.data : error.message);
     }    

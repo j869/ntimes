@@ -9,6 +9,10 @@
         <div class="col-auto">
             <a href="/emergencyEntry" class="btn btn-danger" id="addEmergencyBtn"><i class="fas fa-plus"></i> Emergency</a>
         </div>
+        <div class="col-auto">
+            <a href="/plannedLeave" class="btn btn-danger" id="addEmergencyBtn"><i class="fas fa-plus"></i> Planned Leave</a>
+        </div>
+        
     </div>
   
       <div class="table-responsive">
@@ -52,8 +56,8 @@
                         <td class="hidden"><%= timesheet.notes %></td>
                         <% if (timesheet.id) { %>
                             <td> <!-- Added buttons for actions -->
-                                <a href="/deleteTimesheet/<%= timesheet.id %>">Delete</a>
-                                <a href="/approveTimesheet/<%= timesheet.id %>">Approve</a>
+                                <a href="/deleteTimesheet/<%= timesheet.id %>" >Delete</a>
+                                <a href="/approveTimesheet/<%= timesheet.id %>" >Approve</a>
                             </td>
                         <% } else { %>
                             <td>&nbsp;</td>
@@ -106,4 +110,5 @@
             }
         });
     });    
+
 </script>

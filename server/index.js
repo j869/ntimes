@@ -24,6 +24,8 @@ app.put('/users/:id', db.updateUser)
 app.put('/verify/:token', db.verifyUserEmail)
 app.delete('/users/:id', db.deleteUser)
 
+app.get('/rdo/:id', db.getRdoById)
+
 app.get('/timesheets/:id', db.getCurrentYearTimesheetsForUser)
 app.put('/timesheets', db.createTimesheet)
 app.post('/timesheets/:id/updateStatus', db.updateTimesheetStatus)

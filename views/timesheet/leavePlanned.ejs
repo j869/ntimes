@@ -1,0 +1,62 @@
+<!-- leavePlanned.ejs -->
+
+<%- include('../partials/header', { title: 'Leave Request', user: user, messages: messages }) %>
+
+<form id="plannedLeaveForm" action="/plannedLeave" method="POST">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="work_date">Work Date:</label>
+                    <input type="date" id="work_date" name="work_date" class="form-control" required oninvalid="this.setCustomValidity('Enter the day you worked')" oninput="this.setCustomValidity('')">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="num_days">Number of Days Off:</label>
+                    <input type="number" id="num_days" name="num_days" class="form-control" required min="1">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="leave_approved">Leave Approved:</label>
+                    <select id="leave_approved" name="leave_approved" class="form-control" required>
+                        <option value="true">Yes</option>
+                        <option value="false" selected>No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+                </div>
+            </div>
+        </div>        
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<%- include('../partials/footer') %>
+
+
+<script>
+    if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        console.log("Latitude: " + position.coords.latitude +
+                    " Longitude: " + position.coords.longitude);
+    });
+    } else {
+    console.log("Geolocation is not supported by this browser.");
+    }    
+</script>

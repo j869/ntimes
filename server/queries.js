@@ -155,6 +155,19 @@ const updateTimesheetStatus = (req, res) => {
 //#endregion
 
 
+//--------------------------------
+//----  Other
+//-------------------------------
+const getRdoById = (req, res) => {
+  console.log("rdo1    ", req.params.id)
+  const id = parseInt(req.params.id)
+  pool.query('SELECT * FROM rdo_eligibility WHERE user_id = $1', [id], (error, results) => {
+      if (error) {
+      throw error
+      }
+      res.status(200).json(results.rows)
+})
+}
 
 
 //--------------------------------
@@ -174,6 +187,7 @@ const getUsers = (req, res) => {
 }
 
 const getUserById = (req, res) => {
+    
     const id = parseInt(req.params.id)
     pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
         if (error) {
@@ -377,4 +391,5 @@ export {
   createTimesheet, 
   deleteTimesheet, 
   updateTimesheetStatus, 
+  getRdoById, 
 };
