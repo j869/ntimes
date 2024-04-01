@@ -70,7 +70,7 @@ CREATE TABLE timesheets (
 );
 
 -- Create a default admin user
-INSERT INTO users (username, password) VALUES ('admin', 'hashed_password_of_your_choice');
+INSERT INTO users (username, email, password, verified_email) VALUES ('john@buildingbb.com.au', 'john@buildingbb.com.au', '$2b$10$go9kjxt5Vr.QhenMQoexDeRfKwQjLs.2ZfnhmXuCp.gKp8cda2ahu', true);
 
 
 DROP TABLE IF EXISTS public.debug;
@@ -143,7 +143,7 @@ CREATE TABLE ts_timesheet_t (
     notes TEXT,
     entry_date DATE,
     on_duty SMALLINT,
-    duty_catagory SMALLINT,       -- 2:fire, 
+    duty_category SMALLINT,       -- 2:fire, 
     "status" VARCHAR(10),
     rwe_day SMALLINT,           -- will be 1 in the following circumstances: (i) if it was a normal work day, and you got called to a fire, 
     fund_src VARCHAR(10),
@@ -157,3 +157,36 @@ INSERT INTO ts_timesheet_t ("person_id", "work_date", "time_start", "time_finish
 VALUES (1, '2024-03-01', '08:30', '16:30', '00:30', '00:00', '08:00', '08:00', '00:00', '00:00', '00:00', '00:00', 'Development tasks completed', 2, 'Testing', 'Code review session', '2024-03-01', 1, 1, 'Submitted', 0, 'Internal');
 INSERT INTO ts_timesheet_t ("person_id", "work_date", "time_start", "time_finish", "time_lunch", "time_extra_break", "time_total", "time_accrued", "time_til", "time_leave", "time_overtime", "time_comm_svs", "t_comment", "location_id", "activity", "notes", "entry_date", "on_duty", "duty_catagory", "status", "rwe_day", "fund_src") 
 VALUES (2, '2024-03-01', '09:30', '17:30', '01:00', '00:00', '08:00', '08:00', '00:00', '00:00', '00:00', '00:00', 'Client meeting', 3, 'Client Communication', 'Discuss project progress', '2024-03-01', 1, 1, 'Submitted', 0, 'External');
+
+
+
+CREATE TABLE public_holidays (
+    id SERIAL PRIMARY KEY,
+    holiday_name VARCHAR(255) NOT NULL,
+    holiday_date DATE NOT NULL
+);
+
+
+
+INSERT INTO public_holidays (holiday_name, holiday_date) VALUES
+('New Year''s Day', '2024-01-01'),
+('Australia Day', '2024-01-26'),
+('Labour Day', '2024-03-11'),
+('Good Friday', '2024-03-29'),
+('Saturday before Easter Sunday', '2024-03-30'),
+('Easter Sunday', '2024-03-31'),
+('Easter Monday', '2024-04-01'),
+('ANZAC Day', '2024-04-25'),
+('King''s Birthday', '2024-06-10'),
+('Friday before the AFL Grand Final', '2024-09-27'),
+('Melbourne Cup', '2024-11-05'),
+('Christmas Day', '2024-12-25'),
+('Boxing Day', '2024-12-26');
+
+
+
+CREATE TABLE rdo_eligibility (
+    user_id INT NOT NULL,
+    is_eligible BOOLEAN NOT NULL,
+    PRIMARY KEY (user_id)
+);

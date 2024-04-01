@@ -321,7 +321,6 @@ app.get('/emergencyEntry', isAuthenticated, async (req, res) => {
     });
 });
 
-
 app.post('/emergencyEntry', isAuthenticated, [
     // Validate request body
     body('work_date').optional().isISO8601().toDate().withMessage('Invalid date format'),
