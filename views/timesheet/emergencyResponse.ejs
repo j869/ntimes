@@ -87,7 +87,7 @@
                 //var RDO = confirm("Press OK if you are eligible for RDO");
                 var RDO;
                 <% if (!formData.RDO) { %>
-                    RDO = false; // Set a default value if formData.RDO is not defined
+                    RDO = false; //  Probably the user was not found in the rdo table
                 <% } else { %>
                     RDO = <%= formData.RDO %>;
                 <% } %>;
@@ -106,4 +106,6 @@
             }
     console.log('er9  ', workDate);
 });
+
+
 </script>

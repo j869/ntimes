@@ -60,15 +60,17 @@
 
 
           <main>
-            <% if (locals.messages && locals.messages.length > 0) { %>
-                <% if (messages.length > 0) { %>
-                    <% messages.forEach(msg => { %>
-                        <div class="alert alert-primary" role="alert">
-                            <%= msg %>
-                        </div>
-                    <% }) %>
-                <% } %>   
-            <% } %>
+            <div id="messageContainer">
+                <% if (locals.messages && locals.messages.length > 0) { %>
+                    <% if (messages.length > 0) { %>
+                        <% messages.forEach(msg => { %>
+                            <div class="alert alert-primary" role="alert">
+                                <%= msg %>
+                            </div>
+                        <% }) %>
+                    <% } %>   
+                <% } %>
+            </div>
         
             <% if (typeof messages !== 'undefined' && messages.error) { %>
                 <div class="alert alert-danger" role="alert">

@@ -141,10 +141,6 @@ app.get('/time', isAuthenticated, async (req, res) => {
     const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
     console.log("t2    got " +  result.data.length + " timesheets ")
 
-    // const flashMessages = req.flash('messages');
-    // console.log("t3   ", flashMessages)
-    // // const messages = flashMessages.map(message => message.msg);
-
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { day: '2-digit', month: 'short', year: 'numeric' };
@@ -183,9 +179,9 @@ app.get('/timesheetEntry', isAuthenticated, async (req, res) => {
 
 });
 
-// Custom validation function for time format (hh:mm)
+
 const isValidTimeFormat = (value) => {
-    return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
+    return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);  // Custom validation function for time format (hh:mm)
 };
 
 app.post('/timesheetEntry', isAuthenticated, [
@@ -385,9 +381,31 @@ app.post('/emergencyEntry', isAuthenticated, [
     }
 });
 
-app.get('/plannedLeave', isAuthenticated, (req, res) => {
+app.get('/plannedLeave', isAuthenticated, async (req, res) => {
+
+    const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
+    console.log("t2    got " +  result.data.length + " timesheets ")
+
+    // const flashMessages = req.flash('messages');
+    // console.log("t3   ", flashMessages)
+    // // const messages = flashMessages.map(message => message.msg);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    };
+
+    // Filter the result.data array to exclude entries where id === null
+    const filteredData = result.data.filter(entry => entry['id'] !== null)
+                                    .map(entry => ({
+                                        work_date: formatDate(entry['work_date']),
+                                        id: entry['id']
+                                    }));
+
+    
     // Render the leavePlanned.ejs file
-    res.render('timesheet/leavePlanned.ejs', { title: 'Leave Request', user: req.user, messages: req.flash('messages') });
+    res.render('timesheet/leavePlanned.ejs', { workDays: filteredData, title: 'Leave Request', user: req.user, messages: req.flash('messages') });
 });
 
 app.post('/plannedLeave', isAuthenticated, [
@@ -630,7 +648,8 @@ app.get('/login', (req, res) => {
     // console.log("li2     messages : ", errors);
     // res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
     console.log("li9     ");
-    res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: req.flash('messages') });
+    const defaultEmail = process.env.DEFAULT_USER || "";
+    res.render('login.ejs', { defaultEmail, user: req.user, title: 'numbat', body: '', messages: req.flash('messages') });
 
 });
 
