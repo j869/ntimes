@@ -33,7 +33,7 @@ const getLocationById = (req, res) => {
 const deleteLocation = (req, res) => {
   const { locationId } = req.body;
 
-  const query = `DELETE FROM Location WHERE location_id = $1`;
+  const query = `DELETE FROM Location WHERE id = $1`;
 
   pool.query(query, [locationId], (error, result) => {
     if (error) {
@@ -45,7 +45,8 @@ const deleteLocation = (req, res) => {
 };
 
 const getAllLocation = (req, res) => {
-  const query = `SELECT "location".* FROM "location"`;
+  const query = `SELECT "location".* FROM "location" ORDER BY
+	"location".location_name ASC`;
 
   pool.query(query, [], (error, result) => {
     if (error) {

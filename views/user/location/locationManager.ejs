@@ -96,7 +96,7 @@
           </div>
           <form
             method="POST"
-            action="/editLocation/<%= loc.location_id%>"
+            action="/editLocation/<%= loc.id%>"
             id="editForm"
           >
             <input
@@ -188,7 +188,7 @@
 
             <form action="/deleteLocation/" method="post">
 
-                <input type="hidden" name="locationId" value="<%= loc.location_id%>">
+                <input type="hidden" name="locationId" value="<%= loc.id%>">
                 <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
             </form>
               Delete
