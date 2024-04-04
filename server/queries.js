@@ -19,15 +19,75 @@ export const pool = new Pool({
 //-------------------------------
 //#region ts_timesheet_t
 
-const getLocation = (req, res) => {
+// LOCATIONS FUNCTION HERE
+const getLocationById = (req, res) => {
   // Extract username or person_id from request, assuming it's available in req.params
-  console.log("location  ", req.params);
   const personID = req.params.id;
 
+  // Check if a personID is present in the request
+
   // Construct the SQL query to fetch timesheets for the current year and specific user
+  const query = `SELECT "location".* FROM "location" INNER JOIN ts_timesheet_t ON "location".location_id = ts_timesheet_t.location_id WHERE ts_timesheet_t."id" = $1`;
+
+  pool.query(query, [personID], (error, result) => {
+    if (error) {
+      console.error("Error querying timesheets:", error);
+      res.status(500).json({ error: "Error querying timesheets" });
+      return;
+    }
+
+    res.status(200).json(result.rows);
+  });
+};
+
+const getAllLocation = (req, res) => {
+  const query = `SELECT "location".* FROM "location"`;
+
+  pool.query(query, [], (error, result) => {
+    if (error) {
+      console.error("Error querying timesheets:", error);
+      res.status(500).json({ error: "Error querying timesheets" });
+      return;
+    }
+
+    res.status(200).json(result.rows);
+  });
+};
+
+const editLocation = (req, res) => {
+  const { locationId, locationName, roleId } = req.body;
+
   const query = `
-  SELECT
-	"location".*
+    UPDATE "location"
+    SET "location_name" = $1, "role_id" = $2
+    WHERE "location_id" = $3
+    RETURNING *`;
+
+  pool.query(query, [locationName, roleId, locationId], (error, result) => {
+    if (error) {
+      console.error("Error updating location:", error);
+      res.status(500).json({ error: "Error updating location" });
+      return;
+    }
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Location not found" });
+      return;
+    }
+
+    res.status(200).json(result.rows[0]);
+  });
+};
+
+// Route for editing a location
+
+// GetTimeSheets using the userID
+const getTimesheetsById = (req, res) => {
+  const userID = req.params.id;
+
+  const query = `SELECT
+	ts_timesheet_t.*, 
+	"location".location_name
 FROM
 	"location"
 	INNER JOIN
@@ -35,11 +95,9 @@ FROM
 	ON 
 		"location".location_id = ts_timesheet_t.location_id
 WHERE
-	ts_timesheet_t."id" = $1
-  
-  `;
+	ts_timesheet_t."id" = $1`;
 
-  pool.query(query, [personID], (error, result) => {
+  pool.query(query, [userID], (error, result) => {
     if (error) {
       console.error("Error querying timesheets:", error);
       res.status(500).json({ error: "Error querying timesheets" });
@@ -57,7 +115,7 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 
   // Get the current year
   const currentYear = new Date().getFullYear();
-  console.log("cyt3   currentYear : " + currentYear);
+  console.table({ currentYear });
 
   // Construct the SQL query to fetch timesheets for the current year and specific user
   const query = `
@@ -509,12 +567,12 @@ const deleteUser = (req, res) => {
 }; //unused. no delete route as ov 20Mar
 
 //#endregion
-
 export {
   getUsers,
   getUserById,
   getUserByUsername,
-  getLocation,
+  getLocationById,
+  getAllLocation,
   getCurrentYearTimesheetsForUser,
   createUser,
   updateUser,
@@ -524,4 +582,5 @@ export {
   deleteTimesheet,
   updateTimesheetStatus,
   getRdoById,
+  getTimesheetsById,
 };

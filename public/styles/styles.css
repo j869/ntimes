@@ -16,7 +16,9 @@
 }
 
 .mandatory {
+  
   background-color: #ffb2b2 !important; /*  */
   border: 2px solid red; /* Red border */
+
 }
 

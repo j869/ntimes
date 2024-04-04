@@ -1,79 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-    <link rel="stylesheet" href="styles/main.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://getbootstrap.com/docs/5.3/scss/_reboot.scss" rel="stylesheet" >
-    <link href="https://getbootstrap.com/docs/5.3/scss/mixins/_utilities.scss" rel="stylesheet" >
-    <link href="https://getbootstrap.com/docs/5.3/scss/_nav.scss" rel="stylesheet" >
-    <link rel="stylesheet" href="styles/styles.css">
-    <style>
 
-    </style>
-</head>
-<body>
-
-
-  
-
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://getbootstrap.com/docs/5.3/scss/_reboot.scss"
+      rel="stylesheet"
+    />
+    <link
+      href="https://getbootstrap.com/docs/5.3/scss/mixins/_utilities.scss"
+      rel="stylesheet"
+    />
+    <link
+      href="https://getbootstrap.com/docs/5.3/scss/_nav.scss"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <style></style>
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">numbat</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/users">Users</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/time">Timesheet</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <% if (user) { %>
-                            <a class="nav-link disabled" href="#"><%= user.username %></a>
-                        <% } %>
-                    </li>
-                    <li class="nav-item">
-                        <% if (!user) { %>
-                            <a class="nav-link" href="/login">Login</a>
-                            <% } else { %>
-                            <a class="nav-link" href="/logout">Logout</a>
-                        <% } %>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">numbat</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/users">Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/time">Timesheet</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/locationManager">Manage Location</a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <% if (user) { %>
+              <a class="nav-link disabled" href="#"><%= user.username %></a>
+              <% } %>
+            </li>
+            <li class="nav-item">
+              <% if (!user) { %>
+              <a class="nav-link" href="/login">Login</a>
+              <% } else { %>
+              <a class="nav-link" href="/logout">Logout</a>
+              <% } %>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
-    
 
+    <main>
+      <div id="messageContainer">
+        <% if (locals.messages && locals.messages.length > 0) { %> <% if
+        (messages.length > 0) { %> <% messages.forEach(msg => { %>
+        <div class="alert alert-primary" role="alert"><%= msg %></div>
+        <% }) %> <% } %> <% } %>
+      </div>
 
-          <main>
-            <div id="messageContainer">
-                <% if (locals.messages && locals.messages.length > 0) { %>
-                    <% if (messages.length > 0) { %>
-                        <% messages.forEach(msg => { %>
-                            <div class="alert alert-primary" role="alert">
-                                <%= msg %>
-                            </div>
-                        <% }) %>
-                    <% } %>   
-                <% } %>
-            </div>
-        
-            <% if (typeof messages !== 'undefined' && messages.error) { %>
-                <div class="alert alert-danger" role="alert">
-                    <%= messages.error %>
-                </div>
-            <% } %>
+      <% if (typeof messages !== 'undefined' && messages.error) { %>
+      <div class="alert alert-danger" role="alert"><%= messages.error %></div>
+      <% } %>
+    </main>
+  </body>
+</html>

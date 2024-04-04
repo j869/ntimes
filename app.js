@@ -131,10 +131,72 @@ app.get("/", (req, res) => {
 // PAGE ROUTERS HERE
 
 // ROuter for the Location Manager Page
-app.get("/locationManager", (req, res) => {
+app.get("/locationManager", isAuthenticated, async (req, res) => {
+  const locationResponse = await axios.get(`${API_URL}/location`);
+  const location = locationResponse.data; // Extract the data from the Axios response
+
   res.render("user/location/locationManager.ejs", {
+    user: req.user,
+    location: location,
+    messages: req.flash("messages"),
     title: "Location Manager",
   });
+});
+
+app.post("/deletelocation", isAuthenticated, async (req, res) => {
+  const { locationId } = req.body;
+
+  try {
+    // Update the location in the database
+    await axios.post(`${API_URL}/deletelocation/`, { locationId });
+    res.redirect("/locationManager");
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res.status(500).json({ success: false, error: "Error updating location" });
+  }
+});
+
+app.post("/editlocation/:id", isAuthenticated, async (req, res) => {
+  const locationId = req.params.id;
+  const { locationName, locationRole, location_id } = req.body;
+
+  const location_role = locationRole != "" ? locationRole : null;
+
+  try {
+    // Update the location in the database
+    await axios.put(`${API_URL}/editlocation/${locationId}`, {
+      locationName,
+      location_role,
+      location_id,
+    });
+
+    // Redirect back to the locationManager page
+    res.redirect("/locationManager");
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res.status(500).json({ success: false, error: "Error updating location" });
+  }
+});
+
+app.post("/addlocation", isAuthenticated, async (req, res) => {
+  const { locationName, locationRole, location_id } = req.body;
+
+  const location_role = locationRole != "" ? locationRole : null;
+
+  try {
+    // Update the location in the database
+    await axios.put(`${API_URL}/addlocation`, {
+      locationName,
+      location_role,
+      location_id,
+    });
+
+    // Redirect back to the locationManager page
+    res.redirect("/locationManager");
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res.status(500).json({ success: false, error: error });
+  }
 });
 
 // PAGE ROUTERS ENDS HERE
@@ -148,7 +210,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   console.log(`t1    ${API_URL}/timesheets/${req.user.id}`);
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
-  console.log("t2    got " + result.data.length + " timesheets ");
+  // console.log("t2    got " + result.data.length + " timesheets ");
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -174,6 +236,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
     notes: entry["notes"],
     status: entry["status"],
   }));
+
   res.render("timesheet/main.ejs", {
     title: "Numbat Timekeeper",
     user: req.user,
@@ -186,13 +249,23 @@ app.get("/time", isAuthenticated, async (req, res) => {
 app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   console.log(`y1   `, req.query.date);
 
+  const userId = req.query.userId;
   const date = req.query.date; // Pick up the date from the URL parameter
+
+  const locationResponse = await axios.get(`${API_URL}/location`);
+  const location = locationResponse.data; // Extract the data from the Axios response
+
   res.render("timesheet/recordHours.ejs", {
     forDate: date,
     user: req.user,
+    location: location, // Pass the extracted location data
     title: "Enter Timesheet",
     messages: req.flash("messages"),
   });
+});
+
+app.get("/recordHours", (req, res) => {
+  res.render("recordHours", { userLocation: userLocation });
 });
 
 const isValidTimeFormat = (value) => {
@@ -1128,6 +1201,7 @@ function isAdmin(req, res, next) {
 //---- Start the server
 //-----------------------------------
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

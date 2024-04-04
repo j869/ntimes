@@ -1,14 +1,11 @@
 <%- include('../partials/header', { title, user, messages: messages }) %>
 
-
-
 <div class="container">
-    
     <div class="row">
         <div class="col-md-3">
             <form id="timesheetForm" action="/timesheetEntry" method="POST">
                 <div class="form-group">
-                    <label for="work_date">Work Date: </label>
+                    <label for="work_date">Work Date:</label>
                     <input type="date" id="work_date" name="work_date" class="form-control" required>
                 </div>
                 <div class="form-group">
@@ -35,12 +32,13 @@
             </div>
             <div class="col-md-9">
                 <div class="form-group">
-                    <label for="location_                                               id">Location:</label>
+                    <label for="location_id">Location:</label>
                     <select id="location_id" name="location_id" class="form-control">
-                        <% location.forEach(loc => { %>
-                          <option value="<%= loc.location_id %>"><%= loc.location_name %></option>
-                        <% }); %>
-                      </select>
+                        <option value="1" selected>Office</option>
+                        <option value="2">Home</option>
+                        <option value="3">Patrol</option>
+                        <option value="4">Other</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="fund_src">Fund:</label>
