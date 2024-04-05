@@ -44,7 +44,7 @@
           <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="addLocationForm" action="/addlocation" method="POST" >
+        <form id="addLocationForm" action="/locationManager/add" method="POST" >
         <div class="modal-body">
           <div class="mb-3">
             <label for="addLocationId" class="form-label">Location Id</label>
@@ -96,7 +96,7 @@
           </div>
           <form
             method="POST"
-            action="/editLocation/<%= loc.id%>"
+            action="/locationManager/edit/<%= loc.id%>"
             id="editForm"
           >
             <input
@@ -186,7 +186,7 @@
               Cancel
             </button>
 
-            <form action="/deleteLocation/" method="post">
+            <form action="/locationManager/delete" method="post">
 
                 <input type="hidden" name="locationId" value="<%= loc.id%>">
                 <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
@@ -258,7 +258,7 @@
   }
 </script>
 
-<script>
+<!-- <script>
   function updateLocation(locationId) {
     // const locationId = document.getElementById("editLocationId" + locationId).value;
     const locationName = document.getElementById(
@@ -283,6 +283,6 @@
         console.error("Error updating location:", error);
       });
   }
-</script>
+</script> -->
 
 <%- include('../../partials/footer') %>

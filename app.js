@@ -17,6 +17,11 @@ import crypto from "crypto";
 import flash from "express-flash";
 import { error } from "console";
 
+// ROUTES IMPORts
+
+import createLocationRoutes from "./routes/locationRoutes.js";
+import createActivityRoutes from "./routes/activityRoutes.js";
+
 const app = express();
 const API_URL = "http://localhost:4000";
 // let baseURL = "";
@@ -121,6 +126,28 @@ app.use((req, res, next) => {
 
 //#endregion
 
+// Middleware to check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+  console.log("iau1");
+  if (req.isAuthenticated()) {
+    console.log("iau2    user is authenticated");
+    return next();
+  }
+  console.log("iau9    user is not authenticated");
+  res.redirect("/login");
+};
+
+const isAdmin = (req, res, next) => {
+  console.log("iad1");
+  if (req.user && req.user.role === "admin") {
+    console.log("iad2    user is not admin");
+    return next();
+  } else {
+    console.log("iad3   user is admin");
+    return res.status(403).json({ messages: ["Permission denied"] });
+  }
+};
+
 app.get("/", (req, res) => {
   const username =
     req.user && req.user.username ? " for " + req.user.username : "[]";
@@ -128,82 +155,21 @@ app.get("/", (req, res) => {
   res.render("home.ejs", { user: req.user, title: "Home", body: "" });
 });
 
-// PAGE ROUTERS HERE
-
-// ROuter for the Location Manager Page
-app.get("/locationManager", isAuthenticated, async (req, res) => {
-  const locationResponse = await axios.get(`${API_URL}/location`);
-  const location = locationResponse.data; // Extract the data from the Axios response
-
-  res.render("user/location/locationManager.ejs", {
-    user: req.user,
-    location: location,
-    messages: req.flash("messages"),
-    title: "Location Manager",
-  });
-});
-
-app.post("/deletelocation", isAuthenticated, async (req, res) => {
-  const { locationId } = req.body;
-
-  try {
-    // Update the location in the database
-    await axios.post(`${API_URL}/deletelocation/`, { locationId });
-    res.redirect("/locationManager");
-  } catch (error) {
-    console.error("Error updating location:", error);
-    res.status(500).json({ success: false, error: "Error updating location" });
-  }
-});
-
-app.post("/editlocation/:id", isAuthenticated, async (req, res) => {
-  const locationId = req.params.id;
-  const { locationName, locationRole, location_id } = req.body;
-
-  const location_role = locationRole != "" ? locationRole : null;
-
-  try {
-    // Update the location in the database
-    await axios.put(`${API_URL}/editlocation/${locationId}`, {
-      locationName,
-      location_role,
-      location_id,
-    });
-
-    // Redirect back to the locationManager page
-    res.redirect("/locationManager");
-  } catch (error) {
-    console.error("Error updating location:", error);
-    res.status(500).json({ success: false, error: "Error updating location" });
-  }
-});
-
-app.post("/addlocation", isAuthenticated, async (req, res) => {
-  const { locationName, locationRole, location_id } = req.body;
-
-  const location_role = locationRole != "" ? locationRole : null;
-
-  try {
-    // Update the location in the database
-    await axios.put(`${API_URL}/addlocation`, {
-      locationName,
-      location_role,
-      location_id,
-    });
-
-    // Redirect back to the locationManager page
-    res.redirect("/locationManager");
-  } catch (error) {
-    console.error("Error updating location:", error);
-    res.status(500).json({ success: false, error: error });
-  }
-});
-
-// PAGE ROUTERS ENDS HERE
-
 //--------------------------------
 //----  Authenticated users
 //-------------------------------
+
+// LOCATION MANAGER ROUTES HERE
+app.use("/locationManager", createLocationRoutes(isAuthenticated));
+// PAGE LOCATION MANAGER ROUTES ENDS
+
+// ACTIVIY MANAGER ROUTES
+app.use("/activity", createActivityRoutes(isAuthenticated));
+// ACTIVIYT MAGER ROUTES ENDS
+
+
+// 
+
 //#region regular users
 
 app.get("/time", isAuthenticated, async (req, res) => {
@@ -1172,28 +1138,6 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
   cb(null, user);
 });
-
-// Middleware to check if user is authenticated
-function isAuthenticated(req, res, next) {
-  console.log("iau1");
-  if (req.isAuthenticated()) {
-    console.log("iau2    user is authenticated");
-    return next();
-  }
-  console.log("iau9    user is not authenticated");
-  res.redirect("/login");
-}
-
-function isAdmin(req, res, next) {
-  console.log("iad1");
-  if (req.user && req.user.role === "admin") {
-    console.log("iad2    user is not admin");
-    return next();
-  } else {
-    console.log("iad3   user is admin");
-    return res.status(403).json({ messages: ["Permission denied"] });
-  }
-}
 
 //#endregion
 

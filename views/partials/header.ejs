@@ -59,9 +59,16 @@
             <li class="nav-item">
               <a class="nav-link" href="/time">Timesheet</a>
             </li>
+            <% if (user) { %>
             <li class="nav-item">
               <a class="nav-link" href="/locationManager">Manage Location</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/activity/<%= user.id%>"
+                >Activity List</a
+              >
+            </li>
+            <% } %>
           </ul>
 
           <ul class="navbar-nav">

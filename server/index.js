@@ -10,7 +10,15 @@ import {
   editLocation,
   deleteLocation,
   addLocation,
-} from "./controllers/locationControllers.js"; // Make sure to add the file extension
+} from "./controllers/locationControllers.js";
+
+import {
+  getActivitiesByUserId,
+  createActivity,
+  updateActivity,
+  deleteActivity,
+  getAllActivities,
+} from "./controllers/activitiesControllers.js";
 
 const port = 4000;
 const app = express();
@@ -21,6 +29,13 @@ app.use(
     extended: true,
   })
 );
+
+// ROUTES FOR ACTIVITIES Manager
+app.get("/activities/:id", getActivitiesByUserId);
+app.get("/activities", getAllActivities);
+app.put("/createActivity", createActivity);
+app.put("/updateActivity", updateActivity);
+app.post("/deleteActivity", deleteActivity);
 
 // Define routes using the imported controllers
 app.get("/location/:id", getLocationById);

@@ -1,18 +1,4 @@
-import pg from "pg";
-import env from "dotenv";
-//#region middleware
-env.config();
-const { Pool } = pg;
-export const pool = new Pool({
-  //const pool = new Pool({
-  user: process.env.PG_USER || "me",
-  host: process.env.PG_HOST || "localhost",
-  database: process.env.PG_DATABASE || "api",
-  password: process.env.PG_PASSWORD || "password",
-  port: process.env.PG_PORT || 5432,
-});
-
-//#endregion
+import { pool } from "./middleware.js";
 
 //--------------------------------
 //----  ts_timesheet_t
