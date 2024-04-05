@@ -1,0 +1,42 @@
+<%- include('partials/header', { title: 'Edit Profile', user, messages: messages }) %>
+
+<h1>Edit Profile</h1>
+
+<form id="editProfileForm" action="/editUser" method="POST">
+    <!-- Form fields for editing user details -->
+    <div>
+        <!-- <label for="userID">userID:</label> -->
+        <input type="number" id="userID" name="userID" value="<%= userData.id %>" hidden>
+    </div>    
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="<%= userData.username %>" required>
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="<%= userData.email %>" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" >  <!-- not required unless you want to reset the password -->
+    </div>
+    <div>
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="admin" <% if (userData.role === 'admin') { %> selected <% } %>>Admin</option>
+            <option value="user" <% if (userData.role === 'user') { %> selected <% } %>>User</option>
+        </select>
+    </div>
+    <div>
+        <label for="verification_token">Verification Token:</label>
+        <input type="text" id="verification_token" name="verification_token" value="<%= userData.verification_token %>" required>
+    </div>
+    <div>
+        <label for="verified_email">Verified Email:</label>
+        <input type="checkbox" id="verified_email" name="verified_email" <% if (userData.verified_email) { %> checked <% } %>>
+    </div>    
+    <button type="submit">Update Profile</button>
+</form>
+
+<%- include('partials/footer', {user}) %>
+

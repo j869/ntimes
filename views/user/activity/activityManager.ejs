@@ -1,0 +1,388 @@
+<%- include('../../partials/header', { title: 'Activity List', user, messages })
+%>
+
+<style>
+  .activity-manager-container {
+    padding: 20px;
+  }
+
+  .activity .header {
+    margin-top: 30px;
+    margin-left: 120px;
+    margin-right: 120px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  h2 {
+    margin: 2rem 0rem 1rem;
+  }
+
+  .table-image {
+    td,
+    th {
+      vertical-align: middle;
+    }
+  }
+</style>
+
+<div class="activity">
+  <div class="header">
+    <h2>Activity List</h2>
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#addActivityModal"
+    >
+      Add Activity
+    </button>
+  </div>
+
+  <% activities.forEach(activity => { %>
+  <!-- Edit Modal -->
+  <div
+    class="modal fade"
+    id="editActivityModal<%= activity.id %>"
+    tabindex="-1"
+    aria-labelledby="editActivityModalLabel<%= activity.id %>"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editActivityModalLabel<%= activity.id %>">
+            Edit Activity
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <form
+          id="editActivityForm<%= activity.id %>"
+          action="/activity/edit/<%= activity.id %>"
+          method="POST"
+        >
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="editActivityName<%= activity.id %>" class="form-label"
+                >Name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="editActivityName<%= activity.id %>"
+                name="name"
+                value="<%= activity.name %>"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label
+                for="editActivityPrograms<%= activity.id %>"
+                class="form-label"
+                >Programs</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="editActivityPrograms<%= activity.id %>"
+                name="programs"
+                value="<%= activity.programs %>"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label
+                for="editActivityPercentage<%= activity.id %>"
+                class="form-label"
+                >Percentage</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="editActivityPercentage<%= activity.id %>"
+                name="percentage"
+                value="<%= activity.percentage %>"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label
+                for="editActivityStatus<%= activity.id %>"
+                class="form-label"
+                >Status</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="editActivityStatus<%= activity.id %>"
+                name="status"
+                value="<%= activity.status %>"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label
+                for="editActivityUserId<%= activity.id %>"
+                class="form-label"
+                >User ID</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="editActivityUserId<%= activity.id %>"
+                name="user_id"
+                value="<%= activity.user_id %>"
+                required
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div
+    class="modal fade"
+    id="deleteActivityModal<%= activity.id %>"
+    tabindex="-1"
+    aria-labelledby="deleteActivityModalLabel<%= activity.id %>"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5
+            class="modal-title"
+            id="deleteActivityModalLabel<%= activity.id %>"
+          >
+            Delete Activity
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this activity?</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <form action="/activity/delete/<%= activity.id %>" method="POST">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+
+  <!-- Add Activity Modal -->
+  <div
+    class="modal fade"
+    id="addActivityModal"
+    tabindex="-1"
+    aria-labelledby="addActivityModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addActivityModalLabel">Add Activity</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <form id="addActivityForm" action="/activity/create" method="POST">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="addActivityName" class="form-label">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="addActivityName"
+                name="name"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="addActivityPrograms" class="form-label"
+                >Programs</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="addActivityPrograms"
+                name="programs"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="addActivityPercentage" class="form-label"
+                >Percentage</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="addActivityPercentage"
+                name="percentage"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="addActivityStatus" class="form-label">Status</label>
+              <input
+                type="text"
+                class="form-control"
+                id="addActivityStatus"
+                name="status"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="addActivityUserId" class="form-label">User ID</label>
+              <input
+                type="text"
+                class="form-control"
+                id="addActivityUserId"
+                name="user_id"
+                required
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container activity-manager-container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 col-md-12 flex-column">
+        <div class="tab-content mt-4 project-board">
+          <div class="tab-pane fade show active" id="All-list">
+            <div class="row g-3 gy-5 py-3 row-deck">
+              <% activities.forEach(activity => { %>
+              <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div
+                      class="d-flex align-items-center justify-content-between mt-1"
+                    >
+                      <div class="lesson_name">
+                        <span class="small text-muted project_name fw-bold">
+                          <%= activity.username %>
+                        </span>
+                        <h6 class="mb-0 fw-bold fs-6 mb-2">
+                          <%= activity.name %>
+                        </h6>
+                      </div>
+                      <div
+                        class="btn-group"
+                        role="group"
+                        aria-label="Basic outlined example"
+                      >
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editproject"
+                        >
+                          <i class="fas fa-edit text-success"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteproject"
+                        >
+                          <i class="far fa-trash-alt text-danger"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center"></div>
+                    <div class="row g-2 pt-4">
+                      <% activity.programs.forEach((program, index) => { %>
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="fas fa-thumb-tack"></i>
+                          <span class="ms-2"><%= program %></span>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="icofont-sand-clock"></i>
+                          <div
+                            class="progress-bar"
+                            style="
+                              border-radius: 10px;
+                              width: <%= activity.percentages[index] %>%;
+                            "
+                          >
+                            <div class="label">
+                              <%= activity.percentages[index] %>%
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% }) %>
+                    </div>
+                    <div class="dividers-block"></div>
+
+                    <div
+                      class="d-flex align-items-center justify-content-between mb-2 mt-3"
+                    >
+                      <h4 class="small fw-bold mb-0">Status</h4>
+                      <span class="small light-danger-bg p-1 rounded"
+                        ><i class="icofont-ui-clock"></i> <%= activity.status
+                        %></span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

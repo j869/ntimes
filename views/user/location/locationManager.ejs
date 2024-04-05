@@ -1,0 +1,288 @@
+<%- include('../../partials/header', { title: 'numbat', user, messages: messages
+}) %>
+
+<style>
+  .location-manager-container {
+    padding: 20px;
+  }
+
+  .location .header {
+    margin-top: 30px;
+    margin-left: 120px;
+    margin-right: 120px;
+    display: flex;
+    justify-content: space-between;
+    
+
+  }
+
+  h4 {
+    margin: 2rem 0rem 1rem;
+  }
+
+  .table-image {
+    td,
+    th {
+      vertical-align: middle;
+    }
+  }
+</style>
+
+<div class="location">
+  <div class="header">
+    <h2>Location Manager</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+        Add Location
+      </button>
+  </div>
+
+  <!-- Add Location Modal -->
+<div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addLocationForm" action="/locationManager/add" method="POST" >
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="addLocationId" class="form-label">Location Id</label>
+            <input type="text" class="form-control" id="addLocationId" name="location_id" required>
+          </div>
+            <div class="mb-3">
+              <label for="addLocationName" class="form-label">Location Name</label>
+              <input type="text" class="form-control" id="addLocationName" name="locationName" required>
+            </div>
+            <div class="mb-3">
+              <label for="addLocationRole" class="form-label">Location Role</label>
+              <input type="text" class="form-control" id="addLocationRole" name="locationRole">
+            </div>
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit"  class="btn btn-primary" onclick="addLocation()">Add</button>
+        </div>
+     </form>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Edit Modal -->
+  <div class="container location-manager-container">
+    <% location.forEach(loc => { %>
+    <div
+      class="modal fade"
+      id="form<%= loc.location_id %>"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="false"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Location</h5>
+            <button
+              type="button"
+              class="close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form
+            method="POST"
+            action="/locationManager/edit/<%= loc.id%>"
+            id="editForm"
+          >
+            <input
+              type="hidden"
+              name="locationId"
+              value="<%= loc.location_id%>"
+            />
+
+         
+
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="location_id">Location Id</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="location_id"
+                  value="<%= loc.location_id %>"
+                />
+              </div>
+              <div class="form-group">
+                <label for="locationName">Location Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="locationName"
+                  value="<%= loc.location_name %>"
+                />
+              </div>
+              <div class="form-group">
+                <label for="locationRole">Location Role</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="locationRole"
+                  value="<%= loc.role_id %>"
+                />
+              </div>
+            </div>
+            <div
+              class="modal-footer border-top-0 d-flex justify-content-center"
+            >
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-success">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteLocation<%= loc.location_id%>"
+      tabindex="-1"
+      aria-labelledby="confirmationModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalLabel">
+              Confirmation
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this location?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+
+            <form action="/locationManager/delete" method="post">
+
+                <input type="hidden" name="locationId" value="<%= loc.id%>">
+                <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
+            </form>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+
+    <!-- Edit modal Ends -->
+
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Location Name</th>
+              <th scope="col">Role Id</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% location.forEach(loc => { %>
+            <tr>
+              <th scope="row"><%= loc.location_id%></th>
+              <td><%= loc.location_name%></td>
+              <td><%= loc.role_id %></td>
+
+              <td>
+                <!-- <button type="button" class="btn btn-primary">
+                  <i class="far fa-eye"></i>
+                </button> -->
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#form<%= loc.location_id %>"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteLocation<%= loc.location_id %>"
+                >
+                  <i class="far fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function confirmDelete(locationId) {
+    $("#confirmationModal").modal("show");
+    $("#confirmDeleteBtn").on("click", function () {
+      // Redirect to delete endpoint
+      window.location.href = `/deletelocation/${locationId}`;
+    });
+  }
+</script>
+
+<!-- <script>
+  function updateLocation(locationId) {
+    // const locationId = document.getElementById("editLocationId" + locationId).value;
+    const locationName = document.getElementById(
+      "editLocationName" + locationId
+    ).value;
+    const roleId = document.getElementById("editRoleId" + locationId).value;
+
+    axios
+      .put(`/editlocation/${locationId}`, { locationName, roleId })
+      .then((response) => {
+        if (response.data.success) {
+          // Update the UI or show a success message
+          console.log("Location updated successfully");
+          $("#editLocationModal").modal("hide"); // Close the modal
+        } else {
+          // Handle the error
+          console.error("Error updating location:", response.data.error);
+        }
+      })
+      .catch((error) => {
+        // Handle the error
+        console.error("Error updating location:", error);
+      });
+  }
+</script> -->
+
+<%- include('../../partials/footer') %>

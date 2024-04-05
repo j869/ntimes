@@ -1,0 +1,357 @@
+<%- include('../partials/header', { title, user, messages: messages }) %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <form id="timesheetForm" action="/timesheetEntry" method="POST">
+                <div class="form-group">
+                    <label for="work_date">Work Date:</label>
+                    <input type="date" id="work_date" name="work_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="time_start">Time Start:</label>
+                    <input type="time" id="time_start" name="time_start" class="form-control" required value="09:00">
+                </div>
+                <div class="form-group">
+                    <label for="time_finish">Time Finish:</label>
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:00"> 
+                </div>
+                <div class="form-group">
+                    <label for="time_lunch">Time Lunch:</label>
+                    <input type="time" id="time_lunch" name="time_lunch" class="form-control" required value="00:30">
+                </div>
+                <div class="form-group">
+                    <label for="time_extra_break">Break:</label>
+                    <input type="time" id="time_extra_break" name="time_extra_break" class="form-control" required value="00:00">
+                </div>
+                <div class="form-group">
+                    <label for="time_total">Time Total:</label>
+                    <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly value="08:00">
+                </div>
+
+            </div>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <label for="location_id">Location:</label>
+                    <select id="location_id" name="location_id" class="form-control">
+                        <option value="1" selected>Office</option>
+                        <option value="2">Home</option>
+                        <option value="3">Patrol</option>
+                        <option value="4">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fund_src">Fund:</label>
+                    <input type="text" id="fund_src" name="fund_src" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="activity">Activity:</label>
+                    <input type="text" id="activity" name="activity" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea id="comment" name="comment" class="form-control" rows="6" cols="50"></textarea>
+                </div>
+
+            </div>
+
+        
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label id="variance_lbl" for="flexi_accrued">Variance:</label>
+                            <input type="text" id="variance" name="variance" class="form-control readonly" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label id="variance_type_lbl" for="variance_type" >Variance Type:</label>
+                            <select id="variance_type" name="variance_type" class="form-control mandatory" >
+                                <option value="flexi">Flexitime</option>
+                                <option value="til"  >TIL</option>
+                                <option value="overtime">Overtime</option>
+                                <option value="leave">Leave</option>
+                                <option value="mixed">Custom Variance</option>
+                            </select>
+                        </div>                    
+                    </div>
+                </div>                
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+    </div>
+</div>
+</div>
+
+<div class="container calculated">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Flexitime -->
+            <div class="form-group">
+                <label for="flexi_accrued">Accrue Flexi:</label>
+                <input type="text" id="flexi_accrued" name="flexi_accrued" class="form-control calculated-field" step="3600" readonly>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- TIL -->
+            <div class="form-group">
+                <label for="til_accrued">Accrue TIL:</label>
+                <input type="text" id="til_accrued" name="til_accrued" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Overtime -->
+            <div class="form-group">
+                <label for="time_overtime">Overtime:</label>
+                <input type="text" id="time_overtime" name="time_overtime" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Flexitime -->
+            <div class="form-group">
+                <label for="flexi_taken">Utilise Flexi:</label>
+                <input type="text" id="flexi_taken" name="flexi_taken" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- TIL -->
+            <div class="form-group">
+                <label for="til_taken">Utilise TIL:</label>
+                <input type="text" id="til_taken" name="til_taken" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Leave -->
+            <div class="form-group">
+                <label for="time_leave">leave:</label>
+                <input type="text" id="time_leave" name="time_leave" class="form-control calculated-field" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<%- include('../partials/footer') %>
+
+
+<script>
+    
+
+    // document.addEventListener('DOMContentLoaded', function () {
+//         const userLocation = '= userLocation %>';
+//         console.log('User Location:', userLocation);
+//         // You can use the userLocation variable in your script logic here
+//     });
+// <
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        //set Work Date
+        const workDateInput = document.getElementById('work_date');
+        const forDate = '<%= locals.forDate %>';    
+        console.log('forDate', forDate);
+        if (forDate) {
+            const year = forDate.substring(0, 4);  // Convert forDate to a Date object
+            const month = forDate.substring(4, 6);
+            const day = forDate.substring(6, 8);
+            const formattedDate = new Date(`${year}-${month}-${day}`);
+            console.log('formattedDate', formattedDate);
+            workDateInput.value = formattedDate.toISOString().split('T')[0];    // Set the value of workDateInput to the formatted date
+        } else {
+            const currentDate = new Date().toISOString().split('T')[0];
+            console.log('currentDate', currentDate);
+            workDateInput.value = currentDate;
+        }
+
+
+        const varianceTypeSelect = document.getElementById('variance_type');
+        const inputsToClear = [
+            'flexi_accrued', 'flexi_taken', 'til_accrued', 'til_taken', 'time_overtime', 'time_leave'
+        ];
+
+        //hide variance by default
+        document.getElementById('variance').style.display = 'none';
+        document.getElementById('variance_lbl').style.display = 'none';
+        document.getElementById('variance_type').style.display = 'none';  
+        document.getElementById('variance_type_lbl').style.display = 'none';          
+        document.getElementById('variance_type').value = '';  
+
+        // Add event listener for change event on variance_type select
+        varianceTypeSelect.addEventListener('change', function() {
+            // Clear inputs
+            inputsToClear.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                input.value = "";
+            });
+
+            // Trigger the calculateTimeTotal function
+            calculateTimeTotal();
+        });
+
+        // Function to calculate time total
+        function calculateTimeTotal() {
+            const timeStartInput = document.getElementById('time_start');
+            const timeFinishInput = document.getElementById('time_finish');
+            const timeTotalInput = document.getElementById('time_total');
+            const varianceInput = document.getElementById('variance');
+            const varianceSelect = document.getElementById('variance_type');
+            const commentTextarea = document.getElementById('comment');
+
+            const timeStart = timeStartInput.value;
+            const timeFinish = timeFinishInput.value;
+
+            if (timeStart && timeFinish) {
+                // Calculate time difference
+                const startTime = new Date('1970-01-01 ' + timeStart);
+                const finishTime = new Date('1970-01-01 ' + timeFinish);
+                const timeDifference = finishTime - startTime; // Difference in milliseconds
+                const totalHours = timeDifference / (1000 * 60 * 60); // Decimal variance in hours
+
+                let varianceHours = totalHours - 8;
+                varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
+
+                // read variance Type 
+                if (varianceHours == 0) {
+                    varianceInput.value = "";
+                    commentTextarea.removeAttribute("required");
+                    console.log('a33    ', commentTextarea.attributes);
+                    varianceSelect.removeAttribute("required");
+                    varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
+                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
+                    varianceSelect.value = "";
+                    document.getElementById('variance').style.display = 'none';
+                    document.getElementById('variance_lbl').style.display = 'none';
+                    document.getElementById('variance_type').style.display = 'none';  
+                    document.getElementById('variance_type_lbl').style.display = 'none';  
+                    commentTextarea.classList.remove('mandatory');
+                } else {
+                    varianceInput.value = varianceHours;
+                    commentTextarea.setAttribute("required", "required");
+                    console.log('a33    ', commentTextarea.attributes);
+                    varianceSelect.setAttribute("required", "required");
+                    document.getElementById('variance').style.display = 'block';
+                    document.getElementById('variance_lbl').style.display = 'block';
+                    document.getElementById('variance_type').style.display = 'block';
+                    document.getElementById('variance_type_lbl').style.display = 'block';
+                    commentTextarea.classList.add('mandatory');
+                };
+
+                if (varianceHours > 0) {
+                    // console.log('long day.  overtime, no leave');
+                    varianceSelect.querySelector('option[value="leave"]').style.display = 'none';
+                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
+                };
+
+                if (varianceHours < 0) { 
+                    // console.log('short day.  leave, not overtime');
+                    varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
+                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'none';
+                }
+
+                // Handle other input values based on variance type
+                let flexiHours = 0;
+                switch(varianceSelect.value) {
+                    case 'flexi':
+                        flexiHours = varianceHours;
+                        break;
+                    case 'til':
+                        tilHours = varianceHours;
+                        break;
+                    case 'overtime':
+                        console.log('varianceHours', varianceHours);
+                        if (varianceHours > 0) {   // available on a long day only
+                            overtimeHours = varianceHours;    
+                        } else {
+                            overtimeHours = 0;
+                        }
+                        console.log('overtimeHours', overtimeHours);
+                        break;
+                    case 'leave':
+                        console.log('varianceHours', varianceHours);
+                        if (varianceHours < 0) {    //short day only
+                            leaveHours = varianceHours;
+                        } else {
+                            leaveHours = 0;
+                        }
+                        console.log('leaveHours', leaveHours);
+                        break;
+                    case 'mixed':
+                        console.log('Selected option: Mixed');
+                        break;
+                    default:
+                        console.log('Invalid option');
+                        break;
+                }
+
+                // Handle flexitime option
+                if (varianceSelect.value === 'flexi') {
+                    const flexiAccruedInput = document.getElementById('flexi_accrued');
+                    const flexiTakenInput = document.getElementById('flexi_taken');
+                    flexiAccruedInput.value = "";
+                    flexiTakenInput.value = "";
+                    if (flexiHours < 0) {
+                        flexiTakenInput.value = Math.abs(flexiHours);
+                    } else if (flexiHours > 0) {
+                        flexiAccruedInput.value = Math.abs(flexiHours);
+                    }
+                }
+
+                // Handle tiltime option
+                if (varianceSelect.value === 'til') {
+                    const tilAccruedInput = document.getElementById('til_accrued');
+                    const tilTakenInput = document.getElementById('til_taken');
+                    tilAccruedInput.value = "";
+                    tilTakenInput.value = "";
+                    if (tilHours < 0) {
+                        tilTakenInput.value = Math.abs(tilHours);
+                    } else if (tilHours > 0) {
+                        tilAccruedInput.value = Math.abs(tilHours);
+                    }
+                }                
+
+                // Handle overtime option
+                if (varianceSelect.value === 'overtime' ) {
+                    const overtimeInput = document.getElementById('time_overtime');
+                    overtimeInput.value = "";
+                    if (overtimeHours > 0) {
+                        overtimeInput.value = Math.abs(overtimeHours);
+                    } 
+                }     
+
+                // Handle leave option
+                console.log('varianceSelect.value', varianceSelect.value);
+                if (varianceSelect.value === 'leave' ) {
+                    const leaveInput = document.getElementById('time_leave');
+                    leaveInput.value = "";
+                    if (leaveHours < 0) {
+                        console.log('leaveHours', leaveHours);
+                        leaveInput.value = Math.abs(leaveHours);
+                    } 
+                }     
+                
+
+                // Calculate and set time total
+                const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const formattedHours = hours.toString().padStart(2, '0');
+                const formattedMinutes = minutes.toString().padStart(2, '0');
+                const formattedTimeTotal = `${formattedHours}:${formattedMinutes}`;
+                timeTotalInput.value = formattedTimeTotal;
+            }
+        }
+
+        // Listen for changes in the time start and time finish inputs
+        const timeStartInput = document.getElementById('time_start');
+        const timeFinishInput = document.getElementById('time_finish');
+        timeStartInput.addEventListener('input', calculateTimeTotal);
+        timeFinishInput.addEventListener('input', calculateTimeTotal);
+    });
+
+    console.log("v9", document.getElementById('variance_type').value);
+</script>
