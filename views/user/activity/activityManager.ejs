@@ -1,10 +1,15 @@
-<%- include('../../partials/header', { title: 'Activity List', user, messages })
-%>
+<%- include('../../partials/header', { title: 'numbat', user, messages: messages
+}) %>
 
 <style>
   .activity-manager-container {
     padding: 20px;
   }
+
+
+  *, body, :not(i) {
+  font-family: "Poppins", sans-serif !important;
+}
 
   .activity .header {
     margin-top: 30px;
@@ -297,9 +302,17 @@
         <div class="tab-content mt-4 project-board">
           <div class="tab-pane fade show active" id="All-list">
             <div class="row g-3 gy-5 py-3 row-deck">
-              <% activities.forEach(activity => { %>
-              <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                <div class="card">
+              <% activities.forEach(activity => { 
+                let statusColor = "#cce1ff"; 
+                if (activity.status === "emergency") {
+                    statusColor = "#fbf9a6";
+                }
+            %>
+              <div
+                class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 "
+                }
+              >
+                <div class="card" style="background-color: <%= statusColor%>;">
                   <div class="card-body">
                     <div
                       class="d-flex align-items-center justify-content-between mt-1"
@@ -367,11 +380,8 @@
                     <div
                       class="d-flex align-items-center justify-content-between mb-2 mt-3"
                     >
-                      <h4 class="small fw-bold mb-0">Status</h4>
-                      <span class="small light-danger-bg p-1 rounded"
-                        ><i class="icofont-ui-clock"></i> <%= activity.status
-                        %></span
-                      >
+                      <h4 class="small fw-bold mb-0"><%= activity.status%></h4>
+                      
                     </div>
                   </div>
                 </div>
