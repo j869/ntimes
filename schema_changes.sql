@@ -192,49 +192,19 @@ INSERT INTO location (location_id, location_name) VALUES
 
 
 -- ACTIVITIES MANAGEMENT SCHEMA:
-/*
- Navicat Premium Data Transfer
+CREATE TABLE activities (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  programs INTEGER[],
+  percentages NUMERIC(5,2)[],
+  status VARCHAR(255) NOT NULL DEFAULT 'user_defined',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_id INTEGER
+);
 
- Source Server         : localhost
- Source Server Type    : PostgreSQL
- Source Server Version : 160002 (160002)
- Source Host           : localhost:5432
- Source Catalog        : ntimes
- Source Schema         : public
-
- Target Server Type    : PostgreSQL
- Target Server Version : 160002 (160002)
- File Encoding         : 65001
-
- Date: 08/04/2024 19:34:39
-*/
-
-
--- ----------------------------
--- Table structure for activities
--- ----------------------------
-DROP TABLE IF EXISTS "public"."activities";
-CREATE TABLE "public"."activities" (
-  "id" int4 NOT NULL DEFAULT nextval('activities_id_seq'::regclass),
-  "name" varchar(255) COLLATE "pg_catalog"."default" NOT NULL,
-  "programs" int4[],
-  "percentages" numeric(5,2)[],
-  "status" "public"."status_enum" NOT NULL DEFAULT 'user_defined'::status_enum,
-  "created_at" timestamp(6) DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" timestamp(6) DEFAULT CURRENT_TIMESTAMP,
-  "user_id" int4
-)
-;
-
--- ----------------------------
--- Records of activities
--- ----------------------------
-INSERT INTO "public"."activities" VALUES (1, 'Activity Name', '{615,665}', '{60.00,40.00}', 'user_defined', '2024-04-05 06:21:36.943327', '2024-04-05 06:21:36.943327', 1);
-INSERT INTO "public"."activities" VALUES (6, 'Activity 2', '{515,555}', '{30.00,70.00}', 'user_defined', '2024-04-06 07:09:35.502979', '2024-04-06 07:09:35.502979', 1);
-INSERT INTO "public"."activities" VALUES (7, 'Activty 3', '{414,424}', '{50.00,50.00}', 'emergency', '2024-04-06 07:10:32.519919', '2024-04-06 07:10:32.519919', 1);
-
--- ----------------------------
--- Primary Key structure for table activities
--- ----------------------------
-ALTER TABLE "public"."activities" ADD CONSTRAINT "activities_pkey" PRIMARY KEY ("id");
-
+INSERT INTO activities (name, programs, percentages, status, user_id)
+VALUES 
+  ('Activity Name', '{615,665}', '{60.00,40.00}', 'user_defined', 1),
+  ('Activity 2', '{515,555}', '{30.00,70.00}', 'user_defined', 1),
+  ('Activity 3', '{414,424}', '{50.00,50.00}', 'emergency', 1);
