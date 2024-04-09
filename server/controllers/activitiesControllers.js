@@ -23,12 +23,14 @@ const getAllActivities = (req, res) => {
 
 const createActivity = (req, res) => {
   const { name, programs, percentages, status, user_id } = req.body;
+console.log("createActivity: " + programs)
 
+const thePrograms = `{${programs}}`
   const query = `INSERT INTO activities (name, programs, percentages, status, user_id) VALUES ($1, $2, $3, $4, $5)`;
 
   queryDatabase(
     query,
-    [name, programs, percentages, status, user_id],
+    [name, `{${programs}}`, `{${percentages}}`, status, user_id],
     res,
     "Activity created successfully"
   );
@@ -49,11 +51,12 @@ const updateActivity = (req, res) => {
 };
 
 const deleteActivity = (req, res) => {
-  const activityId = req.params.id;
+  const id = req.body.id
+
 
   const query = `DELETE FROM activities WHERE id = $1`;
 
-  queryDatabase(query, [activityId], res, "Activity deleted successfully");
+  queryDatabase(query, [id], res, "Activity deleted successfully");
 };
 
 export {

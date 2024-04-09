@@ -34,7 +34,7 @@ app.use(
 app.get("/activities/:id", getActivitiesByUserId);
 app.get("/activities", getAllActivities);
 app.put("/createActivity", createActivity);
-app.put("/updateActivity", updateActivity);
+app.put("/updateActivity/:id", updateActivity);
 app.post("/deleteActivity", deleteActivity);
 
 // Define routes using the imported controllers
