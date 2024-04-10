@@ -20,6 +20,8 @@ import {
   getAllActivities,
 } from "./controllers/activitiesControllers.js";
 
+import { getAllHolidays } from "./controllers/publicHollidayController.js";
+
 const port = 4000;
 const app = express();
 app.use(cors());
@@ -29,6 +31,9 @@ app.use(
     extended: true,
   })
 );
+
+// ROUTES FOR PUBLIC HOLIDAyS
+app.get("/publicHolidays", getAllHolidays);
 
 // ROUTES FOR ACTIVITIES Manager
 app.get("/activities/:id", getActivitiesByUserId);

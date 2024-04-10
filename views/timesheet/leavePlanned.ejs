@@ -1,42 +1,85 @@
-<!-- leavePlanned.ejs -->
-
-
-
 <%- include('../partials/header', { title: 'Leave Request', user: user, messages: messages }) %>
 
+<style>
+    .holiday {
+      background-color: #f0ad4e !important;
+      color: #fff !important;
+      cursor: pointer;
+    }
+  
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+  
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
 
-
+    
+    /* Tooltip arrow */
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+  
+    /* Show the tooltip text when hovering */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+</style>
+ 
+  
 <form id="plannedLeaveForm" action="/plannedLeave" method="POST">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="work_date">Work Date:</label>
-                    <input type="date" id="work_date" name="work_date" class="form-control" required  oninput="calculateLastDate()" oninvalid="this.setCustomValidity('Enter the day you worked')" oninput="this.setCustomValidity('')">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="last_date">Last Date:</label>
-                    <input type="date" id="last_date" name="last_date" class="form-control readonly" readonly>
-                </div>
-            </div>            
-        </div>
-        <div class="row">
+    
+
+
+    <div class="container d-flex gap-3 flex-column" style="width: 800px;">
+        <h3 class="mb-2 fw-bold">Add Leave Request</h3>
+        <div class="row mt-3">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="num_days">Number of Days Off:</label>
-                    <input type="number" id="num_days" name="num_days" class="form-control" required  min="1" oninput="calculateLastDate()" > 
+                    <label for="leave_pick_date" class="fw-bold">Leave Date</label>
+                  
+                    <div class="col-md-6" style=" width:max-content; display: flex; gap: 10px; align-items: center;">
+                        <input type="text" value= "" style="width: 300px;" class="form-control" id="date-range" name="date-range" placeholder="Select Date Range">
+                        <p id="num-days"  style="font-weight: bold; width: 300px; margin: 0; color:#0f0063;"></p>
+                    </div>
+            
+        
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="leave_approved">Leave Approved:</label>
-                    <select id="leave_approved" name="leave_approved" class="form-control" required>
-                        <option value="true">Yes</option>
-                        <option value="false" selected>No</option>
+                    <label for="leave_approved" class="fw-bold">Leave Approved:</label>
+                    <select id="leave_approved" name="leave_approved" class="form-control" style="width: 300px">
+                        <option value="true" selected>Pending</option>
+                        <option value="false" >Approve</option>
+                        <option value="false">Cancel</option>
                     </select>
                 </div>
             </div>
@@ -44,7 +87,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="notes">Notes:</label>
+                    <label for="notes" class="fw-bold">Notes:</label>
                     <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
                 </div>
             </div>
@@ -57,58 +100,76 @@
     </div>
 </form>
 
-<%- include('../partials/footer') %>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script>
-    console.log("a1   ")
-    if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        console.log("Latitude: " + position.coords.latitude +
-                    " Longitude: " + position.coords.longitude);
-    });
-    } else {
-    console.log("Geolocation is not supported by this browser.");
-    }    
+$(document).ready(function() {
+    // Define your holidays with date and label
 
-    function calculateLastDate() {
-    console.log("c1   ")
-    var workDate = new Date(document.getElementById("work_date").value);
-    var numDays = parseInt(document.getElementById("num_days").value);
     
-        if (!isNaN(workDate.getTime()) && !isNaN(numDays)) {
-            var lastDate = new Date(workDate);
-            lastDate.setDate(lastDate.getDate() + numDays -1);
-            
-            var formattedLastDate = lastDate.toISOString().split('T')[0];
-            document.getElementById("last_date").value = formattedLastDate;
+    const holidays = {
+    <% publicHolidays.forEach((ph, index) => { %>
+        "<%= ph.holiday_date.slice(0, 10) %>": "<%= ph.holiday_name %>"<%= index < publicHolidays.length - 1 ? ',' : '' %>
+    <% }) %>
+};
 
+
+  
+
+    $('#date-range').daterangepicker({
+        opens: 'left',
+        locale: {
+            format: 'YYYY-MM-DD',
+            separator: ' - ',
+            applyLabel: 'Apply',
+            cancelLabel: 'Cancel',
+            fromLabel: 'From',
+            toLabel: 'To',
+            customRangeLabel: 'Custom',
+            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            firstDay: 0,
+            showCustomRangeLabel: true
+        },
+
+        isCustomDate: function(date) {
+            const dateString = date.format('YYYY-MM-DD');
+            if (holidays[dateString]) {
+                console.log(holidays[dateString])
+
+                return "holiday";
+            }
+            return date.format('D');
+        },
+        isDisabled: function(date) {
+            const dateString = date.format('YYYY-MM-DD');
+            return holidays[dateString] ? true : false;
+        },
+
+        
+    }, function(start, end, label) {
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        const startDate = start.toDate();
+        const endDate = end.toDate();
+        let numDays = 0;
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const dateString = currentDate.toISOString().split('T')[0];
+            if (!holidays[dateString]) {
+                numDays++;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
         }
-        checkTimesheetEntered(workDate, numDays);
-    }
+        document.getElementById("num-days").innerText =  numDays + " Days Leave";
+    });
 
-
-    function checkTimesheetEntered(workDate, numDays) {
-    var workDays = <%- JSON.stringify(workDays.map(entry => ({ ...entry, work_date: new Date(entry.work_date).toISOString().split('T')[0] }))) %>;
-    var messageContainer = document.getElementById('messageContainer');
-
-    // Loop through each date in the range starting from workDate
-    for (var i = 0; i < numDays; i++) {
-        var currentDate = new Date(workDate);
-        currentDate.setDate(currentDate.getDate() + i); // Increment date by i days
-        var formattedCurrentDate = currentDate.toISOString().split('T')[0];
-
-        // Check if the current date clashes with any date in workDays
-        var dateExists = workDays.some(entry => entry['work_date'] === formattedCurrentDate);
-        if (dateExists) {
-            messageContainer.innerHTML = '<div class="alert alert-primary" role="alert">You already have one or more timesheets entered during this period. This action will overwrite all timesheets during the period.</div>';
-            return; // Return early if clash is found
-        }
-    }
-
-    // If no clashes found, clear the message container
-    messageContainer.innerHTML = '';
-}
-
-
+    
+});
 </script>
+
+
+<%- include('../partials/footer') %>

@@ -168,6 +168,8 @@ app.use("/activity", createActivityRoutes(isAuthenticated));
 // ACTIVIYT MAGER ROUTES ENDS
 
 
+
+
 // 
 
 //#region regular users
@@ -558,12 +560,10 @@ app.post(
 );
 
 app.get("/plannedLeave", isAuthenticated, async (req, res) => {
-  const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
-  console.log("t2    got " + result.data.length + " timesheets ");
 
-  // const flashMessages = req.flash('messages');
-  // console.log("t3   ", flashMessages)
-  // // const messages = flashMessages.map(message => message.msg);
+  const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
+  const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
+
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -579,9 +579,14 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
       id: entry["id"],
     }));
 
+    // console.log(publicHolidays.data)
+
+
+
   // Render the leavePlanned.ejs file
   res.render("timesheet/leavePlanned.ejs", {
     workDays: filteredData,
+    publicHolidays: publicHolidays.data,
     title: "Leave Request",
     user: req.user,
     messages: req.flash("messages"),
