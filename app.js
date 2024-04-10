@@ -16,13 +16,28 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import flash from "express-flash";
 import { error } from "console";
+import path from "path";
 
 // ROUTES IMPORts
 
 import createLocationRoutes from "./routes/locationRoutes.js";
 import createActivityRoutes from "./routes/activityRoutes.js";
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
+// Serve static filess
+app.use(express.static(__dirname + '/public'));
+
+// Middleware to set the correct MIME type for CSS files
+app.use((req, res, next) => {
+  if (req.url.endsWith('.css')) {
+    res.header('Content-Type', 'text/css');
+  }
+  next();
+});
+
+
+
 const API_URL = "http://localhost:4000";
 // let baseURL = "";
 const saltRounds = 10;
@@ -38,6 +53,10 @@ if (process.env.SESSION_SECRET) {
   console.log("       npm cache clean --force");
   console.log("       npm i");
 }
+
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
   session({

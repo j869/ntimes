@@ -28,3 +28,27 @@ body {
 
 }
 
+
+.bgnav {
+  background-color: #248232;
+}
+
+#active {
+  background-color: #2ba84a;
+  color: #fcfffc;
+}
+
+.sidebar li { 
+  border: none;
+  padding: 5px;
+  width: 100%;
+}
+
+.sidebar li:hover a { 
+    background-color: #2ba84a;
+}
+
+.sidebar ul { 
+  width: 100%;
+}
+
