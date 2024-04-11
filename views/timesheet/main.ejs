@@ -1,5 +1,14 @@
 <%- include('../partials/header', { title, user, messages: messages }) %>
 
+<style>
+  .time-sheet-container td{
+    background: transparent;
+  }
+
+  .time-sheet-container .holiday { 
+    background-color: antiquewhite;
+  }
+</style>
 <div class="container">
   <div class="row">
     <div class="col-auto">
@@ -19,7 +28,7 @@
     </div>
   </div>
 
-  <div class="table-responsive">
+  <div class="time-sheet-container table-responsive">
     <table class="table" id="timesheetTable">
       <thead>
         <tr>
@@ -43,11 +52,14 @@
 
       <tbody>
         <% tableData.forEach((timesheet, index) => { %>
+         
         <tr
-          class="<%= timesheet.status === 'approved' ? 'table-success' : '' %>"
+          class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
+          <%= timesheet.holiday_name != null ? 'holiday' : ''%>"
+          
         >
-          <th class="hidden" scope="row"><%= index + 1 %></th>
-          <td class="work-date"><%= timesheet.work_date %></td>
+          <th class="hidden" scope="row" ><%= index + 1 %></th>
+          <td class="work-date" style="width: 200px;"><%= timesheet.work_date %> </br> <%= timesheet.holiday_name%> </td>
           <td><%= timesheet.time_start %></td>
           <td><%= timesheet.time_finish %></td>
           <td><%= timesheet.time_total %></td>

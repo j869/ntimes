@@ -36,7 +36,7 @@
   <body>
    
 
-
+<%if(user) {%>
     <div class="sidebar container-fluid ">
       <div class="row flex-nowrap">
           <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgnav">
@@ -56,24 +56,27 @@
                           <i class="bi bi-calendar-week-fill"></i> <span class="ms-1 d-none d-sm-inline">Timesheet</span>
                         </a>
                       </li>
-  
+                  <% if (user.role == "admin") { %>
                     <li class="nav-item">
                       <a href="/users" class="nav-link link-light">
                         <i class="bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
                       </a>
                     </li>
-                    
+                    <%}%>
+                   
+                   
                     <li class="nav-item">
                       <a href="/locationManager" class="nav-link link-light">
                         <i class="bi bi-geo-alt-fill"></i> <span class="ms-1 d-none d-sm-inline">Location</span>
                       </a>
                     </li>
-                      
+                    
                     <li>
                         <a href="/activity/<%= user.id%>" class="nav-link link-light">
                           <i class="bi bi-activity"></i></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                         </a>
                     </li>
+                  
                   </ul>
   
                   <hr>
@@ -90,7 +93,7 @@
                           <li>
                               <hr class="dropdown-divider">
                           </li>
-                          <li><a class="dropdown-item" href="#">Sign out</a></li>
+                          <li><a class="dropdown-item" href="/logout">Sign out</a></li>
                       </ul>
                   </div>
               </div>
@@ -111,4 +114,4 @@
       <div class="alert alert-danger" role="alert"><%= messages.error %></div>
       <% } %>
     </main>
-
+<%}%>

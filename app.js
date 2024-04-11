@@ -197,6 +197,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   console.log(`t1    ${API_URL}/timesheets/${req.user.id}`);
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
+  const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
   // console.log("t2    got " + result.data.length + " timesheets ");
 
   const formatDate = (dateString) => {
@@ -207,6 +208,8 @@ app.get("/time", isAuthenticated, async (req, res) => {
 
   // Filter the result.data array to include only the required fields
   const filteredData = result.data.map((entry) => ({
+
+  
     id: entry["id"],
     work_date: formatDate(entry["work_date"]),
     time_start: entry["time_start"],
@@ -222,6 +225,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
     activity: entry["activity"],
     notes: entry["notes"],
     status: entry["status"],
+    holiday_name: publicHolidays.data.find((holiday) => entry["work_date"].slice(0, 10) === holiday.holiday_date.slice(0, 10))?.holiday_name
   }));
 
   res.render("timesheet/main.ejs", {
@@ -581,6 +585,7 @@ app.post(
 app.get("/plannedLeave", isAuthenticated, async (req, res) => {
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
+
   const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
 
 
@@ -600,8 +605,6 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
 
     // console.log(publicHolidays.data)
 
-
-
   // Render the leavePlanned.ejs file
   res.render("timesheet/leavePlanned.ejs", {
     workDays: filteredData,
@@ -611,6 +614,7 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
     messages: req.flash("messages"),
   });
 });
+
 
 app.post(
   "/plannedLeave",
@@ -648,43 +652,58 @@ app.post(
     try {
       const { num_days, leave_approved, notes } = req.body;
       let workDate = new Date(req.body.work_date); // Start date for leave
-
-      console.log(`pl4      ${API_URL}/timesheets`);
-      for (let i = 0; i < num_days; i++) {
-        //console.log(`pl5    Adding record for ${workDate.toLocaleDateString()}`);
-        const result = await axios.put(`${API_URL}/timesheets`, {
-          person_id: req.user.id,
-          username: req.user.username,
-          work_date: workDate.toISOString(), // Convert to ISO string
-          activity: "Approved Leave",
-          entry_date: currentDate.toISOString(), // Convert to ISO string
-          notes,
-          on_duty: 0, // Off duty
-          duty_category: 3, // Approved leave
-          status: "entered",
-        });
-        console.log(
-          `pl6     Date=${workDate.toLocaleDateString()}: Status=${
-            result.status === 201
-              ? "success(201)"
-              : "error(" + result.status + ")"
-          }`
-        );
-
-        // Increment work_date for the next day
-        workDate.setDate(workDate.getDate() + 1);
+  
+      const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
+      console.log("THE NUMBER: " + num_days);
+  
+      let daysAdded = 0; // Track the number of days added
+  
+      while (daysAdded < num_days) {
+          const dayOfWeek = workDate.getDay();
+          const isSunday = dayOfWeek === 0;
+          const isSaturday = dayOfWeek === 6;
+          const isPublicHoliday = publicHolidays.data.some(holiday =>
+             holiday.holiday_date.slice(0, 10) == workDate.toISOString().slice(0, 10));
+          
+          if (!isSunday && !isSaturday && !isPublicHoliday) {
+              const result = await axios.put(`${API_URL}/timesheets`, {
+                  person_id: req.user.id,
+                  username: req.user.username,
+                  work_date: workDate.toISOString(), // Convert to ISO string
+                  activity: "Approved Leave",
+                  entry_date: new Date().toISOString(), // Convert to ISO string for current date
+                  notes,
+                  on_duty: 0, // Off duty
+                  duty_category: 3, // Approved leave
+                  status: "entered",
+              });
+              console.log(
+                  `Adding record for ${workDate.toLocaleDateString()}: Status ${
+                      result.status === 201 ? "success(201)" : "error(" + result.status + ")"
+                  }`
+              );
+  
+              daysAdded++; // Increment daysAdded only if a valid day is added
+          }
+  
+          // Increment workDate for the next day
+          workDate.setDate(workDate.getDate() + 1);
+  
+          // Check for public holidays again after incrementing workDate
+          const nextDayIsPublicHoliday = publicHolidays.data.some(holiday => holiday.holiday_date.slice(0, 10) === workDate.toISOString().slice(0, 10));
+          if (nextDayIsPublicHoliday) {
+              // Skip the public holiday by incrementing workDate again
+              workDate.setDate(workDate.getDate() + 1);
+          }
       }
-
-      console.log("pl9   ");
+  
+      console.log("pl9");
       res.redirect("/time");
-    } catch {
-      console.error("pl8     Error creating timesheet:", error);
-      req.flash(
-        "messages",
-        "An error occurred while creating the timesheet - the timesheet was not saved"
-      );
+  } catch (error) {
+      console.error("pl8 Error creating timesheet:", error);
+      req.flash("messages", "An error occurred while creating the timesheet - the timesheet was not saved");
       return res.redirect("/time");
-    }
+  }
   }
 );
 
