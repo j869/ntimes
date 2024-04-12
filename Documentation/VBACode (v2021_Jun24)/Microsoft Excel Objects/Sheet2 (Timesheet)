@@ -1,0 +1,95 @@
+Option Explicit
+
+Private Sub Image1_Click()
+    Fm_Help.Show
+End Sub
+
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+    Cancel = True
+    If ActiveSheet.Shapes("UpdateIcon").Visible Then
+        Call UpdateTimesheet
+    End If
+End Sub
+
+
+Private Sub Worksheet_Change(ByVal Target As Range)     'Sheet2 (Timesheet)
+    'trying to catch lost data bug - 24Apr18
+
+    On Error GoTo err_trap:
+    Dim KeyCells As Range
+    Set KeyCells = Range("AB15:AB288")
+    If Not Application.Intersect(KeyCells, Range(Target.Address)) Is Nothing Then
+         Call logDataEntry("Timesheet Data > row(" & Target.row & "),'" & Cells(Target.row, 2) & "','" & Cells(Target.row, 8) & "','" & Cells(Target.row, 18) & "','" & Cells(Target.row, 19) & "','" & Cells(Target.row, 28) & "'")
+    End If
+    
+err_trap:
+    Err.Clear
+    On Error GoTo 0
+    Exit Sub  'fail without error
+End Sub
+
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Dim SelectedDate As Date
+    Dim StartDate As Date
+    Dim EndDate As Date
+    Dim DebugMode As Boolean
+    If ActiveSheet.ProtectContents = True Then DebugMode = False Else DebugMode = True
+    ActiveSheet.Unprotect Password:=Pword
+    Cells(1, EntryDateCol) = ActiveCell.row 'For conditional format
+    
+    ActiveSheet.Shapes("UpdateIcon").Top = 5 'Park Update icon
+    Shapes("UpdateIcon").Visible = False
+    
+    If CancelTimeEntry Then GoTo optout 'An optional timesheet display has been chosen in the Options Form (i.e. Only showing RDOs / AL / ER Duty /....)
+    If ActiveCell.row < Range("StartDate").row Then GoTo optout
+    If ActiveCell.row > Range("EndDate").row Then GoTo optout
+    If StartDate = 0 Then StartDate = Range("StartDate")
+    If EndDate = 0 Then EndDate = Range("EndDate")
+    
+    SelectedDate = Cells(ActiveCell.row, DateCol)
+    If SelectedDate > Date + Sheets("Admin").Range("AdvanceEntry") Then GoTo optout
+    
+    If Not Rows(ActiveCell.row).Hidden Then
+        ActiveSheet.Shapes("UpdateIcon").Top = ActiveCell.Top - 3
+        ActiveSheet.Shapes("UpdateIcon").Left = Columns("X").Left + 10
+        ActiveSheet.Shapes("UpdateIcon").Width = 27
+        ActiveSheet.Shapes("UpdateIcon").Height = 27
+        ActiveSheet.Shapes("UpdateIcon").Visible = True
+    End If
+    
+optout:
+    If Not DebugMode Then
+        ActiveSheet.Protect Password:=Pword, UserInterfaceOnly:=True, DrawingObjects:=True, Contents:=True, Scenarios:=True
+    End If
+End Sub
+
+'This routine fires when the user clicks the 'Clock' icon or doubleclicks a timesheet row
+Private Sub UpdateTimesheet()
+Dim ThisDay As Date
+Dim PaidHours As Single
+ThisDay = Cells(ActiveCell.row, DateCol)
+    PaidHours = Sheets("Admin").Range("PaidHours").Cells(GetPeriodDayNumber(ThisDay))
+    If (Sheets("Admin").Range("RosteredDays") = 0 And PaidHours = 0) Or (Sheets("Admin").Range("RosteredDays") <> 0 And Weekday(ThisDay, 2) < 6 And PaidHours = 0) Then
+        If MsgBox("This is not a normal workday." & vbCr & _
+        "Are you sure you want to fill in your timesheet for this day?", vbYesNo, MsgCaption) = vbNo Then Exit Sub
+    End If
+
+      If Cells(ActiveCell.row, EntryDateCol) <> "" Then
+            If MsgBox("Information for this day has already been entered." & vbCr & _
+                "Are you sure you want to change this information?", vbYesNo, MsgCaption) = vbNo Then
+                Exit Sub
+            End If
+    End If
+
+    Fm_Select_Activity.Show
+End Sub
+
+Sub TimesheetOptionsButton_Click()
+   Fm_Timesheet_Options.Show
+End Sub
+
+Sub InfoButton_Click()
+    Fm_Info.Show
+End Sub
+
+
