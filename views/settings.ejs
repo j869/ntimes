@@ -1,5 +1,5 @@
 
-<%- include('partials/header', { title: 'Admin settings', user, messages }) %>
+<%- include('partials/header') %>
 
 <div class="container-lg">    
     <h1>User Records</h1>
@@ -39,7 +39,8 @@
                             <% } %>
                         </td>
                         <td><%= user.verified_email %></td>
-                        <td><a href="<%= config.baseUrl %>/users/<%= user.id %>">edit</a></td>
+                        <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
+                        
                     </tr>
                 <% }); %>
             </tbody>
@@ -78,6 +79,6 @@
 </div>
 
 
-<%- include('partials/footer', {user}) %>
+<%- include('partials/footer') %>
 
 

@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title, user, messages: messages }) %>
+<%- include('../partials/header') %>
 
 <style>
   .time-sheet-container td{
@@ -9,6 +9,7 @@
     background-color: antiquewhite;
   }
 </style>
+<<<<<<< HEAD
 <div class="container">
 
 <style>
@@ -227,21 +228,28 @@ if (isFlexiAndTil == true) {
 
 
 
+=======
+<!-- <div class="container"> -->
+  <h1 class="page-title mb-4">Timesheet</h1>
+>>>>>>> 230991bc66ebb42cda159bf9a2306631630aff6a
   <div class="row">
     <div class="col-auto">
-      <a href="/timesheetEntry" class="btn btn-primary" id="addTimesheetBtn"
-        ><i class="fas fa-plus"></i> PV Timesheet</a
-      >
+      <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
     </div>
     <div class="col-auto">
-      <a href="/emergencyEntry" class="btn btn-danger" id="addEmergencyBtn"
-        ><i class="fas fa-plus"></i> Emergency</a
-      >
+      <a href="/emergencyEntry" class="btn btngray" id="addEmergencyBtn">
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Emergency</a>
     </div>
     <div class="col-auto">
+<<<<<<< HEAD
       <a href="/plannedLeave" class="btn btn-danger" id="addEmergencyBtn"
         ><i class="fas fa-door-open    "></i> Planned Leave</a
       >
+=======
+      <a href="/plannedLeave" class="btn btngray" id="addEmergencyBtn">
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a>
+>>>>>>> 230991bc66ebb42cda159bf9a2306631630aff6a
     </div>
 
     <div class="col-auto">
@@ -300,9 +308,10 @@ if (isFlexiAndTil == true) {
           <% if (timesheet.id) { %>
           <td>
             <!-- Added buttons for actions -->
-            <a href="/deleteTimesheet/<%= timesheet.id %>">Delete</a>
-            <a href="/approveTimesheet/<%= timesheet.id %>">Approve</a>
-            <a href="/timesheetEntry?userId=<%=user.id %>">View</a>
+            
+            <a href="/deleteTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i></a>
+            <a href="/approveTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-check approve-icon" aria-hidden="true"></i></a>
+            <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon" aria-hidden="true"></i></a>
           </td>
           <% } else { %>
           <td>&nbsp;</td>
@@ -312,9 +321,9 @@ if (isFlexiAndTil == true) {
       </tbody>
     </table>
   </div>
-</div>
+<!-- </div> -->
 
-<%- include('../partials/footer') %>
+<%- include('../partials/footer', { locals }) %>
 
 <script>
   //   console.log(<= tableData%>);

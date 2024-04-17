@@ -239,7 +239,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   }));
 
   res.render("timesheet/main.ejs", {
-    title: "Numbat Timekeeper",
+    title: "Timesheet",
     user: req.user,
     flexTilRdo: flexTilRdo.data[0],
     tableData: filteredData,
@@ -777,6 +777,7 @@ app.get("/users", isAdmin, async (req, res) => {
   res.render("settings.ejs", {
     user: req.user,
     users: result.data,
+    title: "Users", 
     messages: req.flash("messages"),
   });
   console.log("u9  all users displayed on screen ");

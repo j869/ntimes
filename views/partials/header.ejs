@@ -1,124 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numbat</title>
-    <link
-    rel="stylesheet"
-    href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
-    crossorigin="anonymous"
-  />
-  <link rel="stylesheet" href="../../styles/main.css" />
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-    crossorigin="anonymous"
-  />
- 
-  
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="../../styles/styles.css" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <% if (locals.title) { %>
+          <title>Numbat <%=title%></title>
+            <% } else { %>
+              <title>Numbat</title>
+            <% } %>                     
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"/>
+        <script src="https://kit.fontawesome.com/560dca36fa.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../../styles/main.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        />
+    
+    
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="../../styles/styles.css" />
 
-    <!-- FOR THE DATEPOCKER -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <!-- FOR THE DATEPOCKER -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    
+        <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+        <script>
+                  console.log("Header variables", <%- JSON.stringify(locals) %>);
+        </script>
+    </head>
+
+    <body>
    
-    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+        <%if(user) {%>
 
 
-    <style></style>
-  </head>
-  <body>
-   
 
-<%if(user) {%>
-    <div class="sidebar container-fluid ">
-      <div class="row flex-nowrap">
-          <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgnav">
-              <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
-                  <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto ">
-                      <span class="fs-5 d-none d-sm-inline"><img style="width: 100%; border-radius: 10px;" src="../../images/logo.png" alt="logo"></span>
-                  </a>
-                  <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                      <li class="nav-item">
-                          <a href="/" class="nav-link active" id="active">
-                            <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
-                          </a>
-                      </li>
-  
-                      <li class="nav-item">
-                        <a href="/time" class="nav-link link-light">
-                          <i class="bi bi-calendar-week-fill"></i> <span class="ms-1 d-none d-sm-inline">Timesheet</span>
+            <div class="sidebar container-fluid ">
+            <div class="row flex-nowrap">
+
+                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgprimary">
+                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100">
+                        <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto ">
+                            <span class="fs-5 d-none d-sm-inline"><img src="../images/logo.png" alt="logo"></span>
                         </a>
-                      </li>
-                  <% if (user.role == "admin") { %>
-                    <li class="nav-item">
-                      <a href="/users" class="nav-link link-light">
-                        <i class="bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
-                      </a>
-                    </li>
-                    <%}%>
-                   
-                   
-                    <li class="nav-item">
-                      <a href="/locationManager" class="nav-link link-light">
-                        <i class="bi bi-geo-alt-fill"></i> <span class="ms-1 d-none d-sm-inline">Location</span>
-                      </a>
-                    </li>
-                    
-                    <li>
-                        <a href="/activity/<%= user.id%>" class="nav-link link-light">
-                          <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
-                        </a>
-                    </li>
-                    <% if (user.role == "admin") { %>
-                      <li class="nav-item">
-                        <a href="/fundSource" class="nav-link link-light">
-                          <i class="bi bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Fund Sources</span>
-                        </a>
-                      </li>
-                      <%}%>
-                  
-                  </ul>
-  
-                  <hr>
-  
-                  <div class="dropdown pb-4">
-                      <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle link-light" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                          <img src="https://github.com/mdo.png" alt="profile-photo" width="30" height="30" class="rounded-circle">
-                          <span class="d-none d-sm-inline mx-1 fs-small" style="font-size: 11px ;"><%= user.username%></span>
-                      </a>
-  
-                      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                          <li><a class="dropdown-item" href="#">Settings</a></li>
-                          <li><a class="dropdown-item" href="#">Profile</a></li>
-                          <li>
-                              <hr class="dropdown-divider">
+                        <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                            <li class="nav-item">
+                              <% if (locals.title && locals.title === 'Home') { %>
+                                <a href="/" class="nav-link active" id="active">
+                              <% } else { %>
+                                <a href="/" class="nav-link link-light">
+                              <% } %>                              
+                                  <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                                </a>
+                            </li>
+        
+                            <li class="nav-item">
+                                <% if (locals.title && locals.title === 'Timesheet') { %>
+                                  <a href="/time" class="nav-link active" id="active">
+                                <% } else { %>
+                                  <a href="/time" class="nav-link link-light">
+                                <% } %>                              
+                                <i class="bi bi-calendar-week-fill"></i> <span class="ms-1 d-none d-sm-inline">Timesheet</span>
+                              </a>
+                            </li>
+        
+                          <li class="nav-item">
+                              <% if (locals.title && locals.title === 'Users') { %>
+                                <a href="/users" class="nav-link active" id="active">
+                              <% } else { %>
+                                <a href="/users" class="nav-link link-light">
+                              <% } %>                              
+                              <i class="bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
+                            </a>
                           </li>
-                          <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-          <div class="col py-3" style="height: 100vh; overflow-y: auto;">
-             
-     
+                          
+                          <li class="nav-item">
+                            <% if (locals.title && locals.title === 'Location Manager') { %>
+                              <a href="/locationManager" class="nav-link active" id="active">
+                            <% } else { %>
+                              <a href="/locationManager" class="nav-link link-light">
+                            <% } %>
+                              <i class="bi bi-geo-alt-fill"></i> <span class="ms-1 d-none d-sm-inline">Location</span>
+                            </a>
+                          </li>
+                            
+                          <li>
+                              <% if (locals.title && locals.title === 'Activity Manager') { %>
+                                <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
+                              <% } else { %>
+                                <a href="/activity/<%= user.id %>" class="nav-link link-light">
+                              <% } %>
+                                <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
+                              </a>
+                          </li>
+                        </ul>
+        
+                        <hr>
+        
+                        <div class="dropdown pb-4">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle link-light" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="https://github.com/mdo.png" alt="profile-photo" width="30" height="30" class="rounded-circle">
+                                <span class="d-none d-sm-inline mx-1">Name</span>
+                            </a>
+        
+                            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                                <li><a class="dropdown-item" href="/locationManager">Settings</a></li>
+                                <li><a class="dropdown-item" href="/users">Profile</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    <main>
-      <div id="messageContainer">
-        <% if (locals.messages && locals.messages.length > 0) { %> <% if
-        (messages.length > 0) { %> <% messages.forEach(msg => { %>
-        <div class="alert alert-primary" role="alert"><%= msg %></div>
-        <% }) %> <% } %> <% } %>
-      </div>
 
-      <% if (typeof messages !== 'undefined' && messages.error) { %>
-      <div class="alert alert-danger" role="alert"><%= messages.error %></div>
-      <% } %>
-    </main>
-<%}%>
+                
+                    
+            
+
+            <main>
+
+                <section class="col py-3">    
+
+
+                    <div id="messageContainer">
+                        <% if (locals.messages && locals.messages.length > 0) { %> <% if
+                        (messages.length > 0) { %> <% messages.forEach(msg => { %>
+                        <div class="alert alert-primary" role="alert"><%= msg %></div>
+                        <% }) %> <% } %> <% } %>
+                    </div>
+        
+                    <% if (typeof messages !== 'undefined' && messages.error) { %>
+                    <div class="alert alert-danger" role="alert"><%= messages.error %></div>
+                    <% } %>
+        
+
+        <%}%>
+
+
+
