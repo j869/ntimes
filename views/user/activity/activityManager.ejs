@@ -1,5 +1,4 @@
-<%- include('../../partials/header', { title: 'numbat', user, messages: messages
-}) %>
+<%- include('../../partials/header') %>
 
 <style>
   .activity-manager-container {
@@ -263,11 +262,11 @@
                 </td>
                 <td><%= activity.status %></td>
                 <td>
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editActivityModal<%= activity.id %>">
-                    Edit
+                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#editActivityModal<%= activity.id %>">
+                    <i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i>
                   </button>
-                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteActivityModal<%= activity.id %>">
-                    Delete
+                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#deleteActivityModal<%= activity.id %>">
+                    <i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i>
                   </button>
                 </td>
               </tr>

@@ -52,3 +52,94 @@ body {
   width: 100%;
 }
 
+
+
+/*color codes
+    black: #040f0f
+    dark green: #248232
+    primary: #2ba84a
+    gray: #d0dcdc
+    white: #fcfffc
+    slate gray #364958
+*/
+
+
+.bgprimary {
+  background-color: #364958;
+}
+
+.bgtertiary {
+  background-color: #d0dcdc;
+}
+
+.bglight {
+  background-color: #fcfffc;
+}
+
+#active {
+  background-color: #2ba84a;
+  color: #fcfffc;
+}
+
+.nav-link:hover {
+  background-color: #248232;
+}
+
+.btnprimary {
+  background-color: #2ba84a;
+  color: #fcfffc;
+  outline-color: #2ba84a;
+}
+
+.btnprimary:hover {
+  background-color: #248232;
+  color: #fcfffc;
+}
+
+.btngray {
+  background-color: #d0dcdc;
+}
+
+.btngray:hover {
+  background-color: #364958;
+  color: #fcfffc;
+}
+
+.delete-icon {
+  color: #364958;
+  font-size: 20px;
+}
+
+.delete-icon:hover {
+  color: #ff0000;
+  font-size: 20px;
+}
+
+.approve-icon {
+  color: #364958;
+  font-size: 20px;
+}
+
+.approve-icon:hover {
+  color: #2ba84a;
+  font-size: 20px;
+}
+
+.view-icon {
+  color: #364958;
+  font-size: 20px;
+}
+
+.view-icon:hover {
+  color: rgb(0, 89, 255);
+  font-size: 20px;
+}
+
+.edit-icon {
+  color: #364958;
+}
+
+.edit-icon:hover {
+  color: #2ba84a;
+}
+

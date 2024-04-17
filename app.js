@@ -229,7 +229,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   }));
 
   res.render("timesheet/main.ejs", {
-    title: "Numbat Timekeeper",
+    title: "Timesheet",
     user: req.user,
     tableData: filteredData,
     messages: req.flash("messages"),
@@ -766,6 +766,7 @@ app.get("/users", isAdmin, async (req, res) => {
   res.render("settings.ejs", {
     user: req.user,
     users: result.data,
+    title: "Users", 
     messages: req.flash("messages"),
   });
   console.log("u9  all users displayed on screen ");
