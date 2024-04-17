@@ -72,20 +72,41 @@
     }    
 
     function calculateLastDate() {
-    console.log("c1   ")
     var workDate = new Date(document.getElementById("work_date").value);
     var numDays = parseInt(document.getElementById("num_days").value);
-    
-        if (!isNaN(workDate.getTime()) && !isNaN(numDays)) {
-            var lastDate = new Date(workDate);
-            lastDate.setDate(lastDate.getDate() + numDays -1);
-            
-            var formattedLastDate = lastDate.toISOString().split('T')[0];
-            document.getElementById("last_date").value = formattedLastDate;
 
+    if (!isNaN(workDate.getTime()) && !isNaN(numDays)) {
+        var lastDate = new Date(workDate);
+
+        // Loop through each day to add numDays, excluding public holidays, Saturdays, and Sundays
+        for (var i = 1; i < numDays;) {
+            lastDate.setDate(lastDate.getDate() + 1);
+
+            // Check if the current day is a public holiday, Saturday, or Sunday
+            if (isPublicHoliday(lastDate) || lastDate.getDay() === 0 || lastDate.getDay() === 6) {
+                continue; // Skip this day
+            }
+
+            i++; // Increment i only if the current day is not skipped
         }
-        checkTimesheetEntered(workDate, numDays);
+
+        var formattedLastDate = lastDate.toISOString().split('T')[0];
+        document.getElementById("last_date").value = formattedLastDate;
     }
+}
+
+// Function to check if a given date is a public holiday
+function isPublicHoliday(date) {
+    var formattedDate = date.toISOString().split('T')[0];
+    return holidays.hasOwnProperty(formattedDate);
+}
+
+// Example holidays object
+const holidays = {
+    <% publicHolidays.forEach((ph, index) => { %>
+        "<%= ph.holiday_date.slice(0, 10) %>": "<%= ph.holiday_name %>"<%= index < publicHolidays.length - 1 ? ',' : '' %>
+    <% }) %>
+};
 
 
     function checkTimesheetEntered(workDate, numDays) {
