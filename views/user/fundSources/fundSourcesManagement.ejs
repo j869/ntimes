@@ -1,0 +1,146 @@
+<%- include('../../partials/header', { title: 'Fund Sources Management', user, messages: messages }) %>
+
+<style>
+  .location-manager-container {
+    padding: 20px;
+  }
+
+  .location .header {
+    margin-top: 30px;
+    margin-left: 120px;
+    margin-right: 120px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  h4 {
+    margin: 2rem 0rem 1rem;
+  }
+
+  .table-image {
+    td,
+    th {
+      vertical-align: middle;
+    }
+  }
+</style>
+
+<div class="location">
+  <div class="mb-3">
+    <h2>Fund Sources Management</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFundSourceModal">
+        Add Fund Source
+    </button>
+  </div>
+
+  <!-- Add Fund Source Modal -->
+  <div class="modal fade" id="addFundSourceModal" tabindex="-1" aria-labelledby="addFundSourceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addFundSourceModalLabel">Add Fund Source</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addFundSourceForm" action="/fundSource/create" method="POST">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="addFundSourceNum" class="form-label">Fund Source Number</label>
+              <input type="text" class="form-control" id="addFundSourceNum" name="fund_source_num" required>
+            </div>
+            <div class="mb-3">
+              <label for="addFundSourceName" class="form-label">Fund Source Name</label>
+              <input type="text" class="form-control" id="addFundSourceName" name="fund_source_name" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit and Delete Modals -->
+  <% data.forEach(fundSource => { %>
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editFundSourceModal<%= fundSource.fund_source_num %>" tabindex="-1" aria-labelledby="editFundSourceModalLabel<%= fundSource.fund_source_num %>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editFundSourceModalLabel<%= fundSource.fund_source_num %>">Edit Fund Source</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="editFundSourceForm<%= fundSource.fund_source_num %>" action="/fundSource/update" method="POST">
+            <input type="hidden" name="id" value="<%= fundSource.id%>">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="editFundSourceNum<%= fundSource.fund_source_num %>" class="form-label">Fund Source Number</label>
+                <input type="text" class="form-control" id="editFundSourceNum<%= fundSource.fund_source_num %>" name="fund_source_num" value="<%= fundSource.fund_source_num %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="editFundSourceName<%= fundSource.fund_source_num %>" class="form-label">Fund Source Name</label>
+                <input type="text" class="form-control" id="editFundSourceName<%= fundSource.fund_source_num %>" name="fund_source_name" value="<%= fundSource.fund_source_name %>" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteFundSourceModal<%= fundSource.fund_source_num %>" tabindex="-1" aria-labelledby="deleteFundSourceModalLabel<%= fundSource.fund_source_num %>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteFundSourceModalLabel<%= fundSource.fund_source_num %>">Delete Fund Source</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this Fund Source?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form id="deleteFundSourceForm<%= fundSource.fund_source_num %>" action="/fundSource/delete" method="POST">
+              <input type="hidden" name="id" value="<%= fundSource.id %>">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+
+  <!-- Table -->
+  <div class="row">
+    <div class="col-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Fund Source Name</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.forEach(fundSource => { %>
+            <tr>
+              <th scope="row"><%= fundSource.fund_source_num %></th>
+              <td><%= fundSource.fund_source_name %></td>
+              <td>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editFundSourceModal<%= fundSource.fund_source_num %>"><i class="fas fa-edit"></i></button>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFundSourceModal<%= fundSource.fund_source_num %>"><i class="far fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../../partials/footer') %>

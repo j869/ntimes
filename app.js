@@ -22,6 +22,8 @@ import path from "path";
 
 import createLocationRoutes from "./routes/locationRoutes.js";
 import createActivityRoutes from "./routes/activityRoutes.js";
+import createTimesheetRoutes from "./routes/timeSheetsRoutes.js";
+import createFundSourceRoutes from "./routes/fundSourcesRoutes.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
@@ -187,6 +189,12 @@ app.use("/activity", createActivityRoutes(isAuthenticated));
 // ACTIVIYT MAGER ROUTES ENDS
 
 
+// TIMESHEETS ROUTES
+app.use("/dayoff", createTimesheetRoutes(isAuthenticated))
+
+// FUND SOURCS ROUTES
+app.use("/fundSource", createFundSourceRoutes(isAuthenticated))
+
 
 
 // 
@@ -198,6 +206,8 @@ app.get("/time", isAuthenticated, async (req, res) => {
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
   const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
+  const flexTilRdo  = await axios.post(`${API_URL}/tfr/${req.user.id}`);
+  // console.log(flexTilRdo.data[0])
   // console.log("t2    got " + result.data.length + " timesheets ");
 
   const formatDate = (dateString) => {
@@ -231,6 +241,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   res.render("timesheet/main.ejs", {
     title: "Numbat Timekeeper",
     user: req.user,
+    flexTilRdo: flexTilRdo.data[0],
     tableData: filteredData,
     messages: req.flash("messages"),
   });

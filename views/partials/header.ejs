@@ -73,9 +73,16 @@
                     
                     <li>
                         <a href="/activity/<%= user.id%>" class="nav-link link-light">
-                          <i class="bi bi-activity"></i></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
+                          <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                         </a>
                     </li>
+                    <% if (user.role == "admin") { %>
+                      <li class="nav-item">
+                        <a href="/fundSource" class="nav-link link-light">
+                          <i class="bi bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Fund Sources</span>
+                        </a>
+                      </li>
+                      <%}%>
                   
                   </ul>
   

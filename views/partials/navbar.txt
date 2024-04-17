@@ -173,3 +173,182 @@
     </main>
   </body>
 </html>
+
+
+
+<%- include('../partials/header', { title: 'Leave Request', user: user, messages: messages }) %>
+
+<style>
+    .holiday {
+      background-color: #f0ad4e !important;
+      color: #fff !important;
+      cursor: pointer;
+    }
+  
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+  
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    
+    /* Tooltip arrow */
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+  
+    /* Show the tooltip text when hovering */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+</style>
+ 
+  
+<form id="plannedLeaveForm" action="/plannedLeave" method="POST">
+    
+
+
+    <div class="container d-flex gap-3 flex-column" style="width: 800px;">
+        <h3 class="mb-2 fw-bold">Add Leave Request</h3>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="leave_pick_date" class="fw-bold">Leave Date</label>
+                  
+                    <div class="col-md-6" style=" width:max-content; display: flex; gap: 10px; align-items: center;">
+                        <input type="text" value= "" style="width: 300px;" class="form-control" id="date-range" name="date-range" placeholder="Select Date Range">
+                        <p id="num-days"  style="font-weight: bold; width: 300px; margin: 0; color:#0f0063;"></p>
+                    </div>
+            
+        
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="leave_approved" class="fw-bold">Leave Approved:</label>
+                    <select id="leave_approved" name="leave_approved" class="form-control" style="width: 300px">
+                        <option value="true" selected>Pending</option>
+                        <option value="false" >Approve</option>
+                        <option value="false">Cancel</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="notes" class="fw-bold">Notes:</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+                </div>
+            </div>
+        </div>        
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Define your holidays with date and label
+
+    
+    const holidays = {
+    <% publicHolidays.forEach((ph, index) => { %>
+        "<%= ph.holiday_date.slice(0, 10) %>": "<%= ph.holiday_name %>"<%= index < publicHolidays.length - 1 ? ',' : '' %>
+    <% }) %>
+};
+
+
+  
+
+    $('#date-range').daterangepicker({
+        opens: 'left',
+        locale: {
+            format: 'YYYY-MM-DD',
+            separator: ' - ',
+            applyLabel: 'Apply',
+            cancelLabel: 'Cancel',
+            fromLabel: 'From',
+            toLabel: 'To',
+            customRangeLabel: 'Custom',
+            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            firstDay: 0
+        },
+        
+        isCustomDate: function(date) {
+            const dateString = date.format('YYYY-MM-DD');
+            if (holidays[dateString]) {
+                console.log(holidays[dateString])
+
+                return "holiday";
+            }
+            return date.format('D');
+        },
+       
+            isDisabled: function(date) {
+            const dateString = date.format('YYYY-MM-DD');
+            return holidays[dateString] || date.day() === 0 || date.day() === 6; // Disable holidays, Saturdays, and Sundays
+  
+        },
+
+        
+    }, function(start, end, label) {
+        const startDate = start.toDate();
+        const endDate = end.toDate();
+        let numDays = 0;
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const dateString = currentDate.toISOString().split('T')[0];
+            if (!holidays[dateString] && currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                numDays++;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        document.getElementById("num-days").innerText =  numDays + " Days Leave";
+    });
+
+    
+});
+</script>
+
+
+<%- include('../partials/footer') %>
+

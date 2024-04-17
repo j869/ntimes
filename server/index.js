@@ -22,6 +22,15 @@ import {
 
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
+import { 
+  getTFR,
+  postDayOff
+ } from "./controllers/timeSheetsController.js";
+
+
+import { getFundSources, getFundSourceById, createFundSource, updateFundSource, deleteFundSource } from "./controllers/fundSourcesConstroller.js"
+
+
 const port = 4000;
 const app = express();
 app.use(cors());
@@ -31,6 +40,21 @@ app.use(
     extended: true,
   })
 );
+
+// ROUTES FOR THE TIMESHEETS CONTROLLERS
+app.post("/tfr/:userID", getTFR);
+app.post("/flexiDayOff/:userID", postDayOff);
+
+
+
+// ROUTES FOR THE FUND SOURCE CONTROLLER
+app.get("/fundSource", getFundSources);
+app.get("/fundSource/:id", getFundSourceById);
+app.post("/fundSource/create", createFundSource);
+app.post("/fundSource/update", updateFundSource);
+app.post("/fundSource/delete", deleteFundSource);
+
+
 
 // ROUTES FOR PUBLIC HOLIDAyS
 app.get("/publicHolidays", getAllHolidays);
