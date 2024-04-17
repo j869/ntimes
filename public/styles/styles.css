@@ -45,7 +45,8 @@ body {
 }
 
 .sidebar li:hover a { 
-    background-color: #2ba84a;
+   color: #fcfffc;
+  background: #6e899e;
 }
 
 .sidebar ul { 
@@ -77,7 +78,7 @@ body {
 }
 
 #active {
-  background-color: #2ba84a;
+  background-color: #6e899e;
   color: #fcfffc;
 }
 
