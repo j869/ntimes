@@ -53,8 +53,6 @@ body {
   width: 100%;
 }
 
-
-
 /*color codes
     black: #040f0f
     dark green: #248232
@@ -104,6 +102,26 @@ body {
 .btngray:hover {
   background-color: #364958;
   color: #fcfffc;
+}
+
+.btndark {
+  background-color: #364958;
+  color: #fcfffc;
+}
+
+.btndark:hover {
+  background-color: #fcfffc;
+  color: #364958;
+  border-width: 3px;
+  border-color: #364958;
+  padding: 6px 13px;
+
+}
+
+.loginprompt {
+  text-align: center;
+  justify-content: center;
+  width: 450px
 }
 
 .delete-icon {

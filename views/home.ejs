@@ -1,20 +1,18 @@
 <%- include('partials/header') %>
 
-<section class="col py-3">
-  <div class="container pt-2 m-0 bglight">
-    <i class="fas fa-key fa-4x"></i>
-      <h1 class="display-3">numbat</h1>
-      <p class="lead">Timekeeping done naturally</p>
+  <section class="d-flex py-3 justify-content-center">
+    <div class="container pt-2 m-0 loginprompt">
+      <img src="../images/logo2.png"/>
       <hr>
       <% if (user) { %>
-        <p>Hello, <%= user.username %>. Welcome to Numbat Timekeeping.</p>
-        <a class="btn btn-light btn-lg" href="/logout" role="button">Logout</a>
+        <p>Hello, <%= user.username %>.</p>
+        <a class="btn btngray btn-lg" href="/logout" role="button">Logout</a>
         <% } else { %>
-          <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
-          <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
+          <a class="btn btngray btn-lg" href="/register" role="button">Register</a>
+          <a class="btn btnprimary btn-lg" href="/login" role="button">Login</a>
           <% } %>
     </div>
-</section>
+  </section>
 
 
   <%- include('partials/footer') %>
