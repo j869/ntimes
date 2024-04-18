@@ -101,6 +101,16 @@
                                 <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                               </a>
                           </li>
+
+                          <li>
+                            <% if (locals.title && locals.title === 'Fund Source Manager') { %>
+                              <a href="/fundSource" class="nav-link active" id="active">
+                            <% } else { %>
+                              <a href="/fundSource" class="nav-link link-light">
+                            <% } %>
+                            <i class="bi bi-cash-stack"></i> <span class="ms-1 d-none d-sm-inline">Fund Source</span>
+                            </a>
+                        </li>
                         </ul>
         
                         <hr>

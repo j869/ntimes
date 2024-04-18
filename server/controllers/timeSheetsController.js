@@ -44,7 +44,7 @@ const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption) 
 
     const result = await pool.query(query, [userID]);
     const rows = result.rows;
-    console.log(rows[0])
+    // console.log(rows[0])
 try{
     for (let i = 0; i < rows.length; i++) {
         let id = rows[i].id;
@@ -179,6 +179,10 @@ const postDayOff = async (req, res) => {
     const userID = req.params.userID;
     const dayOffOption = req.body.dayOffOption;
     const workDate = req.body.workDate;
+
+    console.log("USERid: " + userID)
+    console.log("OffOption :" + dayOffOption)
+    console.log("workDate: " + workDate)
 
     let workActivity;
     let remainingHours = 8;
