@@ -1,84 +1,97 @@
-
 <%- include('partials/header') %>
 
-<div class="container-lg">    
-    <h1>User Records</h1>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Verification Token</th>
-                    <th scope="col">Verified Email</th>
-                    <th scope="col">Edit</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach(user => { %>
-                    <tr>
-                        <td scope="row"><%= user.id %></td>
-                        <td><%= user.username %></td>
-                        <td><%= user.email %></td>
-                        <td>
-                            <% if (user.password) { %>
-                                <%= user.password.substring(0, 10) + (user.password.length > 10 ? '...' : '') %>
-                            <% } else { %>
-                                N/A
-                            <% } %>
-                        </td>                    
-                        <td><%= user.role %></td>
-                        <td>
-                            <% if (user.verification_token) { %>
-                                <%= user.verification_token.substring(0, 10) + (user.verification_token.length > 10 ? '...' : '') %>
-                            <% } else { %>
-                                null
-                            <% } %>
-                        </td>
-                        <td><%= user.verified_email %></td>
-                        <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
-                        
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-</div>
+    <section class="col py-3">
+        <div class="container pt-2 m-0 bglight">
+            <h1 class="page-title mb-4">User Records</h1>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Password</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Verification Token</th>
+                            <th scope="col">Verified Email</th>
+                            <th scope="col">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user=> { %>
+                            <tr>
+                                <td scope="row">
+                                    <%= user.id %>
+                                </td>
+                                <td>
+                                    <%= user.username %>
+                                </td>
+                                <td>
+                                    <%= user.email %>
+                                </td>
+                                <td>
+                                    <% if (user.password) { %>
+                                        <%= user.password.substring(0, 10) + (user.password.length> 10 ? '...' : '') %>
+                                            <% } else { %>
+                                                N/A
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <%= user.role %>
+                                </td>
+                                <td>
+                                    <% if (user.verification_token) { %>
+                                        <%= user.verification_token.substring(0, 10) + (user.verification_token.length>
+                                            10 ? '...' : '') %>
+                                            <% } else { %>
+                                                null
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <%= user.verified_email %>
+                                </td>
+                                <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i
+                                            class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
 
-<div class="container">
-    <h1>Add User</h1>
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-sm-10">
-            <form action="/addUser" method="POST">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input class="form-control" type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input class="form-control" type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input class="form-control" type="password" id="password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="role">Role:</label>
-                    <select id="role" name="role" class="form-select" required>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                    </select>
-                </div>
-                <button class="btn btn-dark btn-lg" type="submit">Add User</button>
-            </form>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+
+    <section class="col py-3 main">
+        <div class="container pt-2 m-0 bglight">
+            <h1>Add User</h1>
+            <div class="row justify-content-left">
+                <div class="col-lg-6 col-md-8 col-sm-10">
+                    <form action="/addUser" method="POST">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input class="form-control" type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input class="form-control" type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input class="form-control" type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role:</label>
+                            <select id="role" name="role" class="form-select" required>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-dark btn-lg" type="submit">Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
 
-<%- include('partials/footer') %>
-
-
+    <%- include('partials/footer') %>

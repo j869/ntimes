@@ -1,86 +1,90 @@
 <%- include('../../partials/header') %>
 
-<style>
-  .activity-manager-container {
-    padding: 20px;
-  }
-
-  .activity .header {
-    margin-top: 30px;
-    margin-left: 120px;
-    margin-right: 120px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  h4 {
-    margin: 2rem 0rem 1rem;
-  }
-
-  .table-image {
-    td,
-    th {
-      vertical-align: middle;
+  <style>
+    .activity-manager-container {
+      padding: 20px;
     }
-  }
-</style>
 
-<div class="activity">
-  <div class="header">
-    <h2>Activity Manager</h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addActivityModal">
-      Add Activity
-    </button>
-  </div>
+    .activity .header {
+      margin-top: 30px;
+      margin-left: 120px;
+      margin-right: 120px;
+      display: flex;
+      justify-content: space-between;
+    }
 
-  <!-- Add Activity Modal -->
-  <div class="modal fade" id="addActivityModal" tabindex="-1" aria-labelledby="addActivityModalLabel" aria-hidden="true">
-    <div class="modal-dialog" >
-      <div class="modal-content" >
-        <div class="modal-header">
-          <h5 class="modal-title" id="addActivityModalLabel">Add Activity</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form id="addActivityForm" action="/activity/create" method="POST">
-          <div class="modal-body">
-            <div class="mb-3">
+    h4 {
+      margin: 2rem 0rem 1rem;
+    }
+
+    .table-image {
+
+      td,
+      th {
+        vertical-align: middle;
+      }
+    }
+  </style>
+
+  <section class="col py-3">
+    <div class="container pt-2 m-0 bglight">
+      <h1 class="page-title mb-4">Activity Manager</h1>
+      <button type="button" class="btn btnprimary mb-3" data-bs-toggle="modal" data-bs-target="#addActivityModal">
+        <i class="fa-solid fa-circle-plus"></i> Add Activity
+      </button>
+    </div>
+
+    <!-- Add Activity Modal -->
+    <div class="modal fade" id="addActivityModal" tabindex="-1" aria-labelledby="addActivityModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addActivityModalLabel">Add Activity</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="addActivityForm" action="/activity/create" method="POST">
+            <div class="modal-body">
+              <div class="mb-3">
                 <label for="addActivityName" class="form-label">Name</label>
                 <input type="text" class="form-control" id="addActivityName" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label for="editActivityStatus" class="form-label">Status</label>
-              <input type="text" class="form-control" id="editActivityStatus" name="status" value="" required>
-            </div>
-            <div id="programInputsContainer" class="col">
-              <div id="programPercentageInputs" class="row">
-              <div class="col-md-6">
-                <label for="addActivityPrograms" class="form-label">Programs</label>
-                <input type="text" class="form-control program-input-field" name="programs" required>
               </div>
-              <div class="col-md-4">
-                <label for="addActivityPercentages" class="form-label">Percentages</label>
-                <input type="number" class="form-control percentage-input-field" name="percentages" required>
+              <div class="mb-3">
+                <label for="editActivityStatus" class="form-label">Status</label>
+                <input type="text" class="form-control" id="editActivityStatus" name="status" value="" required>
               </div>
-              <div class="col-md-2">
-                <button type="button" class="form-control btn btn-danger remove-program-percentage " style="margin-top:32px; width: max-content;"> <i class="far fa-trash-alt"></i></button>
+              <div id="programInputsContainer" class="col">
+                <div id="programPercentageInputs" class="row">
+                  <div class="col-md-6">
+                    <label for="addActivityPrograms" class="form-label">Programs</label>
+                    <input type="text" class="form-control program-input-field" name="programs" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="addActivityPercentages" class="form-label">Percentages</label>
+                    <input type="number" class="form-control percentage-input-field" name="percentages" required>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="form-control btn btn-danger remove-program-percentage "
+                      style="margin-top:32px; width: max-content;"> <i class="far fa-trash-alt"></i></button>
+                  </div>
+                </div>
               </div>
-            </div>
-            </div>
-            
-            
-            <button type="button" class="btn btn-primary mt-2" id="addProgramPercentageField">Add Program & Percentage</button>
-            <div class="modal-footer mt-2">
+
+
+              <button type="button" class="btn btn-primary mt-2" id="addProgramPercentageField">Add Program &
+                Percentage</button>
+              <div class="modal-footer mt-2">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" id="submitActivityForm">Add</button>
+              </div>
             </div>
-        </div>
-        
-        <script>
-          document.getElementById("addProgramPercentageField").addEventListener("click", function () {
-            const programPercentageInputs = document.getElementById("programInputsContainer");
-            const programPercentageInput = document.createElement("div");
-            programPercentageInput.classList.add("row", "mb-3", "program-percentage-input");
-            programPercentageInput.innerHTML = `
+
+            <script>
+              document.getElementById("addProgramPercentageField").addEventListener("click", function () {
+                const programPercentageInputs = document.getElementById("programInputsContainer");
+                const programPercentageInput = document.createElement("div");
+                programPercentageInput.classList.add("row", "mb-3", "program-percentage-input");
+                programPercentageInput.innerHTML = `
               <div class="col-md-6">
                 <label for="addActivityPrograms" class="form-label">Programs</label>
                 <input type="text" class="form-control program-input-field" name="programs[]" required>
@@ -93,127 +97,136 @@
                 <button type="button" class="btn btn-danger remove-program-percentage" style="margin-top: 32px;"><i class="far fa-trash-alt"></i></button>
               </div>
             `;
-            programPercentageInputs.appendChild(programPercentageInput);
-          });
-        
-          document.getElementById("submitActivityForm").addEventListener("click", function () {
-            const programs = document.querySelectorAll(".program-input-field");
-            const percentages = document.querySelectorAll(".percentage-input-field");
-        
-            const programValues = [];
-            const percentageValues = [];
-        
-            programs.forEach(program => {
-              programValues.push(program.value);
-            });
-        
-            percentages.forEach(percentage => {
-              percentageValues.push(percentage.value);
-            });
-        
-            console.log("Programs:", programValues);
-            console.log("Percentages:", percentageValues);
-        
-            // Now you can submit the form with the programValues and percentageValues arrays
-          });
-        
-          document.addEventListener("click", function (event) {
-            if (event.target && event.target.classList.contains("remove-program-percentage")) {
-              event.target.parentNode.parentNode.remove();
-            }
-          });
-        </script>
-        
-        
-       
+                programPercentageInputs.appendChild(programPercentageInput);
+              });
+
+              document.getElementById("submitActivityForm").addEventListener("click", function () {
+                const programs = document.querySelectorAll(".program-input-field");
+                const percentages = document.querySelectorAll(".percentage-input-field");
+
+                const programValues = [];
+                const percentageValues = [];
+
+                programs.forEach(program => {
+                  programValues.push(program.value);
+                });
+
+                percentages.forEach(percentage => {
+                  percentageValues.push(percentage.value);
+                });
+
+                console.log("Programs:", programValues);
+                console.log("Percentages:", percentageValues);
+
+                // Now you can submit the form with the programValues and percentageValues arrays
+              });
+
+              document.addEventListener("click", function (event) {
+                if (event.target && event.target.classList.contains("remove-program-percentage")) {
+                  event.target.parentNode.parentNode.remove();
+                }
+              });
+            </script>
+
+
+
+          </form>
+        </div>
+      </div>
+    </div>
+  
+
+
+  <% activities.forEach(activity=> { %>
+
+  <!-- Edit Activity Modal -->
+  <div class="modal fade" id="editActivityModal<%= activity.id %>" tabindex="-1"
+    aria-labelledby="editActivityModalLabel<%= activity.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editActivityModalLabel<%= activity.id %>">Edit Activity</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="editActivityForm<%= activity.id %>" action="/activity/edit" method="POST">
+          <input type="hidden" name="id" value="<%= activity.id%>">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="editActivityName<%= activity.id %>" class="form-label">Name</label>
+              <input type="text" class="form-control" id="editActivityName<%= activity.id %>" name="name"
+                value="<%= activity.name %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="editActivityStatus<%= activity.status%>" class="form-label">Status</label>
+              <input type="text" class="form-control" id="editActivityStatus" name="status"
+                value="<%= activity.status%>" required>
+            </div>
+
+            <div id="editProgramInputsContainer<%= activity.id %>" class="col">
+              <div id="editProgramPercentageInputs<%= activity.id %>" class="row">
+                <% activity.programs.forEach((program, index)=> { %>
+                  <div class="col-md-6">
+                    <label for="editActivityPrograms" class="form-label">Programs</label>
+                    <input type="text" class="form-control program-input-field" name="programs[]"
+                      value="<%= program %>" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="editActivityPercentages" class="form-label">Percentages</label>
+                    <input type="number" class="form-control percentage-input-field" name="percentages[]"
+                      value="<%= activity.percentages[index] %>" required>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-program-percentage"
+                      style="margin-top: 32px;"><i class="far fa-trash-alt"></i></button>
+                  </div>
+                  <% }) %>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary mt-2"
+              id="editAddProgramPercentageField<%= activity.id %>">Add Program & Percentage</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
         </form>
       </div>
     </div>
   </div>
 
- 
-<% activities.forEach(activity => { %>
- 
-<!-- Edit Activity Modal -->
-<div class="modal fade" id="editActivityModal<%= activity.id %>" tabindex="-1" aria-labelledby="editActivityModalLabel<%= activity.id %>" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editActivityModalLabel<%= activity.id %>">Edit Activity</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="editActivityForm<%= activity.id %>" action="/activity/edit" method="POST">
-        <input type="hidden" name="id" value="<%= activity.id%>">
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="editActivityName<%= activity.id %>" class="form-label">Name</label>
-            <input type="text" class="form-control" id="editActivityName<%= activity.id %>" name="name" value="<%= activity.name %>" required>
-          </div>
-          <div class="mb-3">
-            <label for="editActivityStatus<%= activity.status%>" class="form-label">Status</label>
-              <input type="text" class="form-control" id="editActivityStatus" name="status" value="<%= activity.status%>" required>
-          </div>
-          
-          <div id="editProgramInputsContainer<%= activity.id %>" class="col">
-            <div id="editProgramPercentageInputs<%= activity.id %>" class="row">
-              <% activity.programs.forEach((program, index) => { %>
-                <div class="col-md-6">
-                  <label for="editActivityPrograms" class="form-label">Programs</label>
-                  <input type="text" class="form-control program-input-field" name="programs[]" value="<%= program %>" required>
-                </div>
-                <div class="col-md-4">
-                  <label for="editActivityPercentages" class="form-label">Percentages</label>
-                  <input type="number" class="form-control percentage-input-field" name="percentages[]" value="<%= activity.percentages[index] %>" required>
-                </div>
-                <div class="col-md-2">
-                  <button type="button" class="btn btn-danger remove-program-percentage" style="margin-top: 32px;"><i class="far fa-trash-alt"></i></button>
-                </div>
-              <% }) %>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary mt-2" id="editAddProgramPercentageField<%= activity.id %>">Add Program & Percentage</button>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </div>
-      </form>
+  <script>
+    document.getElementById("editAddProgramPercentageField<%= activity.id %>").addEventListener("click", function () {
+      const programPercentageInputs = document.getElementById("editProgramInputsContainer<%= activity.id %>");
+      const programPercentageInput = document.createElement("div");
+      programPercentageInput.classList.add("row", "mb-3", "program-percentage-input");
+      programPercentageInput.innerHTML = `
+    <div class="col-md-6">
+      <label for="editActivityPrograms" class="form-label">Programs</label>
+      <input type="text" class="form-control program-input-field" name="programs[]" required>
     </div>
-  </div>
-</div>
+    <div class="col-md-4">
+      <label for="editActivityPercentages" class="form-label">Percentages</label>
+      <input type="number" class="form-control percentage-input-field" name="percentages[]" required>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-danger remove-program-percentage" style="margin-top: 32px;"><i class="far fa-trash-alt"></i></button>
+    </div>
+  `;
+      programPercentageInputs.appendChild(programPercentageInput);
+    });
 
-<script>
-  document.getElementById("editAddProgramPercentageField<%= activity.id %>").addEventListener("click", function () {
-    const programPercentageInputs = document.getElementById("editProgramInputsContainer<%= activity.id %>");
-    const programPercentageInput = document.createElement("div");
-    programPercentageInput.classList.add("row", "mb-3", "program-percentage-input");
-    programPercentageInput.innerHTML = `
-      <div class="col-md-6">
-        <label for="editActivityPrograms" class="form-label">Programs</label>
-        <input type="text" class="form-control program-input-field" name="programs[]" required>
-      </div>
-      <div class="col-md-4">
-        <label for="editActivityPercentages" class="form-label">Percentages</label>
-        <input type="number" class="form-control percentage-input-field" name="percentages[]" required>
-      </div>
-      <div class="col-md-2">
-        <button type="button" class="btn btn-danger remove-program-percentage" style="margin-top: 32px;"><i class="far fa-trash-alt"></i></button>
-      </div>
-    `;
-    programPercentageInputs.appendChild(programPercentageInput);
-  });
-
-  document.addEventListener("click", function (event) {
-    if (event.target && event.target.classList.contains("remove-program-percentage")) {
-      event.target.parentNode.parentNode.remove();
-    }
-  });
-</script>
+    document.addEventListener("click", function (event) {
+      if (event.target && event.target.classList.contains("remove-program-percentage")) {
+        event.target.parentNode.parentNode.remove();
+      }
+    });
+  </script>
 
 
 
   <!-- Delete Activity Modal -->
-  <div class="modal fade" id="deleteActivityModal<%= activity.id %>" tabindex="-1" aria-labelledby="deleteActivityModalLabel<%= activity.id %>" aria-hidden="true">
+  <div class="modal fade" id="deleteActivityModal<%= activity.id %>" tabindex="-1"
+    aria-labelledby="deleteActivityModalLabel<%= activity.id %>" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -233,50 +246,61 @@
       </div>
     </div>
   </div>
-<% }) %>
+  <% }) %>
 
-  <div class="container activity-manager-container">
-    <div class="row">
-      <div class="col-12">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Activity Name</th>
-              <th scope="col">Programs</th>
-              <th scope="col">Status</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% activities.forEach(activity => { %>
+  <section class="col py-3">
+    <div class="container activity-manager-container m-0">
+      <div class="row">
+        <div class="col-12">
+          <table class="table table-bordered">
+            <thead>
               <tr>
-                <th scope="row"><%= activity.id %></th>
-                <td><%= activity.name %></td>
-                <td>
-                  <ul>
-                    <% activity.programs.forEach((program, index) => { %>
-                      <li><%= program %> - <span class="badge bg-secondary"><%= activity.percentages[index] %>%</span></li>
-                    <% }) %>
-                  </ul>
-                </td>
-                <td><%= activity.status %></td>
-                <td>
-                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#editActivityModal<%= activity.id %>">
-                    <i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i>
-                  </button>
-                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#deleteActivityModal<%= activity.id %>">
-                    <i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i>
-                  </button>
-                </td>
+                <th scope="col">ID</th>
+                <th scope="col">Activity Name</th>
+                <th scope="col">Programs</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
               </tr>
-            <% }) %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% activities.forEach(activity=> { %>
+                <tr>
+                  <th scope="row">
+                    <%= activity.id %>
+                  </th>
+                  <td>
+                    <%= activity.name %>
+                  </td>
+                  <td>
+                    <ul>
+                      <% activity.programs.forEach((program, index)=> { %>
+                        <li>
+                          <%= program %> - <span class="badge bg-secondary">
+                              <%= activity.percentages[index] %>%
+                            </span>
+                        </li>
+                        <% }) %>
+                    </ul>
+                  </td>
+                  <td>
+                    <%= activity.status %>
+                  </td>
+                  <td>
+                    <button type="button" class="btn " data-bs-toggle="modal"
+                      data-bs-target="#editActivityModal<%= activity.id %>">
+                      <i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn " data-bs-toggle="modal"
+                      data-bs-target="#deleteActivityModal<%= activity.id %>">
+                      <i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
-<%- include('../../partials/footer') %>
-  
+  </section>
+    <%- include('../../partials/footer') %>

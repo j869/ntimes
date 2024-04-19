@@ -1,15 +1,14 @@
 <%- include('../partials/header') %>
 
-<style>
-  .time-sheet-container td{
-    background: transparent;
-  }
+  <style>
+    .time-sheet-container td {
+      background: transparent;
+    }
 
-  .time-sheet-container .holiday { 
-    background-color: antiquewhite;
-  }
-</style>
-<<<<<<< HEAD
+    .time-sheet-container .holiday {
+      background-color: antiquewhite;
+    }
+  </style>
 <div class="container">
 
 <style>
@@ -228,28 +227,25 @@ if (isFlexiAndTil == true) {
 
 
 
-=======
-<!-- <div class="container"> -->
-  <h1 class="page-title mb-4">Timesheet</h1>
->>>>>>> 230991bc66ebb42cda159bf9a2306631630aff6a
-  <div class="row">
-    <div class="col-auto">
-      <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
-    </div>
-    <div class="col-auto">
-      <a href="/emergencyEntry" class="btn btngray" id="addEmergencyBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Emergency</a>
-    </div>
-    <div class="col-auto">
-<<<<<<< HEAD
-      <a href="/plannedLeave" class="btn btn-danger" id="addEmergencyBtn"
-        ><i class="fas fa-door-open    "></i> Planned Leave</a
-      >
-=======
+  <!-- <div class="container"> -->
+  <section class="main col py-3">
+    <div class="container pt-2 m-0 bglight">
+      <h1 class="page-title mb-4">Timesheet</h1>
+      <div class="row">
+        <div class="col-auto">
+          <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
+            <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
+        </div>
+        <div class="col-auto">
+          <a href="/emergencyEntry" class="btn btngray" id="addEmergencyBtn">
+            <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Emergency</a>
+        </div>
+        <div class="col-auto">
+
       <a href="/plannedLeave" class="btn btngray" id="addEmergencyBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a>
->>>>>>> 230991bc66ebb42cda159bf9a2306631630aff6a
+           <i class="fas fa-door-open                          "></i> Planned Leave</a>
+      <!-- <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a> -->
+
     </div>
 
     <div class="col-auto">
@@ -258,110 +254,141 @@ if (isFlexiAndTil == true) {
         <i class="fas fa-door-open    "></i> Leave for a day</a>
       </div>
 
+        </div>
+      </div>
+
+      <div class="time-sheet-container table-responsive">
+        <table class="table" id="timesheetTable">
+          <thead>
+            <tr>
+              <th scope="col" class="hidden">#</th>
+              <th scope="col">Work Date</th>
+              <th scope="col">Time Start</th>
+              <th scope="col">Time Finish</th>
+              <th scope="col">Time Total</th>
+              <th scope="col" class="hidden">Time Accrued</th>
+              <th scope="col" class="hidden">Time Til</th>
+              <th scope="col" class="hidden">Time Leave</th>
+              <th scope="col" class="hidden">Time Overtime</th>
+              <th scope="col" class="hidden">Time Comm Svs</th>
+              <th scope="col">Comment</th>
+              <th scope="col" class="hidden">Location ID</th>
+              <th scope="col">Activity</th>
+              <th scope="col" class="hidden">Notes</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% tableData.forEach((timesheet, index)=> { %>
+
+              <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
+              <%= timesheet.holiday_name != null ? 'holiday' : ''%>">
+                <th class="hidden" scope="row">
+                  <%= index + 1 %>
+                </th>
+                <td class="work-date" style="width: 200px;">
+                  <%= timesheet.work_date %> </br>
+                    <%= timesheet.holiday_name%>
+                </td>
+                <td>
+                  <%= timesheet.time_start %>
+                </td>
+                <td>
+                  <%= timesheet.time_finish %>
+                </td>
+                <td>
+                  <%= timesheet.time_total %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_accrued %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_til %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_leave %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_overtime %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_comm_svs %>
+                </td>
+                <td>
+                  <%= timesheet.comment %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.location_id %>
+                </td>
+                <td>
+                  <%= timesheet.activity %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.notes %>
+                </td>
+                <% if (timesheet.id) { %>
+                  <td>
+                    <!-- Added buttons for actions -->
+
+                    <a href="/deleteTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-trash delete-icon"
+                        aria-hidden="true"></i></a>
+                    <a href="/approveTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-check approve-icon"
+                        aria-hidden="true"></i></a>
+                    <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon"
+                        aria-hidden="true"></i></a>
+                  </td>
+                  <% } else { %>
+                    <td>&nbsp;</td>
+                    <% } %>
+              </tr>
+              <% }); %>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </section>
+  <!-- </div> -->
 
-  <div class="time-sheet-container table-responsive">
-    <table class="table" id="timesheetTable">
-      <thead>
-        <tr>
-          <th scope="col" class="hidden">#</th>
-          <th scope="col">Work Date</th>
-          <th scope="col">Time Start</th>
-          <th scope="col">Time Finish</th>
-          <th scope="col">Time Total</th>
-          <th scope="col" class="hidden">Time Accrued</th>
-          <th scope="col" class="hidden">Time Til</th>
-          <th scope="col" class="hidden">Time Leave</th>
-          <th scope="col" class="hidden">Time Overtime</th>
-          <th scope="col" class="hidden">Time Comm Svs</th>
-          <th scope="col">Comment</th>
-          <th scope="col" class="hidden">Location ID</th>
-          <th scope="col">Activity</th>
-          <th scope="col" class="hidden">Notes</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
+  <%- include('../partials/footer', { locals }) %>
 
-      <tbody>
-        <% tableData.forEach((timesheet, index) => { %>
-         
-        <tr
-          class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
-          <%= timesheet.holiday_name != null ? 'holiday' : ''%>"
-          
-        >
-          <th class="hidden" scope="row" ><%= index + 1 %></th>
-          <td class="work-date" style="width: 200px;"><%= timesheet.work_date %> </br> <%= timesheet.holiday_name%> </td>
-          <td><%= timesheet.time_start %></td>
-          <td><%= timesheet.time_finish %></td>
-          <td><%= timesheet.time_total %></td>
-          <td class="hidden"><%= timesheet.time_accrued %></td>
-          <td class="hidden"><%= timesheet.time_til %></td>
-          <td class="hidden"><%= timesheet.time_leave %></td>
-          <td class="hidden"><%= timesheet.time_overtime %></td>
-          <td class="hidden"><%= timesheet.time_comm_svs %></td>
-          <td><%= timesheet.comment %></td>
-          <td class="hidden"><%= timesheet.location_id %></td>
-          <td><%= timesheet.activity %></td>
-          <td class="hidden"><%= timesheet.notes %></td>
-          <% if (timesheet.id) { %>
-          <td>
-            <!-- Added buttons for actions -->
-            
-            <a href="/deleteTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i></a>
-            <a href="/approveTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-check approve-icon" aria-hidden="true"></i></a>
-            <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon" aria-hidden="true"></i></a>
-          </td>
-          <% } else { %>
-          <td>&nbsp;</td>
-          <% } %>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </div>
-<!-- </div> -->
+    <script>
+      //   console.log(<= tableData%>);
+      // CSS class to hide columns
+      const hideColumns = () => {
+        const hiddenColumns = document.querySelectorAll(".hidden");
+        hiddenColumns.forEach((column) => {
+          column.style.display = "none";
+        });
+      };
 
-<%- include('../partials/footer', { locals }) %>
+      // Hide columns on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        hideColumns();
+      });
 
-<script>
-  //   console.log(<= tableData%>);
-  // CSS class to hide columns
-  const hideColumns = () => {
-    const hiddenColumns = document.querySelectorAll(".hidden");
-    hiddenColumns.forEach((column) => {
-      column.style.display = "none";
-    });
-  };
-
-  // Hide columns on page load
-  document.addEventListener("DOMContentLoaded", () => {
-    hideColumns();
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const table = document.getElementById("timesheetTable");
-    table.addEventListener("click", (event) => {
-      const target = event.target.closest("tr");
-      const dateCell = target.querySelector(".work-date");
-      if (dateCell) {
-        const dateString = dateCell.textContent.trim();
-        const dateParts = dateString.split(" "); // Split the date string by space
-        if (dateParts.length === 3) {
-          const monthStr = dateParts[0].substring(0, 3); // Get the first 3 characters of the month
-          const day = dateParts[1].slice(0, -1); // Remove the comma from the day
-          const year = dateParts[2];
-          // Convert month abbreviation to month number
-          const month =
-            new Date(Date.parse(monthStr + " 1, 2022")).getMonth() + 1;
-          // Format the date as 'YYYYMMDD'
-          const formattedDate = `${year}${month
-            .toString()
-            .padStart(2, "0")}${day.padStart(2, "0")}`;
-          // window.location.href = `/timesheetEntry?date=${formattedDate}`;
-        }
-      }
-    });
-  });
-</script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const table = document.getElementById("timesheetTable");
+        table.addEventListener("click", (event) => {
+          const target = event.target.closest("tr");
+          const dateCell = target.querySelector(".work-date");
+          if (dateCell) {
+            const dateString = dateCell.textContent.trim();
+            const dateParts = dateString.split(" "); // Split the date string by space
+            if (dateParts.length === 3) {
+              const monthStr = dateParts[0].substring(0, 3); // Get the first 3 characters of the month
+              const day = dateParts[1].slice(0, -1); // Remove the comma from the day
+              const year = dateParts[2];
+              // Convert month abbreviation to month number
+              const month =
+                new Date(Date.parse(monthStr + " 1, 2022")).getMonth() + 1;
+              // Format the date as 'YYYYMMDD'
+              const formattedDate = `${year}${month
+                .toString()
+                .padStart(2, "0")}${day.padStart(2, "0")}`;
+              // window.location.href = `/timesheetEntry?date=${formattedDate}`;
+            }
+          }
+        });
+      });
+    </script>

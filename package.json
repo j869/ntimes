@@ -1,7 +1,6 @@
 {
   "name": "ntimessandbox",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -29,5 +28,6 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.3"
-  }
+  },
+  "description": ""
 }
