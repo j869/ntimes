@@ -28,10 +28,11 @@ body {
 
 }
 
-
-.bgnav {
-  background-color: #248232;
+.sidebar {
+  position: sticky;
+  top: 0;
 }
+
 
 #active {
   background-color: #2ba84a;
@@ -54,7 +55,7 @@ body {
 }
 
 /*color codes
-    black: #040f0f
+    black: #040F0F
     dark green: #248232
     primary: #2ba84a
     gray: #d0dcdc
@@ -64,7 +65,7 @@ body {
 
 
 .bgprimary {
-  background-color: #364958;
+  background-color: #040F0F;
 }
 
 .bgtertiary {
@@ -72,11 +73,11 @@ body {
 }
 
 .bglight {
-  background-color: #fcfffc;
+  background-color: #329232;
 }
 
 #active {
-  background-color: #6e899e;
+  background-color: #364958;
   color: #fcfffc;
 }
 

@@ -28,57 +28,54 @@
     }
   </style>
 
-<section class="col py-3">
-  <div class="container pt-2 m-0 bglight">
-    <h1 class="page-title mb-4">Location</h1>
-
-
-
-
-      <button type="button" class="btn btnprimary" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+  <section class="col py-3 mx-4">
+   
+      <h1 class="page-title mb-2">Location</h1>
+      <button type="button" class="btn btnprimary mb-5" data-bs-toggle="modal" data-bs-target="#addLocationModal">
         <i class="fa-solid fa-circle-plus"></i> Add Location
       </button>
-    </div>
+   
 
-    <!-- Add Location Modal -->
-    <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- Add Location Modal -->
+      <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addLocationForm" action="/locationManager/add" method="POST">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="addLocationId" class="form-label">Location Id</label>
+                  <input type="text" class="form-control" id="addLocationId" name="location_id" required>
+                </div>
+                <div class="mb-3">
+                  <label for="addLocationName" class="form-label">Location Name</label>
+                  <input type="text" class="form-control" id="addLocationName" name="locationName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="addLocationRole" class="form-label">Location Role</label>
+                  <input type="text" class="form-control" id="addLocationRole" name="locationRole">
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="addLocation()">Add</button>
+              </div>
+            </form>
           </div>
-          <form id="addLocationForm" action="/locationManager/add" method="POST">
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="addLocationId" class="form-label">Location Id</label>
-                <input type="text" class="form-control" id="addLocationId" name="location_id" required>
-              </div>
-              <div class="mb-3">
-                <label for="addLocationName" class="form-label">Location Name</label>
-                <input type="text" class="form-control" id="addLocationName" name="locationName" required>
-              </div>
-              <div class="mb-3">
-                <label for="addLocationRole" class="form-label">Location Role</label>
-                <input type="text" class="form-control" id="addLocationRole" name="locationRole">
-              </div>
-
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" onclick="addLocation()">Add</button>
-            </div>
-          </form>
         </div>
       </div>
-    </div>
-  </section>
+      
+  
 
 
-  <!-- Edit Modal -->
-  <section class="col py-3">
-    <div class="container pt-2 m-0 bglight">
+    <!-- Edit Modal -->
+  
+    
       <% location.forEach(loc=> { %>
         <div class="modal fade" id="form<%= loc.location_id %>" tabindex="-1" role="dialog"
           aria-labelledby="exampleModalLabel" aria-hidden="false">
@@ -152,53 +149,53 @@
         </div>
         <% }) %>
 
-        <!-- Edit modal Ends -->
+          <!-- Edit modal Ends -->
 
-        <div class="row">
-          <div class="col-12">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Location Name</th>
-                  <th scope="col">Role Id</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% location.forEach(loc=> { %>
+          <div class="row">
+            <div class="col-12">
+              <table class="table table-bordered">
+                <thead>
                   <tr>
-                    <th scope="row">
-                      <%= loc.location_id%>
-                    </th>
-                    <td>
-                      <%= loc.location_name%>
-                    </td>
-                    <td>
-                      <%= loc.role_id %>
-                    </td>
+                    <th scope="col">ID</th>
+                    <th scope="col">Location Name</th>
+                    <th scope="col">Role Id</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% location.forEach(loc=> { %>
+                    <tr>
+                      <th scope="row">
+                        <%= loc.location_id%>
+                      </th>
+                      <td>
+                        <%= loc.location_name%>
+                      </td>
+                      <td>
+                        <%= loc.role_id %>
+                      </td>
 
-                    <td>
-                      <!-- <button type="button" class="btn btn-primary">
+                      <td>
+                        <!-- <button type="button" class="btn btn-primary">
                 <i class="far fa-eye"></i>
               </button> -->
-                      <button type="button" class="btn" data-bs-toggle="modal"
-                        data-bs-target="#form<%= loc.location_id %>">
-                        <i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i>
-                      </button>
-                      <button type="button" class="btn " data-bs-toggle="modal"
-                        data-bs-target="#deleteLocation<%= loc.location_id %>">
-                        <i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i>
-                      </button>
+                        <button type="button" class="btn" data-bs-toggle="modal"
+                          data-bs-target="#form<%= loc.location_id %>">
+                          <i class="fa-solid fa-pen edit-icon" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn " data-bs-toggle="modal"
+                          data-bs-target="#deleteLocation<%= loc.location_id %>">
+                          <i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i>
+                        </button>
 
-                    </td>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
+                      </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-    </div>
+    
   </section>
 
 
