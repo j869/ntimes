@@ -28,31 +28,6 @@ body {
 
 }
 
-.sidebar {
-  position: sticky;
-  top: 0;
-}
-
-
-#active {
-  background-color: #2ba84a;
-  color: #fcfffc;
-}
-
-.sidebar li { 
-  border: none;
-  padding: 5px;
-  width: 100%;
-}
-
-.sidebar li:hover a { 
-   color: #fcfffc;
-  background: #6e899e;
-}
-
-.sidebar ul { 
-  width: 100%;
-}
 
 /*color codes
     black: #040F0F
@@ -64,6 +39,37 @@ body {
 */
 
 
+.sidebar {
+  position: sticky;
+  top: 0;
+}
+
+.sidebar li { 
+  border: none;
+  padding: 5px;
+  width: 100%;
+}
+
+.sidebar li:hover a { 
+   color: #fcfffc;
+  background: #2ba84a;
+}
+
+.sidebar ul { 
+  width: 100%;
+}
+
+#active {
+  background-color: #2ba84a;
+  color: #fcfffc;
+}
+
+.logo {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .bgprimary {
   background-color: #040F0F;
 }
@@ -74,15 +80,6 @@ body {
 
 .bglight {
   background-color: #329232;
-}
-
-#active {
-  background-color: #364958;
-  color: #fcfffc;
-}
-
-.nav-link:hover {
-  background-color: #248232;
 }
 
 .btnprimary {
@@ -97,25 +94,23 @@ body {
 }
 
 .btngray {
-  background-color: #d0dcdc;
+  background-color: #364958;
+  color: #d0dcdc;
 }
 
 .btngray:hover {
-  background-color: #364958;
+  background-color: #040F0F;
   color: #fcfffc;
 }
 
 .btndark {
-  background-color: #364958;
+  background-color: #040F0F;
   color: #fcfffc;
 }
 
 .btndark:hover {
-  background-color: #fcfffc;
-  color: #364958;
-  border-width: 3px;
-  border-color: #364958;
-  padding: 6px 13px;
+  background-color: #364958;
+  color: #fcfffc;
 
 }
 
