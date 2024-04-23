@@ -12,8 +12,11 @@
                             <th scope="col">Email</th>
                             <th scope="col">Password</th>
                             <th scope="col">Role</th>
-                            <th scope="col">Verification Token</th>
-                            <th scope="col">Verified Email</th>
+                            <th scope="col">Flexi Balance</th>
+                            <th scope="col">RDO Balance</th>
+                            <th scope="col">TIL Balance</th>
+                            <th scope="col">Total Leave</th>
+                            <th scope="col">Total Overtime</th>
                             <th scope="col">Edit</th>
                         </tr>
                     </thead>
@@ -32,30 +35,34 @@
                                 <td>
                                     <% if (user.password) { %>
                                         <%= user.password.substring(0, 10) + (user.password.length> 10 ? '...' : '') %>
-                                            <% } else { %>
-                                                N/A
-                                                <% } %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
                                 </td>
                                 <td>
                                     <%= user.role %>
                                 </td>
                                 <td>
-                                    <% if (user.verification_token) { %>
-                                        <%= user.verification_token.substring(0, 10) + (user.verification_token.length>
-                                            10 ? '...' : '') %>
-                                            <% } else { %>
-                                                null
-                                                <% } %>
+                                    <%= user.flexi_balance %>
                                 </td>
                                 <td>
-                                    <%= user.verified_email %>
+                                    <%= user.rdo_balance %>
+                                </td>
+                                <td>
+                                    <%= user.til_balance %>
+                                </td>
+                                <td>
+                                    <%= user.total_leave %>
+                                </td>
+                                <td>
+                                    <%= user.total_overtime %>
                                 </td>
                                 <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i
                                             class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
-
                             </tr>
-                            <% }); %>
+                        <% }); %>
                     </tbody>
+                    
                 </table>
             </div>
         </div>

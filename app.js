@@ -770,10 +770,7 @@ app.get("/approveTimesheet/:id", async (req, res) => {
 app.get("/users", isAdmin, async (req, res) => {
   console.log("u1    Admin route: Rendering settings page...");
   const result = await axios.get(`${API_URL}/users`);
-  // const errors = req.flash('messages');
-  // console.log("u2    ", errors)
-  // const messages = errors.map(error => error.msg);
-  // console.log("u3    ", messages)
+  console.log("u2    ", result.data);
   res.render("settings.ejs", {
     user: req.user,
     users: result.data,

@@ -7,6 +7,7 @@ import { pool } from "./middleware.js";
 
 // LOCATIONS FUNCTION HERE
 const getLocationById = (req, res) => {
+  console.log("qj1   ", req.params);
   // Extract username or person_id from request, assuming it's available in req.params
   const personID = req.params.id;
 
@@ -27,6 +28,7 @@ const getLocationById = (req, res) => {
 };
 
 const getAllLocation = (req, res) => {
+  console.log("qk1   ")
   const query = `SELECT "location".* FROM "location"`;
 
   pool.query(query, [], (error, result) => {
@@ -41,6 +43,7 @@ const getAllLocation = (req, res) => {
 };
 
 const editLocation = (req, res) => {
+  console.log("ql1   ", req.body);
   const { locationId, locationName, roleId } = req.body;
 
   const query = `
@@ -69,6 +72,7 @@ const editLocation = (req, res) => {
 
 // GetTimeSheets using the userID
 const getTimesheetsById = (req, res) => {
+  console.log("qo1   ", req.params);
   const userID = req.params.id;
 
   const query = `SELECT
@@ -233,7 +237,7 @@ const createTimesheet = (req, res) => {
 };
 
 const deleteTimesheet = (req, res) => {
-  console.log("d1  ", req.params);
+  console.log("qd1  ", req.params);
   const timesheetID = parseInt(req.params.id);
 
   try {
@@ -245,17 +249,17 @@ const deleteTimesheet = (req, res) => {
           throw error;
         }
         res.status(200).send(`Timesheet deleted with ID: ${timesheetID}`);
-        console.log("d5  ");
+        console.log("qd5  ");
       }
     );
   } catch (error) {
-    console.error("d8   Error deleting timesheet:", error);
+    console.error("qd8   Error deleting timesheet:", error);
     throw error; // Throw error for handling in upper layers
   }
 };
 
 const updateTimesheetStatus = (req, res) => {
-  console.log("ud1   " + req.params.id + " ", req.body);
+  console.log("qud1   " + req.params.id + " ", req.body);
   const timesheetID = parseInt(req.params.id);
   let newStatus = req.body.status;
 
@@ -266,34 +270,34 @@ const updateTimesheetStatus = (req, res) => {
       [timesheetID],
       (error, result) => {
         if (error) {
-          console.error("ud3   Error querying timesheets:", error);
+          console.error("qud3   Error querying timesheets:", error);
         }
         console.log("ud4 ", result.rows);
         oldStatus = result.rows[0].status;
         if (newStatus == oldStatus) {
           newStatus = "entered"; // toggle status, if it is already approved
         }
-        console.log("ud5   ", newStatus);
+        console.log("qud5   ", newStatus);
 
         pool.query(
           "UPDATE ts_timesheet_t SET status = $1 WHERE id = $2",
           [newStatus, timesheetID],
           (error, results) => {
-            console.log("ud6    ");
+            console.log("qud6    ");
             if (error) {
-              console.log("ud7    ");
+              console.log("qud7    ");
               throw error;
             }
             res
               .status(200)
               .send(`Set Timesheet(${timesheetID}) to status : ${newStatus}`);
-            console.log("ud9  ");
+            console.log("qud9  ");
           }
         );
       }
     );
   } catch (error) {
-    console.error("ud8   Error deleting timesheet:", error);
+    console.error("qud8   Error deleting timesheet:", error);
     throw error; // Throw error for handling in upper layers
   }
 };
@@ -323,7 +327,10 @@ const getRdoById = (req, res) => {
 //#region users table
 
 const getUsers = (req, res) => {
-  pool.query("SELECT * FROM users ORDER BY id ASC", (error, results) => {
+  console.log("qg1   ")
+  pool.query(`SELECT *
+              FROM users LEFT JOIN leave_balances ON users.id = leave_balances.person_id
+              ORDER BY users.id ASC;`, (error, results) => {
     if (error) {
       console.log(error);
       throw error;
@@ -331,9 +338,11 @@ const getUsers = (req, res) => {
     //console.log("SELECT * FROM users ORDER BY id ASC", results.rows)
     res.status(200).json(results.rows);
   });
+  console.log("qg9   ")
 };
 
 const getUserById = (req, res) => {
+  console.log("qh1   ", req.params.id);
   const id = parseInt(req.params.id);
   pool.query("SELECT * FROM users WHERE id = $1", [id], (error, results) => {
     if (error) {
@@ -344,6 +353,7 @@ const getUserById = (req, res) => {
 };
 
 const getUserByUsername = (req, res) => {
+  console.log("qi1   ", req.params.username);
   console.log(
     "h1 SELECT * FROM users WHERE username = '" + req.params.username + "';"
   );
@@ -542,6 +552,7 @@ const verifyUserEmail = (req, res) => {
 };
 
 const deleteUser = (req, res) => {
+  console.log("qde1   ", req.params);
   const id = parseInt(req.params.id);
 
   pool.query("DELETE FROM users WHERE id = $1", [id], (error, results) => {
