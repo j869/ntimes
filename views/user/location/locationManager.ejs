@@ -28,17 +28,12 @@
     }
   </style>
 
-<section class="col py-3">
-  <div class="container pt-2 m-0 bglight">
+  <section class="col py-3 mx-4">
     <h1 class="page-title mb-4">Location</h1>
+    <button type="button" class="btn btnprimary mb-5" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+      <i class="fa-solid fa-circle-plus"></i> Add Location
+    </button>
 
-
-
-
-      <button type="button" class="btn btnprimary" data-bs-toggle="modal" data-bs-target="#addLocationModal">
-        <i class="fa-solid fa-circle-plus"></i> Add Location
-      </button>
-    </div>
 
     <!-- Add Location Modal -->
     <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel"
@@ -73,84 +68,85 @@
         </div>
       </div>
     </div>
-  </section>
-
-
-  <!-- Edit Modal -->
-  <section class="col py-3">
-    <div class="container pt-2 m-0 bglight">
-      <% location.forEach(loc=> { %>
-        <div class="modal fade" id="form<%= loc.location_id %>" tabindex="-1" role="dialog"
-          aria-labelledby="exampleModalLabel" aria-hidden="false">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header border-bottom-0">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Location</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form method="POST" action="/locationManager/edit/<%= loc.id%>" id="editForm">
-                <input type="hidden" name="locationId" value="<%= loc.location_id%>" />
 
 
 
-                <div class="modal-body">
-                  <div class="form-group">
-                    <label for="location_id">Location Id</label>
-                    <input type="text" class="form-control" name="location_id" value="<%= loc.location_id %>" />
-                  </div>
-                  <div class="form-group">
-                    <label for="locationName">Location Name</label>
-                    <input type="text" class="form-control" name="locationName" value="<%= loc.location_name %>" />
-                  </div>
-                  <div class="form-group">
-                    <label for="locationRole">Location Role</label>
-                    <input type="text" class="form-control" name="locationRole" value="<%= loc.role_id %>" />
-                  </div>
-                </div>
-                <div class="modal-footer border-top-0 d-flex justify-content-center">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Close
-                  </button>
-                  <button type="submit" class="btn btn-success">Save</button>
-                </div>
-              </form>
+
+    <!-- Edit Modal -->
+
+
+    <% location.forEach(loc=> { %>
+      <div class="modal fade" id="form<%= loc.location_id %>" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+              <h5 class="modal-title" id="exampleModalLabel">Edit Location</h5>
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-          </div>
-        </div>
+            <form method="POST" action="/locationManager/edit/<%= loc.id%>" id="editForm">
+              <input type="hidden" name="locationId" value="<%= loc.location_id%>" />
 
-        <!-- Confirmation Modal -->
-        <div class="modal fade" id="deleteLocation<%= loc.location_id%>" tabindex="-1"
-          aria-labelledby="confirmationModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">
-                  Confirmation
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
+
+
               <div class="modal-body">
-                Are you sure you want to delete this location?
+                <div class="form-group">
+                  <label for="location_id">Location Id</label>
+                  <input type="text" class="form-control" name="location_id" value="<%= loc.location_id %>" />
+                </div>
+                <div class="form-group">
+                  <label for="locationName">Location Name</label>
+                  <input type="text" class="form-control" name="locationName" value="<%= loc.location_name %>" />
+                </div>
+                <div class="form-group">
+                  <label for="locationRole">Location Role</label>
+                  <input type="text" class="form-control" name="locationRole" value="<%= loc.role_id %>" />
+                </div>
               </div>
-              <div class="modal-footer">
+              <div class="modal-footer border-top-0 d-flex justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                  Cancel
+                  Close
                 </button>
-
-                <form action="/locationManager/delete" method="post">
-
-                  <input type="hidden" name="locationId" value="<%= loc.id%>">
-                  <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
-                </form>
-                Delete
-                </button>
+                <button type="submit" class="btn btn-success">Save</button>
               </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Modal -->
+      <div class="modal fade" id="deleteLocation<%= loc.location_id%>" tabindex="-1"
+        aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">
+                Confirmation
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this location?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+
+              <form action="/locationManager/delete" method="post">
+
+                <input type="hidden" name="locationId" value="<%= loc.id%>">
+                <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
+              </form>
+              Delete
+              </button>
             </div>
           </div>
         </div>
-        <% }) %>
+      </div>
+      <% }) %>
 
         <!-- Edit modal Ends -->
 
@@ -198,7 +194,7 @@
             </table>
           </div>
         </div>
-    </div>
+
   </section>
 
 

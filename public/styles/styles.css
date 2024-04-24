@@ -29,13 +29,19 @@ body {
 }
 
 
-.bgnav {
-  background-color: #248232;
-}
+/*color codes
+    black: #040F0F
+    dark green: #248232
+    primary: #2ba84a
+    gray: #d0dcdc
+    white: #fcfffc
+    slate gray #364958
+*/
 
-#active {
-  background-color: #2ba84a;
-  color: #fcfffc;
+
+.sidebar {
+  position: sticky;
+  top: 0;
 }
 
 .sidebar li { 
@@ -46,25 +52,26 @@ body {
 
 .sidebar li:hover a { 
    color: #fcfffc;
-  background: #6e899e;
+  background: #2ba84a;
 }
 
 .sidebar ul { 
   width: 100%;
 }
 
-/*color codes
-    black: #040f0f
-    dark green: #248232
-    primary: #2ba84a
-    gray: #d0dcdc
-    white: #fcfffc
-    slate gray #364958
-*/
+#active {
+  background-color: #2ba84a;
+  color: #fcfffc;
+}
 
+.logo {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
 
 .bgprimary {
-  background-color: #364958;
+  background-color: #040F0F;
 }
 
 .bgtertiary {
@@ -72,16 +79,7 @@ body {
 }
 
 .bglight {
-  background-color: #fcfffc;
-}
-
-#active {
-  background-color: #6e899e;
-  color: #fcfffc;
-}
-
-.nav-link:hover {
-  background-color: #248232;
+  background-color: #329232;
 }
 
 .btnprimary {
@@ -96,25 +94,23 @@ body {
 }
 
 .btngray {
-  background-color: #d0dcdc;
+  background-color: #364958;
+  color: #d0dcdc;
 }
 
 .btngray:hover {
-  background-color: #364958;
+  background-color: #040F0F;
   color: #fcfffc;
 }
 
 .btndark {
-  background-color: #364958;
+  background-color: #040F0F;
   color: #fcfffc;
 }
 
 .btndark:hover {
-  background-color: #fcfffc;
-  color: #364958;
-  border-width: 3px;
-  border-color: #364958;
-  padding: 6px 13px;
+  background-color: #364958;
+  color: #fcfffc;
 
 }
 
