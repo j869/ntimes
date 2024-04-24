@@ -41,16 +41,38 @@
 
   <%if(user) {%>
 
+      <header class="topbar mb-0 bglight">
+        <div class="container-fluid d-flex align-items-center">
+          <a href="/" class="d-flex align-items-center py-2 mb-md-0 me-md-auto">
+            <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" height="75px" alt="logo"></span>
+          </a>    
+          <div class="d-flex align-items-center">
+           
+    
+            <div class="flex-shrink-0 dropdown align-self-end">
+              <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+              data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="profile photo" width="32" height="32" class="rounded-circle">
+                <span class="d-none d-sm-inline mx-1">Name</span>
+              </a>
 
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                <li><a class="dropdown-item dlist" href="/locationManager">Settings</a></li>
+                <li><a class="dropdown-item dlist" href="/users">Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider dlist">
+                </li>
+                <li><a class="dropdown-item dlist" href="/logout">Sign out</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </header>
 
-    <div class="sidebar container-fluid ">
-      <div class="row flex-nowrap">
-
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgprimary">
+    <div class="container-fluid ">
+      <div class="sidebar row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgdark">
           <div class="sidebar d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100" style="overflow: hidden;">
-            <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
-              <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" alt="logo"></span>
-            </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Home' ) { %>
@@ -103,25 +125,6 @@
                       </a>
               </li>
             </ul>
-
-            <hr>
-
-            <div class="dropdown pb-4">
-              <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle link-light"
-                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="profile-photo" width="30" height="30" class="rounded-circle">
-                <span class="d-none d-sm-inline mx-1">Name</span>
-              </a>
-
-              <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item" href="/locationManager">Settings</a></li>
-                <li><a class="dropdown-item" href="/users">Profile</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-              </ul>
-            </div>
           </div>
         </div>
 

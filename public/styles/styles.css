@@ -4,6 +4,7 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background-color: white;
 }
 
 
@@ -35,9 +36,16 @@ body {
     primary: #2ba84a
     gray: #d0dcdc
     white: #fcfffc
-    slate gray #364958
+    dark gray #364958
 */
 
+
+.topbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index:1;
+}
 
 .sidebar {
   position: sticky;
@@ -64,14 +72,15 @@ body {
   color: #fcfffc;
 }
 
-.logo {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
+.dlist {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .bgprimary {
-  background-color: #040F0F;
+  background-color: #248232;
 }
 
 .bgtertiary {
@@ -79,7 +88,11 @@ body {
 }
 
 .bglight {
-  background-color: #329232;
+  background-color: #fcfffc;
+}
+
+.bgdark {
+  background-color: #040F0F;
 }
 
 .btnprimary {
@@ -117,7 +130,7 @@ body {
 .loginprompt {
   text-align: center;
   justify-content: center;
-  width: 450px
+  width: 550px
 }
 
 .delete-icon {
