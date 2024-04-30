@@ -40,11 +40,13 @@ body {
 */
 
 
-.topbar {
+.titlebar {
   position: sticky;
   top: 0;
   width: 100%;
   z-index:1;
+  background-color: #fcfffc;
+  padding-left: 15px;
 }
 
 .sidebar {
@@ -99,6 +101,7 @@ body {
   background-color: #2ba84a;
   color: #fcfffc;
   outline-color: #2ba84a;
+  margin-bottom: 5px;
 }
 
 .btnprimary:hover {
@@ -109,6 +112,7 @@ body {
 .btngray {
   background-color: #364958;
   color: #d0dcdc;
+  margin-bottom: 5px;
 }
 
 .btngray:hover {
@@ -119,12 +123,13 @@ body {
 .btndark {
   background-color: #040F0F;
   color: #fcfffc;
+  margin-bottom: 5px;
 }
 
 .btndark:hover {
-  background-color: #364958;
-  color: #fcfffc;
-
+  background-color: #fcfffc;
+  color: #040F0F;
+  border: 1px solid #040F0F;
 }
 
 .loginprompt {
@@ -135,32 +140,32 @@ body {
 
 .delete-icon {
   color: #364958;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .delete-icon:hover {
   color: #ff0000;
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .approve-icon {
   color: #364958;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .approve-icon:hover {
   color: #2ba84a;
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .view-icon {
   color: #364958;
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .view-icon:hover {
   color: rgb(0, 89, 255);
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .edit-icon {

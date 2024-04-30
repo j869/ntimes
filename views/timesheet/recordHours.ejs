@@ -1,10 +1,11 @@
 <%- include('../partials/header', { title, user, messages: messages }) %>
 
 
+    <div class="titlebar pt-5 pb-2 border-bottom">
+        <h1 class="page-title mb-4">Timesheet Entry</h1>
+    </div>
 
     <section class="main col pt-3 mx-4">
-        <h1 class="page-title mb-4">Timesheet Entry</h1>
-
         <div class="row">
             <div class="col-md-3">
                 <form id="timesheetForm" action="/timesheetEntry" method="POST">
@@ -91,7 +92,7 @@
                     <label for="notes">Notes:</label>
                     <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btnprimary mt-2">Submit</button>
             </div>
         </div>
     </section>

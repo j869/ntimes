@@ -5,10 +5,12 @@
 <%- include('../partials/header', { title: 'Leave Request', user: user, messages: messages }) %>
 
 
+<div class="titlebar pt-5 pb-2 border-bottom">
+    <h1 class="page-title mb-4">Planned Leave</h1>
+</div>
 
 <form id="plannedLeaveForm" action="/plannedLeave" method="POST">
     <div class="main col pt-3 mx-4">
-        <h1 class="page-title mb-4">Planned Leave</h1>
         <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
@@ -52,7 +54,7 @@
         </div>        
         <div class="row">
             <div class="col-md-12">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btnprimary mt-2">Submit</button>
             </div>
         </div>
     </div>
