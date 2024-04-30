@@ -1,0 +1,164 @@
+<%- include('../../user/manager/managerSidebar', {userInfo: userInfo} ) %>
+
+  <style>
+    .location-manager-container {
+      padding: 20px;
+    }
+
+    .location .header {
+      margin-top: 30px;
+      margin-left: 120px;
+      margin-right: 120px;
+      display: flex;
+      justify-content: space-between;
+
+
+    }
+
+    h4 {
+      margin: 2rem 0rem 1rem;
+    }
+
+    .table-image {
+
+      td,
+      th {
+        vertical-align: middle;
+      }
+    }
+
+
+    table tbody td, table tbody th, table thead th{ 
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+
+
+<section class="col py-3 mx-4">
+  <% if (locals.messages && locals.messages.length > 0) { %>
+    <% messages.forEach(msg => { %>
+      <div class="alert alert-primary" role="alert"><%= msg %></div>
+    <% }) %>
+  <% } %>
+
+  <% if (typeof messages !== 'undefined' && messages.error) { %>
+    <div class="alert alert-danger" role="alert"><%= messages.error %></div>
+  <% } %>
+
+  <% if (typeof status !== 'undefined' && status === '202') { %>
+    <div class="alert alert-primary" role="alert">Update Successfully</div>
+  <% } %>
+
+  <h1 class="page-title mb-4">Pending Timesheets</h1>
+
+  <% if (data.length === 0) { %>
+    <div class="alert alert-info" role="alert">No Pending Timesheets</div>
+  <% } else { %>
+    <div class="time-sheet-container table-responsive" style="width: max-content; padding: 20px;">
+      <table class="table" id="timesheetTable">
+        <thead>
+          <tr>
+            <thead>
+                <tr>
+                  <th scope="col" class="hidden">User Email</th>
+                  <th scope="col">Work Date</th>
+                  <th scope="col">Time Start</th>
+                  <th scope="col">Time Finish</th>
+                  <th scope="col">Time Total</th>
+                  <th scope="col" class="hidden">Time Accrued</th>
+                  <th scope="col" class="hidden">Time Til</th>
+                  <th scope="col" class="hidden">Time Leave</th>
+                  <th scope="col" class="hidden">Time Overtime</th>
+                  <th scope="col" class="hidden">Time Comm Svs</th>
+                  <th scope="col">Comment</th>
+                  <th scope="col" class="hidden">Location ID</th>
+                  <th scope="col">Activity</th>
+                  <th scope="col" class="hidden">Notes</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+          </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((timesheet, index)=> { %>
+
+              <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
+          <%= timesheet.holiday_name != null ? 'holiday' : ''%>">
+                <th class="hidden" scope="row">
+                  <%= timesheet.username %>
+                </th>
+                <td class="work-date" style="width: 200px;">
+                  <%= new Date(timesheet.work_date).toDateString() %> </br>
+                    <%= timesheet.holiday_name%>
+                </td>
+                <td>
+                  <%= timesheet.time_start %>
+                </td>
+                <td>
+                  <%= timesheet.time_finish %>
+                </td>
+                <td>
+                  <%= timesheet.time_total %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_accrued %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_til %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_leave %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_overtime %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.time_comm_svs %>
+                </td>
+                <td>
+                  <%= timesheet.comment %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.location_id %>
+                </td>
+                <td>
+                  <%= timesheet.activity %>
+                </td>
+                <td class="hidden">
+                  <%= timesheet.notes %>
+                </td>
+                <% if (timesheet.id) { %>
+                  <td style="display: flex; flex-direction: row; gap: 10px  ">
+                    
+                    <form action="/timesheet/approveTs?page=pending" method="post">
+                      <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
+                      <button class="btn btn-primary" type="submit">Approve</button>
+                    </form>
+
+                    <form action="/timesheet/rejectTs?page=pending" method="post">
+                      <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
+                      <button class="btn btn-danger" type="submit">Reject</button>
+                    </form>
+                  </td>
+                  <% } else { %>
+                    <td>&nbsp;</td>
+                    <% } %>
+              </tr>
+              <% }); %>
+          </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+  <script>
+    function confirmDelete(locationId) {
+      $("#confirmationModal").modal("show");
+      $("#confirmDeleteBtn").on("click", function () {
+        // Redirect to delete endpoint
+        window.location.href = `/deletelocation/${locationId}`;
+      });
+    }
+  </script>
+  <%- include('../../partials/footer') %>

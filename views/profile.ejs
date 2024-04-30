@@ -20,13 +20,13 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" >  <!-- not required unless you want to reset the password -->
     </div>
-    <div>
+    <!-- <div>
         <label for="role">Role:</label>
         <select id="role" name="role" required>
-            <option value="admin" <% if (userData.role === 'admin') { %> selected <% } %>>Admin</option>
-            <option value="user" <% if (userData.role === 'user') { %> selected <% } %>>User</option>
+            <option value="admin" % if (userData.role === 'admin') { %> selected % } %>>Admin</option>
+            <option value="user" % if (userData.role === 'user') { %> selected % } %>>User</option>
         </select>
-    </div>
+    </div> -->
     <div>
         <label for="verification_token">Verification Token:</label>
         <input type="text" id="verification_token" name="verification_token" value="<%= userData.verification_token %>" required>
