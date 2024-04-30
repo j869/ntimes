@@ -20,6 +20,10 @@ import {
   getAllActivities,
 } from "./controllers/activitiesControllers.js";
 
+
+import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet } from "./controllers/managerController.js";
+import { isManager, getUserInfo } from "./controllers/userController.js";
+
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
 import { 
@@ -73,6 +77,14 @@ app.put("/editlocation/:id", editLocation);
 app.post("/deletelocation", deleteLocation);
 app.put("/addlocation", addLocation);
 
+// Manager timeSheets approval 
+app.get("/timesheet/pending/:userID", getPendingTimeSheet);
+app.get("/timesheet/approved/:userID", getApproveTimeSheet);
+app.get("/timesheet/reject/:userID", getRejectTimeSheet);
+app.post("/timesheet/rejectTs/:userID",rejectTimesheet );
+app.post("/timesheet/approveTs/:userID", approveTimesheet);
+
+
 // Define other routes
 app.get("/users", db.getUsers);
 app.get("/login/:username", db.getUserByUsername);
@@ -82,6 +94,9 @@ app.put("/users/:id", db.updateUser);
 app.put("/verify/:token", db.verifyUserEmail);
 app.delete("/users/:id", db.deleteUser);
 app.get("/rdo/:id", db.getRdoById);
+
+app.get("/users/userInfo/:userID",getUserInfo);
+app.get("/users/isManager/:userID", isManager);
 
 // Locations CRUD ENDS
 app.get("/timesheetsbyid/:id", db.getTimesheetsById);

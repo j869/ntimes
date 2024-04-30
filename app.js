@@ -24,6 +24,8 @@ import createLocationRoutes from "./routes/locationRoutes.js";
 import createActivityRoutes from "./routes/activityRoutes.js";
 import createTimesheetRoutes from "./routes/timeSheetsRoutes.js";
 import createFundSourceRoutes from "./routes/fundSourcesRoutes.js";
+import createManagerRoutes from "./routes/managerRoutes.js";
+import { userInfo } from "os";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
@@ -170,15 +172,51 @@ const isAdmin = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
+  const userInfo = req.session.userInfo;
+
+   
   const username =
     req.user && req.user.username ? " for " + req.user.username : "[]";
   console.log("z9    Home. User is " + username);
-  res.render("home.ejs", { user: req.user, title: "Home", body: "" });
+  res.render("home.ejs", { 
+    userInfo: userInfo,
+    user: req.user, 
+    title: "Home", 
+    body: "" });
 });
 
 //--------------------------------
 //----  Authenticated users
 //-------------------------------
+
+const runManager = (req, res, next) => {
+  const userInfo = req.session.userInfo;
+
+    const allowedRoutes =
+     ['/timesheet/pending',
+     '/timesheet/approved',
+     '/timesheet/rejected',
+     '/timesheet/approveTs',
+     '/timesheet/rejectTs',
+      '/login', 
+      '/logout'];
+  
+  if (userInfo != undefined && userInfo.role_id == 2) {
+
+    app.use('/timesheet', createManagerRoutes(isAuthenticated))
+
+    if (allowedRoutes.includes(req.path)) {
+      next();
+    } else {
+      res.status(403).json({ messages: ["Permission denied"] });
+    }
+  } else {
+    next()
+  }
+};
+
+app.use(runManager);
+
 
 // LOCATION MANAGER ROUTES HERE
 app.use("/locationManager", createLocationRoutes(isAuthenticated));
@@ -193,7 +231,13 @@ app.use("/activity", createActivityRoutes(isAuthenticated));
 app.use("/dayoff", createTimesheetRoutes(isAuthenticated))
 
 // FUND SOURCS ROUTES
-app.use("/fundSource", createFundSourceRoutes(isAuthenticated))
+app.use("/fundSource", createFundSourceRoutes(isAuthenticated));
+
+
+
+
+
+
 
 
 
@@ -770,10 +814,7 @@ app.get("/approveTimesheet/:id", async (req, res) => {
 app.get("/users", isAdmin, async (req, res) => {
   console.log("u1    Admin route: Rendering settings page...");
   const result = await axios.get(`${API_URL}/users`);
-  // const errors = req.flash('messages');
-  // console.log("u2    ", errors)
-  // const messages = errors.map(error => error.msg);
-  // console.log("u3    ", messages)
+  console.log("u2    ", result.data);
   res.render("settings.ejs", {
     user: req.user,
     users: result.data,
@@ -929,6 +970,7 @@ app.get("/login", (req, res) => {
     user: req.user,
     title: "numbat",
     body: "",
+    query: req.query,
     messages: req.flash("messages"),
   });
 });
@@ -942,10 +984,19 @@ app.post("/login", function (req, res, next) {
       req.flash("messages", "Invalid username or password. Please try again.");
       return res.redirect("/login");
     }
-    req.logIn(user, function (err) {
+    req.logIn(user, async function (err) {
       if (err) {
         return next(err);
       }
+
+      const isManager = await axios.get(`${API_URL}/users/isManager/${req.user.id}`);
+      req.session.userInfo = isManager.data[0]
+
+      
+      if (isManager.data[0] != undefined && isManager.data[0].role_id == 2) {
+        return res.redirect("/timesheet/pending")
+      } 
+
       return res.redirect("/time");
     });
   })(req, res, next);
@@ -1066,6 +1117,7 @@ app.post("/register", async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     if (error.message === "Email already registered") {
+    
       console.log("gp8 already reg'd");
       return res.render("register.ejs", {
         user: req.user,
@@ -1078,6 +1130,8 @@ app.post("/register", async (req, res) => {
       return res.status(500).send("Error registering user");
     }
   }
+
+  
 });
 
 // Route for handling email verification

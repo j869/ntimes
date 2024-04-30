@@ -1,356 +1,400 @@
 <%- include('../partials/header') %>
 
-<style>
-  .time-sheet-container td{
-    background: transparent;
-  }
+  <style>
+    .time-sheet-container td {
+      background: transparent;
+    }
 
-  .time-sheet-container .holiday { 
-    background-color: antiquewhite;
-  }
-</style>
-<div class="container">
+    .time-sheet-container .holiday {
+      background-color: antiquewhite;
+    }
 
-<style>
+    .leave_day_off_modal label span {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: rgb(0, 0, 116);
+    }
 
-  .leave_day_off_modal label span { 
-    font-size: 1.2rem ;
-    font-weight: 600;
-    color: rgb(0, 0, 116);
-  }
+    .leave_day_off_modal .disabled,
+    .leave_day_off_modal .disabled span {
+      color: rgb(145, 145, 145);
+    }
+  </style>
 
-  .leave_day_off_modal .disabled, .leave_day_off_modal .disabled span{ 
-  color:rgb(145, 145, 145);
-  }
-
-
-</style>
   <!-- LEAVE DAY OFF MODAL -->
 
 
- <%
-  
-  let flexiTilSum = Number(flexTilRdo.totaltil) + Number(flexTilRdo.totalflexi);
+  <% let flexiTilSum=Number(flexTilRdo.totaltil) + Number(flexTilRdo.totalflexi); let isFlexiAndTil=flexiTilSum < 8 ?
+    false : true; let isRDO=Number(flexTilRdo.totalrdo)> 0 ? true : false;
 
-let isFlexiAndTil = flexiTilSum < 8 ? false : true;
+    let flexiBalance = Number(flexTilRdo.totalflexi);
+    let tilBalance = Number(flexTilRdo.totaltil);
 
-let isRDO = Number(flexTilRdo.totalrdo) > 0 ? true : false;
+    let flexiInput = 4;
+    let tilInput = 4;
 
-let flexiBalance = Number(flexTilRdo.totalflexi);
-let tilBalance = Number(flexTilRdo.totaltil);
+    if (isFlexiAndTil == true) {
 
-let flexiInput = 4;
-let tilInput = 4;
+    if(flexiBalance < 4 || tilBalance < 4 ) { if (flexiBalance < 4) { flexiInput=flexiBalance; tilInput=8 -
+      flexiBalance; } if (tilBalance < 4) { tilInput=tilBalance; flexiInput=8 - tilBalance; } } } %>
+      <div class="modal fade leave_day_off_modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form action="/dayoff/flexiDayOff" method="post">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Take a Full Day Off</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="display: flex; flex-direction: column; gap: 10px;">
 
-if (isFlexiAndTil == true) {
+                <div class="form-check flex-column" style="display: flex; align-items: start;">
+                  <label class="form-check-label" for="til">
+                    Date:
+                  </label>
+                  <input type="date" name="workDate" id="" required>
 
-  if(flexiBalance < 4 || tilBalance < 4 ) {
-    
-    if (flexiBalance < 4) {
+                </div>
 
-      flexiInput = flexiBalance;
-      tilInput = 8 - flexiBalance;
-    } 
 
-    if (tilBalance < 4) {
-      tilInput = tilBalance;
-      flexiInput = 8 - tilBalance;
-    }
-  }
-}
- %> 
-<div class="modal fade leave_day_off_modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-    <form action="/dayoff/flexiDayOff" method="post">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Take a Full Day Off</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <% if(isFlexiAndTil==true) {%>
+
+                  <% if(tilBalance < 8){%>
+
+                    <div class="form-check flex-column" style="display: flex; align-items: start;">
+                      <p style="color: rgb(12, 0, 182);"> you don't have enough til balance for a day off but you can
+                        still use Mix.</p>
+                      <label class="form-check-label disabled" for="til">
+                        Time in Lieu (TIL): <span>
+                          <%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance
+                        </span>
+                      </label>
+                    </div>
+
+                    <%} else{ %>
+                      <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+                        <input class="form-check-input" type="radio" name="dayOffOption" id="til" value="til">
+                        <label class="form-check-label" for="til">
+                          Time in Lieu (TIL): <span>
+                            <%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance
+                          </span>
+                        </label>
+                      </div>
+                      <%}%>
+
+                        <% if(flexiBalance < 8){ %>
+                          <div class="form-check flex-column" style="display: flex; align-items: start;">
+                            <p style="color: rgb(12, 0, 182);"> you don't have enough flexi balance for a day off but
+                              you can still use Mix.</p>
+                            <label class="form-check-label disabled" for="flexi">
+                              Flexi Hours: <span>
+                                <%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance
+                              </span>
+                            </label>
+                          </div>
+                          <%} else {%>
+                            <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+                              <input class="form-check-input" type="radio" name="dayOffOption" id="flexi" value="flexi">
+                              <label class="form-check-label" for="flexi">
+                                Flexi Hours: <span>
+                                  <%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance
+                                </span>
+                              </label>
+                            </div>
+
+                            <%}%>
+                              <div class="" style="display: flex; flex-direction: column; align-items:start; gap: 5px;">
+                                <div class="form-check d-flex flex-row gap-2 justify-content-center">
+                                  <input class="form-check-input" type="radio" name="dayOffOption" id="mix" value="mix">
+                                  <label class="form-check-label" for="mix">
+                                    Mix
+                                  </label>
+                                </div>
+
+                                <div id="mixOptions"
+                                  style="display: none; gap: 5px; flex-direction: column; gap: 5px; padding-left: 30px; width: 70%; ">
+                                  <div class="row  d-flex flex-row justify-content-center">
+
+                                    <label for="flexiHours" style="font-weight: bold;">Flexi Hours Deduction : <%=
+                                        flexiInput%> Hours</label>
+                                  </div>
+                                  <div class="row d-flex flex-row justify-content-center">
+
+                                    <label for="tilHours" style="font-weight: bold;">TIL Hours Deduction : <%= tilInput
+                                        %> Hours</label>
+                                  </div>
+
+                                </div>
+                              </div>
+                              <% } else {%>
+                                <div>
+                                  <p style="color: red;"> It seems that you dont have enough hours from Flexi and Til
+                                    Balance to spent in a day off</p>
+                                </div>
+                                <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+
+                                  <label class="form-check-label" for="til" style="color:rgb(204, 204, 204)">
+                                    Time in Lieu (TIL): <span style="color:rgb(204, 204, 204)">
+                                      <%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance
+                                    </span>
+                                  </label>
+                                </div>
+                                <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+
+                                  <label class="form-check-label" for="flexi" style="color:rgb(204, 204, 204)">
+                                    Flexi Hours: <span style="color:rgb(204, 204, 204)">
+                                      <%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance
+                                    </span>
+                                  </label>
+                                </div>
+                                <%}%>
+                                  <hr>
+                                  <% if (isRDO) { %>
+                                    <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+                                      <input class="form-check-input" type="radio" name="dayOffOption" id="rdo"
+                                        value="rdo">
+                                      <label class="form-check-label" for="rdo">
+                                        Rostered Day Off (RDO): <span>
+                                          <%= flexTilRdo.totalrdo%> Days Balance
+                                        </span>
+                                      </label>
+                                    </div>
+                                    <%} else { %>
+                                      <div>
+                                        <p style="color: red;"> It seems that you dont have enough RDO balance to spent
+                                          for a day off</p>
+                                      </div>
+                                      <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+
+                                        <label class="form-check-label" for="rdo" style="color:rgb(204, 204, 204)">
+                                          Rostered Day Off (RDO): <span style="color:rgb(204, 204, 204)">
+                                            <%= flexTilRdo.totalrdo%> Days Balance
+                                          </span>
+                                        </label>
+                                      </div>
+                                      <% }%>
+
+                                        <div id="errorDiv" style="color: red; display: none;">Total Flexi and TIL hours
+                                          must be equal to or greater than 8 hours</div>
+                                        <hr>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <% if(isRDO || isFlexiAndTil) { %>
+                  <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+                  <%}%>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="modal-body" style="display: flex; flex-direction: column; gap: 10px;">
-        
-        <div class="form-check flex-column" style="display: flex; align-items: start;">
-          <label class="form-check-label" for="til">
-            Date:
-          </label>
-          <input type="date" name="workDate" id="" required>
-         
-        </div>
+      <!-- LEAVE DAY OFF MODAL ENDS -->
 
-     
-        <% if(isFlexiAndTil == true) {%>
+      <script>
+        const mixRadio = document.getElementById('mix');
+        const mixOptions = document.getElementById('mixOptions');
+        const flexiInput = document.getElementById('flexiHours');
+        const tilInput = document.getElementById('tilHours');
+        const errorDiv = document.getElementById('errorDiv');
 
-        <% if(tilBalance < 8){%>
+        mixRadio.addEventListener('change', () => {
+          if (mixRadio.checked) {
+            mixOptions.style.display = 'flex';
+          } else {
+            mixOptions.style.display = 'none';
+          }
+        });
 
-          <div class="form-check flex-column" style="display: flex; align-items: start;">
-            <p style="color: rgb(12, 0, 182);"> you don't have enough til balance for a day off but you can still use Mix.</p>
-            <label class="form-check-label disabled" for="til" >
-              Time in Lieu (TIL): <span><%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance</span>
-            </label>
-          </div>
+        const checkTotalHours = () => {
+          const totalHours = parseFloat(flexiInput.value) + parseFloat(tilInput.value);
+          if (totalHours < 8) {
+            errorDiv.style.display = 'block';
+            mixRadio.disabled = true;
+            flexiInput.disabled = true;
+            tilInput.disabled = true;
+          } else {
+            errorDiv.style.display = 'none';
+            mixRadio.disabled = false;
+            flexiInput.disabled = false;
+            tilInput.disabled = false;
+          }
+        };
 
-          <%} else{ %>
-        <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-          <input class="form-check-input" type="radio" name="dayOffOption" id="til" value="til">
-          <label class="form-check-label" for="til">
-            Time in Lieu (TIL): <span><%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance</span>
-          </label>
-        </div>
-        <%}%>
+        flexiInput.addEventListener('input', checkTotalHours);
+        tilInput.addEventListener('input', checkTotalHours);
+      </script>
 
-        <% if(flexiBalance < 8){ %>
-          <div class="form-check flex-column" style="display: flex; align-items: start;">
-            <p style="color: rgb(12, 0, 182);"> you don't have enough flexi balance for a day off but you can still use Mix.</p>
-            <label class="form-check-label disabled" for="flexi">
-              Flexi Hours: <span><%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance</span>
-            </label>
-          </div>
-        <%} else {%>
-        <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-          <input class="form-check-input" type="radio" name="dayOffOption" id="flexi" value="flexi">
-          <label class="form-check-label" for="flexi">
-            Flexi Hours: <span><%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance</span>
-          </label>
-        </div>
 
-        <%}%>
-        <div class="" style="display: flex; flex-direction: column; align-items:start; gap: 5px;">
-          <div class="form-check d-flex flex-row gap-2 justify-content-center" >
-            <input class="form-check-input" type="radio" name="dayOffOption" id="mix" value="mix">
-            <label class="form-check-label" for="mix">
-              Mix
-            </label>
-          </div>
-          
-          <div id="mixOptions" style="display: none; gap: 5px; flex-direction: column; gap: 5px; padding-left: 30px; width: 70%; ">
-            <div class="row  d-flex flex-row justify-content-center">
-           
-              <label for="flexiHours"  style="font-weight: bold;">Flexi Hours Deduction : <%= flexiInput%> Hours</label>
+
+
+
+
+
+      <!-- <div class="container"> -->
+      <section class="main col pt-3 mx-4">
+          <h1 class="page-title mb-4">Timesheet</h1>
+          <div class="row">
+            <div class="col-auto">
+              <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
+                <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
             </div>
-           <div class="row d-flex flex-row justify-content-center">
-           
-            <label for="tilHours" style="font-weight: bold;">TIL Hours Deduction : <%= tilInput %> Hours</label>
-           </div>
-            
+            <div class="col-auto">
+              <a href="/emergencyEntry" class="btn btndark" id="addEmergencyBtn">
+                <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Emergency</a>
+            </div>
+            <div class="col-auto">
+
+              <a href="/plannedLeave" class="btn btndark" id="addEmergencyBtn">
+                <i class="fas fa-door-open                          "></i> Planned Leave</a>
+              <!-- <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a> -->
+
+            </div>
+
+            <div class="col-auto">
+
+              <div class="btn btndark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="fas fa-door-open    "></i> Leave for a day</a>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="time-sheet-container table-responsive">
+            <table class="table" id="timesheetTable">
+              <thead>
+                <tr>
+                  <th scope="col" class="hidden">#</th>
+                  <th scope="col">Work Date</th>
+                  <th scope="col">Time Start</th>
+                  <th scope="col">Time Finish</th>
+                  <th scope="col">Time Total</th>
+                  <th scope="col" class="hidden">Time Accrued</th>
+                  <th scope="col" class="hidden">Time Til</th>
+                  <th scope="col" class="hidden">Time Leave</th>
+                  <th scope="col" class="hidden">Time Overtime</th>
+                  <th scope="col" class="hidden">Time Comm Svs</th>
+                  <th scope="col">Comment</th>
+                  <th scope="col" class="hidden">Location ID</th>
+                  <th scope="col">Activity</th>
+                  <th scope="col" class="hidden">Notes</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% tableData.forEach((timesheet, index)=> { %>
+
+                  <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
+              <%= timesheet.holiday_name != null ? 'holiday' : ''%>">
+                    <th class="hidden" scope="row">
+                      <%= index + 1 %>
+                    </th>
+                    <td class="work-date" style="width: 200px;">
+                      <%= timesheet.work_date %> </br>
+                        <%= timesheet.holiday_name%>
+                    </td>
+                    <td>
+                      <%= timesheet.time_start %>
+                    </td>
+                    <td>
+                      <%= timesheet.time_finish %>
+                    </td>
+                    <td>
+                      <%= timesheet.time_total %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.time_accrued %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.time_til %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.time_leave %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.time_overtime %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.time_comm_svs %>
+                    </td>
+                    <td>
+                      <%= timesheet.comment %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.location_id %>
+                    </td>
+                    <td>
+                      <%= timesheet.activity %>
+                    </td>
+                    <td class="hidden">
+                      <%= timesheet.notes %>
+                    </td>
+                    <% if (timesheet.id) { %>
+                      <td>
+                        <!-- Added buttons for actions -->
+                        <%if (timesheet.status != "approved") {%>
+                          <a href="/deleteTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-trash delete-icon"
+                            aria-hidden="true"></i></a>
+                        <%}%>
+                       
+                            <%if (timesheet.status != "approved") {%>
+                              <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon"
+                            aria-hidden="true"></i></a>
+                        <%}%>
+                        
+                      </td>
+                      <% } else { %>
+                        <td>&nbsp;</td>
+                        <% } %>
+                  </tr>
+                  <% }); %>
+              </tbody>
+            </table>
           </div>
         </div>
-        <% } else {%>
-          <div>
-            <p style="color: red;"> It seems that you dont have enough hours from Flexi and Til Balance to spent in a day off</p>
-          </div>
-          <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-           
-            <label class="form-check-label" for="til" style="color:rgb(204, 204, 204)">
-              Time in Lieu (TIL): <span style="color:rgb(204, 204, 204)"><%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance</span>
-            </label>
-          </div>
-          <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-            
-            <label class="form-check-label" for="flexi" style="color:rgb(204, 204, 204)">
-              Flexi Hours: <span style="color:rgb(204, 204, 204)"><%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance</span>
-            </label>
-          </div>
-          <%}%>
-          <hr>
-          <% if (isRDO) { %>
-        <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-          <input class="form-check-input" type="radio" name="dayOffOption" id="rdo" value="rdo">
-          <label class="form-check-label" for="rdo">
-            Rostered Day Off (RDO): <span><%= flexTilRdo.totalrdo%> Days Balance</span>
-          </label>
-        </div>
-        <%} else { %>
-          <div>
-            <p style="color: red;"> It seems that you dont have enough RDO balance to spent for a day off</p>
-          </div>
-          <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
-           
-            <label class="form-check-label" for="rdo" style="color:rgb(204, 204, 204)">
-              Rostered Day Off (RDO): <span style="color:rgb(204, 204, 204)"><%= flexTilRdo.totalrdo%> Days Balance</span>
-            </label>
-          </div>
-        <% }%>
-       
-        <div id="errorDiv" style="color: red; display: none;">Total Flexi and TIL hours must be equal to or greater than 8 hours</div>
-        <hr>
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <% if(isRDO || isFlexiAndTil) { %>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-        <%}%>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-<!-- LEAVE DAY OFF MODAL ENDS -->
+      </section>
+      <!-- </div> -->
 
-<script>
-  const mixRadio = document.getElementById('mix');
-  const mixOptions = document.getElementById('mixOptions');
-  const flexiInput = document.getElementById('flexiHours');
-  const tilInput = document.getElementById('tilHours');
-  const errorDiv = document.getElementById('errorDiv');
-  
-  mixRadio.addEventListener('change', () => {
-    if (mixRadio.checked) {
-      mixOptions.style.display = 'flex';
-    } else {
-      mixOptions.style.display = 'none';
-    }
-  });
+      <%- include('../partials/footer', { locals }) %>
 
-  const checkTotalHours = () => {
-    const totalHours = parseFloat(flexiInput.value) + parseFloat(tilInput.value);
-    if (totalHours < 8) {
-      errorDiv.style.display = 'block';
-      mixRadio.disabled = true;
-      flexiInput.disabled = true;
-      tilInput.disabled = true;
-    } else {
-      errorDiv.style.display = 'none';
-      mixRadio.disabled = false;
-      flexiInput.disabled = false;
-      tilInput.disabled = false;
-    }
-  };
+        <script>
+          //   console.log(<= tableData%>);
+          // CSS class to hide columns
+          const hideColumns = () => {
+            const hiddenColumns = document.querySelectorAll(".hidden");
+            hiddenColumns.forEach((column) => {
+              column.style.display = "none";
+            });
+          };
 
-  flexiInput.addEventListener('input', checkTotalHours);
-  tilInput.addEventListener('input', checkTotalHours);
-</script>
+          // Hide columns on page load
+          document.addEventListener("DOMContentLoaded", () => {
+            hideColumns();
+          });
 
-
-
-
-
-
-
-  <div class="row">
-    <div class="col-auto">
-      <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
-    </div>
-    <div class="col-auto">
-      <a href="/emergencyEntry" class="btn btngray" id="addEmergencyBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Emergency</a>
-    </div>
-    <div class="col-auto">
-      <a href="/plannedLeave" class="btn btngray" id="addEmergencyBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a>
-    </div>
-
-    <div class="col-auto">
-      
-      <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        <i class="fas fa-door-open    "></i> Leave for a day</a>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="time-sheet-container table-responsive">
-    <table class="table" id="timesheetTable">
-      <thead>
-        <tr>
-          <th scope="col" class="hidden">#</th>
-          <th scope="col">Work Date</th>
-          <th scope="col">Time Start</th>
-          <th scope="col">Time Finish</th>
-          <th scope="col">Time Total</th>
-          <th scope="col" class="hidden">Time Accrued</th>
-          <th scope="col" class="hidden">Time Til</th>
-          <th scope="col" class="hidden">Time Leave</th>
-          <th scope="col" class="hidden">Time Overtime</th>
-          <th scope="col" class="hidden">Time Comm Svs</th>
-          <th scope="col">Comment</th>
-          <th scope="col" class="hidden">Location ID</th>
-          <th scope="col">Activity</th>
-          <th scope="col" class="hidden">Notes</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% tableData.forEach((timesheet, index) => { %>
-         
-        <tr
-          class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
-          <%= timesheet.holiday_name != null ? 'holiday' : ''%>"
-          
-        >
-          <th class="hidden" scope="row" ><%= index + 1 %></th>
-          <td class="work-date" style="width: 200px;"><%= timesheet.work_date %> </br> <%= timesheet.holiday_name%> </td>
-          <td><%= timesheet.time_start %></td>
-          <td><%= timesheet.time_finish %></td>
-          <td><%= timesheet.time_total %></td>
-          <td class="hidden"><%= timesheet.time_accrued %></td>
-          <td class="hidden"><%= timesheet.time_til %></td>
-          <td class="hidden"><%= timesheet.time_leave %></td>
-          <td class="hidden"><%= timesheet.time_overtime %></td>
-          <td class="hidden"><%= timesheet.time_comm_svs %></td>
-          <td><%= timesheet.comment %></td>
-          <td class="hidden"><%= timesheet.location_id %></td>
-          <td><%= timesheet.activity %></td>
-          <td class="hidden"><%= timesheet.notes %></td>
-          <% if (timesheet.id) { %>
-          <td>
-            <!-- Added buttons for actions -->
-            
-            <a href="/deleteTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-trash delete-icon" aria-hidden="true"></i></a>
-            <a href="/approveTimesheet/<%= timesheet.id %>"><i class="fa fa-solid fa-check approve-icon" aria-hidden="true"></i></a>
-            <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon" aria-hidden="true"></i></a>
-          </td>
-          <% } else { %>
-          <td>&nbsp;</td>
-          <% } %>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </div>
-<!-- </div> -->
-
-<%- include('../partials/footer', { locals }) %>
-
-<script>
-  //   console.log(<= tableData%>);
-  // CSS class to hide columns
-  const hideColumns = () => {
-    const hiddenColumns = document.querySelectorAll(".hidden");
-    hiddenColumns.forEach((column) => {
-      column.style.display = "none";
-    });
-  };
-
-  // Hide columns on page load
-  document.addEventListener("DOMContentLoaded", () => {
-    hideColumns();
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const table = document.getElementById("timesheetTable");
-    table.addEventListener("click", (event) => {
-      const target = event.target.closest("tr");
-      const dateCell = target.querySelector(".work-date");
-      if (dateCell) {
-        const dateString = dateCell.textContent.trim();
-        const dateParts = dateString.split(" "); // Split the date string by space
-        if (dateParts.length === 3) {
-          const monthStr = dateParts[0].substring(0, 3); // Get the first 3 characters of the month
-          const day = dateParts[1].slice(0, -1); // Remove the comma from the day
-          const year = dateParts[2];
-          // Convert month abbreviation to month number
-          const month =
-            new Date(Date.parse(monthStr + " 1, 2022")).getMonth() + 1;
-          // Format the date as 'YYYYMMDD'
-          const formattedDate = `${year}${month
-            .toString()
-            .padStart(2, "0")}${day.padStart(2, "0")}`;
-          // window.location.href = `/timesheetEntry?date=${formattedDate}`;
-        }
-      }
-    });
-  });
-</script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const table = document.getElementById("timesheetTable");
+            table.addEventListener("click", (event) => {
+              const target = event.target.closest("tr");
+              const dateCell = target.querySelector(".work-date");
+              if (dateCell) {
+                const dateString = dateCell.textContent.trim();
+                const dateParts = dateString.split(" "); // Split the date string by space
+                if (dateParts.length === 3) {
+                  const monthStr = dateParts[0].substring(0, 3); // Get the first 3 characters of the month
+                  const day = dateParts[1].slice(0, -1); // Remove the comma from the day
+                  const year = dateParts[2];
+                  // Convert month abbreviation to month number
+                  const month =
+                    new Date(Date.parse(monthStr + " 1, 2022")).getMonth() + 1;
+                  // Format the date as 'YYYYMMDD'
+                  const formattedDate = `${year}${month
+                    .toString()
+                    .padStart(2, "0")}${day.padStart(2, "0")}`;
+                  // window.location.href = `/timesheetEntry?date=${formattedDate}`;
+                }
+              }
+            });
+          });
+        </script>

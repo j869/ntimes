@@ -5,20 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <%let isManager = false%>
-  <% try { %>
-    <% if (userInfo != undefined) { %>
-      <% isManager = true; %>
-    <% } else { %>
-      <% isManager = false; %>
-    <% } %>
-  <% } catch(err) { %>
-    <% isManager = false; %>
-  <% } %>
-
-  <% if (locals.title) {  %>
-   
-
+  <% if (locals.title) { %>
     <title>Numbat <%=title%>
     </title>
     <% } else { %>
@@ -45,7 +32,7 @@
         <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
         <script>
-          console.log("Header variables", <% - JSON.stringify(locals) %>);
+        //   console.log("Header variables", <- JSON.stringify(locals) %>);
         </script>
 </head>
 
@@ -65,7 +52,6 @@
               <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" alt="logo"></span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-              
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Home' ) { %>
                   <a href="/" class="nav-link active" id="active">
@@ -75,50 +61,12 @@
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
               </li>
-              <%if(!isManager) {%>
-              <li class="nav-item">
-                <% if (locals.title && locals.title==='Timesheet' ) { %>
-                  <a href="/time" class="nav-link active" id="active">
-                    <% } else { %>
-                      <a href="/time" class="nav-link link-light">
-                        <% } %>
-                          <i class="bi bi-calendar-week-fill"></i> <span
-                            class="ms-1 d-none d-sm-inline">Timesheet</span>
-                      </a>
-              </li>
 
-              <li class="nav-item">
-                <% if (locals.title && locals.title==='Users' ) { %>
-                  <a href="/users" class="nav-link active" id="active">
-                    <% } else { %>
-                      <a href="/users" class="nav-link link-light">
-                        <% } %>
-                          <i class="bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
-                      </a>
-              </li>
+             
 
-              <li class="nav-item">
-                <% if (locals.title && locals.title==='Location Manager' ) { %>
-                  <a href="/locationManager" class="nav-link active" id="active">
-                    <% } else { %>
-                      <a href="/locationManager" class="nav-link link-light">
-                        <% } %>
-                          <i class="bi bi-geo-alt-fill"></i> <span class="ms-1 d-none d-sm-inline">Location</span>
-                      </a>
-              </li>
-
-              <li>
-                <% if (locals.title && locals.title==='Activity Manager' ) { %>
-                  <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
-                    <% } else { %>
-                      <a href="/activity/<%= user.id %>" class="nav-link link-light">
-                        <% } %>
-                          <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
-                      </a>
-              </li>
-              <%}%>
+       
  
-<%if (isManager == true) { %>
+<%if (userInfo) { %>
 
               <li>
                 <% if (locals.title && locals.title==='Pending Timesheets' ) { %>
