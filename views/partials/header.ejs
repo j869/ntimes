@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<<<<<<< HEAD
   <%let isManager = false%>
   <% try { %>
     <% if (userInfo != undefined) { %>
@@ -19,6 +20,9 @@
   <% if (locals.title) {  %>
    
 
+=======
+  <% if (locals.title) { %>
+>>>>>>> 6cb1bb915169572c09117c6b4dbb1a51fb494f11
     <title>Numbat <%=title%>
     </title>
     <% } else { %>
@@ -65,7 +69,10 @@
               <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" alt="logo"></span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+<<<<<<< HEAD
               
+=======
+>>>>>>> 6cb1bb915169572c09117c6b4dbb1a51fb494f11
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Home' ) { %>
                   <a href="/" class="nav-link active" id="active">
@@ -75,7 +82,11 @@
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
               </li>
+<<<<<<< HEAD
               <%if(!isManager) {%>
+=======
+
+>>>>>>> 6cb1bb915169572c09117c6b4dbb1a51fb494f11
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Timesheet' ) { %>
                   <a href="/time" class="nav-link active" id="active">
@@ -116,6 +127,7 @@
                           <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                       </a>
               </li>
+<<<<<<< HEAD
               <%}%>
  
 <%if (isManager == true) { %>
@@ -151,6 +163,8 @@
               </li>
 
 <%}%>
+=======
+>>>>>>> 6cb1bb915169572c09117c6b4dbb1a51fb494f11
             </ul>
 
             <hr>
@@ -163,7 +177,11 @@
               </a>
 
               <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+<<<<<<< HEAD
                 <li><a class="dropdown-item" href="/settings">Settings</a></li>
+=======
+                <li><a class="dropdown-item" href="/locationManager">Settings</a></li>
+>>>>>>> 6cb1bb915169572c09117c6b4dbb1a51fb494f11
                 <li><a class="dropdown-item" href="/users">Profile</a></li>
                 <li>
                   <hr class="dropdown-divider">
