@@ -43,19 +43,19 @@
 
       
 
-    <div class="container-fluid ">
-      <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgdark">   
-          <div class="sidebar d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100" style="overflow: hidden;">
-            <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
-              <span class="d-none d-sm-inline"><img class="logo" src="../images/new2.png" height="50px" alt="logo"></span>
+    <div class="container-fluid overflow-hidden">
+      <div class="row vh-100 overflow-auto">
+          <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 bgdark d-flex sticky-top">
+              <div class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2">
+            <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-decoration-none">
+              <span class="d-none d-sm-inline"><img class="logo d-none d-sm-inline" src="../images/new2.png" height="50px" alt="logo"></span>
             </a> 
-            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+            <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Home' ) { %>
-                  <a href="/" class="nav-link active" id="active">
+                  <a href="/" class="nav-link px-sm-2 px-2 active" id="active">
                     <% } else { %>
-                      <a href="/" class="nav-link link-light">
+                      <a href="/" class="nav-link px-sm-2 px-2 link-light">
                         <% } %>
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
@@ -63,9 +63,9 @@
 
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Timesheet' ) { %>
-                  <a href="/time" class="nav-link active" id="active">
+                  <a href="/time" class="nav-link px-sm-2 px-2 active" id="active">
                     <% } else { %>
-                      <a href="/time" class="nav-link link-light">
+                      <a href="/time" class="nav-link px-sm-2 px-2 link-light">
                         <% } %>
                           <i class="bi bi-calendar-week-fill"></i> <span
                             class="ms-1 d-none d-sm-inline">Timesheet</span>
@@ -74,9 +74,9 @@
 
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Users' ) { %>
-                  <a href="/users" class="nav-link active" id="active">
+                  <a href="/users" class="nav-link px-sm-2 px-2 active" id="active">
                     <% } else { %>
-                      <a href="/users" class="nav-link link-light">
+                      <a href="/users" class="nav-link px-sm-2 px-2 link-light">
                         <% } %>
                           <i class="bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
                       </a>
@@ -84,9 +84,9 @@
 
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Location Manager' ) { %>
-                  <a href="/locationManager" class="nav-link active" id="active">
+                  <a href="/locationManager" class="nav-link px-sm-2 px-2 active" id="active">
                     <% } else { %>
-                      <a href="/locationManager" class="nav-link link-light">
+                      <a href="/locationManager" class="nav-link px-sm-2 px-2 link-light">
                         <% } %>
                           <i class="bi bi-geo-alt-fill"></i> <span class="ms-1 d-none d-sm-inline">Location</span>
                       </a>
@@ -94,16 +94,16 @@
 
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Activity Manager' ) { %>
-                  <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
+                  <a href="/activity/<%= user.id%>" class="nav-link px-sm-2 px-2 active" id="active">
                     <% } else { %>
-                      <a href="/activity/<%= user.id %>" class="nav-link link-light">
+                      <a href="/activity/<%= user.id %>" class="nav-link px-sm-2 px-2 link-light">
                         <% } %>
                           <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                       </a>
               </li>
             </ul>
             <hr>
-                <div class="dropdown pb-4">
+                <div class="dropdown py-sm-4 mt-sm-auto ms-auto ms-sm-0 flex-shrink-1">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
                         <span class="d-none d-sm-inline mx-1">Name</span>
@@ -127,8 +127,8 @@
 
 
 
-        <section class="col pb-3">
-
+        <section class="col d-flex flex-column h-sm-100">
+          <main class="row overflow-auto">
 
           <div id="messageContainer">
             <% if (locals.messages && locals.messages.length> 0) { %> <% if (messages.length> 0) { %> <%
