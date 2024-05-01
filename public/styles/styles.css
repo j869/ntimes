@@ -40,6 +40,7 @@ body {
 */
 
 
+
 .titlebar {
   position: sticky;
   top: 0;
@@ -54,13 +55,13 @@ body {
   top: 0;
 }
 
-.sidebar li { 
+.sidebar .nav-item { 
   border: none;
   padding: 5px;
   width: 100%;
 }
 
-.sidebar li:hover a { 
+.sidebar .nav-item:hover a { 
    color: #fcfffc;
   background: #2ba84a;
 }
