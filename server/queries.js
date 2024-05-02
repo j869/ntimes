@@ -321,6 +321,141 @@ const getRdoById = (req, res) => {
   );
 };
 
+//------------------------------------
+//----  HR Profile (My Information)
+//------------------------------------
+
+const updateProfile = (req, res) => {
+  console.log("up1   ", req.body);
+
+  // Extract the data from the request
+  const {
+    advance_entry_days,
+    at_agreement,
+    at_balance,
+    at_carried,
+    at_limit_hours,
+    at_max,
+    at_open,
+    auto_calculate_hours,
+    current_period,
+    default_location,
+    fire_role,
+    fund_source,
+    last_update,
+    location_id,
+    normal_start,
+    rdo_balance,
+    rdo_carried,
+    rdo_minimum,
+    rdo_open,
+    rostered_days,
+    takes_rdos,
+    timesheet_mode,
+    timesheet_version,
+    weekends_worked,
+    workcentre,
+    file_location
+  } = req.body; // Assuming data is sent in the request body
+
+  // Extract the ID from the request parameters
+  const id = parseInt(req.params.id);
+
+  // SQL query to update the users table
+  const query = `
+    UPDATE ts_user_t
+    SET
+      advance_entry_days = $1,
+      at_agreement = $2,
+      at_balance = $3,
+      at_carried = $4,
+      at_limit_hours = $5,
+      at_max = $6,
+      at_open = $7,
+      auto_calculate_hours = $8,
+      current_period = $9,
+      default_location = $10,
+      fire_role = $11,
+      fund_source = $12,
+      last_update = $13,
+      location_id = $14,
+      normal_start = $15,
+      rdo_balance = $16,
+      rdo_carried = $17,
+      rdo_minimum = $18,
+      rdo_open = $19,
+      rostered_days = $20,
+      takes_rdos = $21,
+      timesheet_mode = $22,
+      timesheet_version = $23,
+      weekends_worked = $24,
+      workcentre = $25,
+      file_location = $26
+    WHERE id = $27
+  `;
+
+  // Array containing the values to be inserted into the query
+  const values = [
+    advance_entry_days,
+    at_agreement,
+    at_balance,
+    at_carried,
+    at_limit_hours,
+    at_max,
+    at_open,
+    auto_calculate_hours,
+    current_period,
+    default_location,
+    fire_role,
+    fund_source,
+    last_update,
+    location_id,
+    normal_start,
+    rdo_balance,
+    rdo_carried,
+    rdo_minimum,
+    rdo_open,
+    rostered_days,
+    takes_rdos,
+    timesheet_mode,
+    timesheet_version,
+    weekends_worked,
+    workcentre,
+    file_location,
+    id
+  ];
+
+  // Execute the query using the database connection pool
+  pool.query(query, values, (error, results) => {
+    if (error) {
+      // Log and handle any errors that occur during the query execution
+      console.error('Error updating users table:', error);
+      res.status(500).json({ error: 'Internal server error' }); // Send an error response
+    } else {
+      // Send a success response
+      res.status(200).json({ message: 'Users table updated successfully' });
+    }
+  });
+};
+
+
+
+const getProfile = (req,res) => {
+  console.log("qf1   ", req.params.id);
+  const id = parseInt(req.params.id);
+  pool.query("SELECT * FROM ts_user_t WHERE id = $1", [id], (error, results) => {
+    if (error) {
+      throw error;
+    }
+    console.log("up8    ");
+    res.status(200).json(results.rows);
+  });
+
+}
+
+
+
+
 //--------------------------------
 //----  users
 //-------------------------------
@@ -568,6 +703,8 @@ export {
   getUsers,
   getUserById,
   getUserByUsername,
+  getProfile,
+  updateProfile,
   getLocationById,
   getAllLocation,
   getCurrentYearTimesheetsForUser,

@@ -74,6 +74,8 @@ app.post("/deletelocation", deleteLocation);
 app.put("/addlocation", addLocation);
 
 // Define other routes
+app.get("/profile/:id", db.getProfile);
+app.put("/updateProfile/:id", db.updateProfile);
 app.get("/users", db.getUsers);
 app.get("/login/:username", db.getUserByUsername);
 app.get("/users/:id", db.getUserById);

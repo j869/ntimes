@@ -429,3 +429,18 @@ INSERT INTO fund (fund_source_num, fund_source_name) VALUES
 ('300', '300 BERC (Point Nepean) - Output'),
 ('310', '310 BERC (Urban Parks and Trails) - Output');
 
+
+
+CREATE VIEW leave_balances AS
+SELECT
+    person_id,
+    SUM(time_flexi) AS flexi_balance,
+    SUM(time_til) AS til_balance,
+    SUM(rwe_day) AS rdo_balance,
+    SUM(time_leave) AS total_leave,
+    SUM(time_overtime) AS total_overtime
+FROM
+    ts_timesheet_t
+GROUP BY
+     person_id,
+	 username;

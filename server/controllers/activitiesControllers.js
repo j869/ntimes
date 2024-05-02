@@ -1,6 +1,7 @@
 import { queryDatabase } from "../middleware.js";
 
 const getActivitiesByUserId = (req, res) => {
+  console.log("ga1     getActivitiesByUserId: " + req.params.id)
   const userID = req.params.id;
   const query = `SELECT
 	users.username, 

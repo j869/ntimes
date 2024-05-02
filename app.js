@@ -257,10 +257,18 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   const locationResponse = await axios.get(`${API_URL}/location`);
   const location = locationResponse.data; // Extract the data from the Axios response
 
+  const activityList = await axios.get(`${API_URL}/activities/${req.user.id}`);
+  const activity = activityList.data;
+
+  const fundResponse = await axios.get(`${API_URL}/fundSource`);
+  const fundSource = fundResponse.data;
+
   res.render("timesheet/recordHours.ejs", {
     forDate: date,
     user: req.user,
+    fundSource: fundSource,
     location: location, // Pass the extracted location data
+    activity: activity,
     title: "Enter Timesheet",
     messages: req.flash("messages"),
   });
@@ -758,6 +766,27 @@ app.get("/approveTimesheet/:id", async (req, res) => {
       error.response ? error.response.data : error.message
     );
   }
+});
+
+
+app.get("/myprofile", isAuthenticated, async (req, res) => {
+  console.log("ui1    My Information");
+  try {  
+    const result = await axios.get(`${API_URL}/users/${req.user.id}`);
+    console.log("ui2    ", result.data);
+    const { password, ...userData } = result.data; //remove password from being sent
+    res.render("profile.ejs", {
+      user: req.user,
+      userData,
+      title: "My Profile",
+      messages: req.flash("messages")
+    });
+    console.log("ui9   ");
+  } catch (error) {
+    console.error("iu8   Error fetching myprofile data:", error);
+    res.status(500).send("Error fetching user data");
+  }  
+
 });
 
 //#endregion
