@@ -35,3 +35,5 @@ CREATE TABLE staff_hierarchy (
     FOREIGN KEY (manager_id) REFERENCES users(id),
     PRIMARY KEY (user_id, manager_id)
 );
+
+

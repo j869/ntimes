@@ -21,9 +21,13 @@ users."id" = $1`
 
 queryDatabase(query, [userId], res, "User fetched successfully");
 
-
-
 }
+
+
+
+//STATUS if ts_user_t.role_id = 1 then it is NORMAL USER
+//STATUS if ts_user_t.role_id = 2 then it is MANAGER USER
+
 
 const isManager = async (req, res) => {
     try {

@@ -38,5 +38,67 @@
     <button type="submit">Update Profile</button>
 </form>
 
-<%- include('partials/footer', {user}) %>
+<!-- Table showing name and totalHours -->
+<div class="w-100 flex">
+    <div class="work-schedule">
+        <h3 class="mb-4 mt-5">User Work Schedule</h3>
+        <table class="table table-striped-columns w-50">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Paid Hours</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <% userSchedule[0].schedule_day.forEach(schedule => { %>
+                    <tr>
+                        <td><%= schedule%></td>
+                        <td><%= schedule == "Sunday" || schedule == "Saturday" ? 0.00 : userSchedule[0].paid_hours %></td>
+                    </tr>
+                <% }) %>
+                    <tr>
+                        <td class="table-info fw-bold">Total Hours</td>
+                        <td class="table-info"><%= totalHours%></td>
+                    </tr>
+        
+                
+            </tbody>
+        </table>
+    </div>
+    
+    
+    <div class="pay-day">
+    
+    <h3 class="mb-4 mt-5">Pay Day Table</h3>
+    
+    <table class="table table-striped-columns w-50">
+        <thead>
+            <tr>
+                <th>Dates</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <% payPeriods.forEach((schedule, index) => { %>
+                <tr>
+                    <td><%= schedule.toDateString().split(' ')[0] + ' ' + schedule.toDateString().split(' ')[1] + '. ' + schedule.getDate() + ' ' + schedule.getFullYear() %></td>
+                    <td><%= individaulSchedTotalHours[index]%></td>
+                </tr>
+            <% }) %>
+               
+    
+            
+        </tbody>
+    </table>
+    
+    </div>
+    
+    
+</div>
 
+
+
+
+<%- include('partials/footer', {user}) %>
