@@ -33,6 +33,7 @@ import {
 
 
 import { getFundSources, getFundSourceById, createFundSource, updateFundSource, deleteFundSource } from "./controllers/fundSourcesConstroller.js"
+import { getTotalHourByDate, getUserScheduleById } from "./controllers/userWorkingSheduleController.js";
 
 
 const port = 4000;
@@ -57,6 +58,12 @@ app.get("/fundSource/:id", getFundSourceById);
 app.post("/fundSource/create", createFundSource);
 app.post("/fundSource/update", updateFundSource);
 app.post("/fundSource/delete", deleteFundSource);
+
+
+// ROUTES FOR USER WORKING SCHEDULE
+app.get("/userSchedule/:userID", getUserScheduleById);
+app.post("/totalHours/:userID", getTotalHourByDate);
+
 
 
 

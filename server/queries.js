@@ -457,6 +457,8 @@ const createUser = (req, res) => {
     req.body;
   console.log("k2", req.body);
 
+  
+
   pool.query(
     "SELECT * FROM users WHERE email = $1",
     [email],
@@ -475,7 +477,7 @@ const createUser = (req, res) => {
 
       console.log("k5");
       const query =
-        "INSERT INTO users (username, email, password, role, verification_token, verified_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
+        `INSERT INTO users (username, email, password, role, verification_token, verified_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `;
       const values = [
         username,
         email,
@@ -493,6 +495,28 @@ const createUser = (req, res) => {
         }
         console.log("k7");
         const userId = result.rows[0].id;
+
+        // INSERTING THE REGISTERED USER TO THE ts_user_t
+
+        !error && pool.query("INSERT INTO ts_user_t (user_id) VALUES ($1)", [userId], (error, result) => {
+          if (error) {
+            console.error("Adding User Error:", error);
+            return res
+              .status(500)
+              .json({ messages: ["Error adding user to the database"] });
+          } })
+
+          
+
+          !error && pool.query("INSERT INTO user_work_schedule (user_id, schedule_id) VALUES ($1, $2)", [userId, 1], (error, result) => {
+            if (error) {
+              console.error("Adding User Error:", error);
+              return res
+                .status(500)
+                .json({ messages: ["Error adding user to the database"] });
+            } })
+
+
         console.log("k9 successfully created user");
         return res
           .status(201)

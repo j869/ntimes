@@ -26,6 +26,7 @@ import createTimesheetRoutes from "./routes/timeSheetsRoutes.js";
 import createFundSourceRoutes from "./routes/fundSourcesRoutes.js";
 import createManagerRoutes from "./routes/managerRoutes.js";
 import { userInfo } from "os";
+import createProfileRoutes from "./routes/profileRoutes.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
@@ -216,6 +217,9 @@ const runManager = (req, res, next) => {
 };
 
 app.use(runManager);
+
+// PROILE ROUTE HERE
+app.use("/profile", createProfileRoutes(isAuthenticated));
 
 
 // LOCATION MANAGER ROUTES HERE
@@ -828,14 +832,15 @@ app.get("/users/:id", isAuthenticated, async (req, res) => {
   console.log("v1      Protected route: Fetching user data...", req.params);
   // if (req.isAuthenticated()) {
   try {
-    console.log(`v2      ${API_URL}/users/${req.params.id}`);
-    const response = await axios.get(`${API_URL}/users/${req.params.id}`);
+    console.log(`v2      ${API_URL}/users/${req.user.id}`);
+    const response = await axios.get(`${API_URL}/users/${req.user.id}`);
     const q = response.data[0];
     const { password, ...userData } = q; //remove password from being sent
     console.log("v3    ", userData);
     //res.send(response.data);
     const errors = req.flash("messages");
     const messages = errors.map((error) => error.msg);
+
     res.render("profile.ejs", {
       title: "Edit Profile",
       user: req.user,
@@ -989,7 +994,8 @@ app.post("/login", function (req, res, next) {
         return next(err);
       }
 
-      const isManager = await axios.get(`${API_URL}/users/isManager/${req.user.id}`);
+      const isManager = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+
       req.session.userInfo = isManager.data[0]
 
       
