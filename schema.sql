@@ -120,7 +120,6 @@ CREATE TABLE ts_user_t (
 );
 
 
-
 drop table ts_timesheet_t;
 CREATE TABLE ts_timesheet_t (
     id SERIAL PRIMARY KEY,

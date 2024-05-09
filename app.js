@@ -41,8 +41,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 const API_URL = "http://localhost:4000";
 // let baseURL = "";
 const saltRounds = 10;
@@ -175,6 +173,9 @@ const isAdmin = (req, res, next) => {
 app.get("/", (req, res) => {
   const userInfo = req.session.userInfo;
 
+  console.log("THE USER INFO")
+  console.log(userInfo)
+
    
   const username =
     req.user && req.user.username ? " for " + req.user.username : "[]";
@@ -202,7 +203,7 @@ const runManager = (req, res, next) => {
       '/login', 
       '/logout'];
   
-  if (userInfo != undefined && userInfo.role_id == 2) {
+  if (userInfo != undefined && userInfo.position == "manager") {
 
     app.use('/timesheet', createManagerRoutes(isAuthenticated))
 
@@ -995,11 +996,11 @@ app.post("/login", function (req, res, next) {
       }
 
       const isManager = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
-
+      
       req.session.userInfo = isManager.data[0]
 
       
-      if (isManager.data[0] != undefined && isManager.data[0].role_id == 2) {
+      if (isManager.data[0] != undefined && isManager.data[0].position == "manager") {
         return res.redirect("/timesheet/pending")
       } 
 

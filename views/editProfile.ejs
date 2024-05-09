@@ -1,0 +1,115 @@
+
+<%- include('partials/header', { title: 'Edit Profile', user, messages: messages
+}) %>
+
+<%
+let role = "";
+let email = user.email;
+let username = user.username
+let firstName = "";
+let lastName = "";
+let birthDate = "";
+let age = "";
+
+if (userData) {
+    role = userData.position;
+    username = userData.username
+    email = userData.email
+    firstName = userData.first_name || "";
+    lastName = userData.last_name || "";
+    birthDate = userData.birth_date ? new Date(userData.birth_date).toLocaleDateString() : "";
+    age = userData.birth_date ? Math.floor((new Date() - new Date(userData.birth_date)) / (365.25 * 24 * 60 * 60 * 1000)) : "";
+}
+%>
+
+
+
+
+    <h1>Edit Profile</h1>
+    <div class="main-body">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/64/64572.png"
+                            alt="Admin"
+                            class="rounded-circle"
+                            width="150"
+                          />
+                          <div class="mt-3">
+                            <h4><%= `${firstName} ${lastName}`%></h4>
+                            <p class="text-secondary mb-1"><%= email%></p>
+                            <p class="text-secondary mb-1"><%= role%></p>
+                            
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">First Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" value="<%= firstName%>">
+                            </div>
+                        </div>
+                       
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Last Name</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" value="<%= lastName%>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Birthday</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="date" class="form-control" value="<%= birthDate%>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Email</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" value="<%= email%>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Username</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="text" class="form-control" value="<%= username%>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Password</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="password" class="form-control" value="">
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9 text-secondary">
+                                <input type="button" class="btn btn-primary px-4" value="Save Changes">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>

@@ -6,6 +6,88 @@ const createProfileRoutes = (isAuthenticated) => {
   const router = Router();
   const API_URL = process.env.API_URL;
 
+  
+  router.get("/edit", isAuthenticated, async (req, res) => {
+    const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+    const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    const userInfo = req.session.userInfo;
+
+    const password = await bcrypt.compareSync(data.data[0].password, req.user.passwordHash);
+    console.log(password)
+            res.render("editProfile.ejs", {
+                user: req.user,
+                password: password,         
+                userSchedule: userSchedule.data,
+                userData: data.data[0],
+                userInfo: userInfo,
+                messages: req.flash(""),
+                title: "Edit Profile",
+
+                 // Pass the individual total hours to the template
+            });
+ 
+    
+})
+
+  router.get("/check", isAuthenticated, (req, res) => {
+            res.redirect("/profile")
+            
+  })
+  router.post("/check", isAuthenticated, async (req, res) => {
+    const email = req.body.email
+    const password = req.body.password 
+    const checkUser = await checkUserExists(email, password)
+    // console.log("THIS IS THE CHECK " + checkUser)
+
+
+    const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+    const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    const userInfo = req.session.userInfo;
+
+
+   
+
+    try {
+        if(checkUser == true) { 
+
+            res.render("editProfile.ejs", {
+                user: req.user,          
+                userSchedule: userSchedule.data,
+                userData: data.data[0],
+                userInfo: userInfo,
+                messages: req.flash(""),
+                title: "Edit Profile",
+
+                 // Pass the individual total hours to the template
+            });
+        } else { 
+           
+            res.redirect("/profile?status=404")
+        }
+        
+
+    } catch (error) {
+        console.error("Error fetching individual total hours:", error);
+        res.status(500).send("Internal Server Error");
+    }
+  })
+
+  const checkUserExists = async (email, password) => {
+ 
+      // Correctly format the data as an object instead of an array
+      const response = await axios.post(`${API_URL}/users/check`, { email, password });
+    //     console.log("LAKsdja;lksjlkdja;lskdja;klsdjas;lkj")
+    //   console.log(response.data.exists)
+    
+      if (response.data.exists == true ) {
+        return true; // The server should return if the password matches
+      } else {
+        return false; // No user found with the given email
+      }
+   
+  };
+
+
 
   function getPayPeriods(startDate, endDate, scheduleDays) {
     const allDateSchedules = [];
@@ -28,11 +110,8 @@ const createProfileRoutes = (isAuthenticated) => {
     let startDay = getDayOfWeekName(allDateSchedules[0].getDay());
 
     // Determine pay periods based on the last scheduled day within each pay period
-    while (i > 0) {
+    while (i > 1) {
         if (i > scheduleDays.length - 1) {
-
-
-
             payPeriods.push(allDateSchedules[payDayIndex]);
             payDayIndex += scheduleDays.length
             i -= scheduleDays.length;
@@ -54,26 +133,57 @@ function getDayOfWeekName(dayOfWeek) {
 
 router.get("/", isAuthenticated, async (req, res) => {
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
-    const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;
 
-    let totalHours = 0;
-    const paidHours = Number(userSchedule.data[0].paid_hours);
+    // Check if userScheduleResponse.data is empty
+    if (!userScheduleResponse.data || userScheduleResponse.data.length === 0) {
+        res.render("profile.ejs", {
+            status: req.query.staus,
+            user: req.user,
+            payPeriods: [],
+            userSchedule: [],
+            totalHours: 0,
+            userData: data.data[0],
+            userInfo: userInfo,
+            messages: req.flash(""),
+            title: "Pending Timesheets",
+        });
+        return;
+    }
 
-    const scheduleDays = userSchedule.data[0].schedule_day;
-    const startDate = new Date(userSchedule.data[0].start_date);
-    const endDate = new Date(userSchedule.data[0].end_date);
+    let totalHours = 0;
+    const paidHours = Number(userScheduleResponse.data[0].paid_hours);
+
+    const scheduleDays = userScheduleResponse.data[0].schedule_day;
+    const startDate = new Date(userScheduleResponse.data[0].start_date);
+    const endDate = new Date(userScheduleResponse.data[0].end_date);
     const payPeriods = getPayPeriods(startDate, endDate, scheduleDays);
 
-    userSchedule.data[0].schedule_day.forEach(day => {
+    userScheduleResponse.data[0].schedule_day.forEach(day => {
         if (day !== "Saturday" && day !== "Sunday") {
             totalHours += paidHours;
         }
     });
+    let initiateStartDate = false;
 
     const individaulSchedTotalHoursPromises = payPeriods.map(async (date, index) => {
-        let start_date = payPeriods[index] ? payPeriods[index].toISOString().split('T')[0] : null;
-        let end_date = payPeriods[index + 1] ? payPeriods[index + 1].toISOString().split('T')[0] : null;
+
+        
+        let start_date;
+        let end_date;
+
+        if (initiateStartDate == false) {
+
+            start_date = startDate ? startDate.toISOString().split('T')[0] : null;
+            end_date = payPeriods[index] ? payPeriods[index].toISOString().split('T')[0] : null;
+            initiateStartDate = true
+
+        } else {
+            start_date = payPeriods[index - 1] ? payPeriods[index -1].toISOString().split('T')[0] : null;
+            end_date = payPeriods[index ] ? payPeriods[index ].toISOString().split('T')[0] : null;
+        }
+        
 
         try {
             const totalTimeResponse = await axios.post(`${API_URL}/totalHours/${req.user.id}`, {
@@ -82,37 +192,36 @@ router.get("/", isAuthenticated, async (req, res) => {
             });
 
             let totalTime = totalTimeResponse.data.data[0].totalhours;
-            return totalTime == null || totalTime == "" ? 0 : totalTime;   
+            return totalTime == null || totalTime == "" ? 0 : totalTime;
         } catch (error) {
             console.error("Error fetching total hours:", error);
-
             return 0;
         }
+
+        
     });
 
     try {
         const individaulSchedTotalHours = await Promise.all(individaulSchedTotalHoursPromises);
-
-        // console.table(individaulSchedTotalHours);
-        
-
+       
         res.render("profile.ejs", {
-            user: req.user,   
-            individaulSchedTotalHours: individaulSchedTotalHours,         
+            user: req.user,
+            status: req.query.status,
             payPeriods: payPeriods,
-            userSchedule: userSchedule.data,
+            userSchedule: userScheduleResponse.data,
             totalHours: totalHours,
-            userData: data.data,
+            userData: data.data[0],
             userInfo: userInfo,
             messages: req.flash(""),
             title: "Pending Timesheets",
-            individaulSchedTotalHours: individaulSchedTotalHours, // Pass the individual total hours to the template
+            individaulSchedTotalHours: individaulSchedTotalHours,
         });
     } catch (error) {
         console.error("Error fetching individual total hours:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 
 

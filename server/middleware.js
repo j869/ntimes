@@ -11,7 +11,7 @@ export const pool = new Pool({
   port: process.env.PG_PORT || 5432,
 });
 
-export const queryDatabase = (query, params, res, successMessage) => {
+export const  queryDatabase = (query, params, res, successMessage) => {
   pool.query(query, params, (error, result) => {
     if (error) {
       console.error("Database error:", error);
@@ -22,3 +22,4 @@ export const queryDatabase = (query, params, res, successMessage) => {
     res.status(200).json(result.rows);
   });
 };
+

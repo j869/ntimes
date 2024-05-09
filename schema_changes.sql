@@ -37,3 +37,27 @@ CREATE TABLE staff_hierarchy (
 );
 
 
+
+-- Intermediate Table for Many-to-Many Relationship
+CREATE TABLE IF work_schedule (
+  "id" serial PRIMARY KEY,
+  "schedule_day" varchar(255)[],
+  "paid_hours" numeric(5,2),
+  "start_date" timestamp,
+  "end_date" timestamp
+);
+
+INSERT INTO work_schedule ("schedule_day", "paid_hours", "start_date", "end_date")
+VALUES ('{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}', 7.60, '2023-12-31 18:31:18', '2024-12-31 18:31:28');
+
+
+CREATE TABLE user_work_schedule (
+  "user_id" int4 NOT NULL,
+  "schedule_id" int4 NOT NULL DEFAULT 1,
+  "next_pay_date" date,
+  "payment_status" int2,
+  "total_work_hours" int4,
+  PRIMARY KEY ("user_id", "schedule_id")
+);
+
+

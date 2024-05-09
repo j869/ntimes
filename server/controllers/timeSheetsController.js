@@ -20,7 +20,7 @@ WHERE
 }
 
 
-const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption) => {
+const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption, flexiInput, tilInput) => {
     let query;
     let flexiQuery;
     let tilQuery;
@@ -29,6 +29,8 @@ const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption) 
         // Deduct RDO from weekend timesheets
         query = `SELECT id, activity, EXTRACT(DOW FROM work_date) AS dayOfWeek FROM ts_timesheet_t WHERE person_id = $1 AND EXTRACT(DOW FROM work_date) IN (0, 6) ORDER BY id ASC`;
     } else if (dayOffOption == "mix") {
+
+
         query = `SELECT SUM(time_til) AS totalTil, SUM(time_flexi) AS totalFlexi FROM ts_timesheet_t WHERE person_id = $1`;
         try {
             flexiQuery = await pool.query(`SELECT id, time_flexi FROM ts_timesheet_t WHERE time_flexi > 0 AND person_id = $1`, [userID]);
@@ -179,6 +181,8 @@ const postDayOff = async (req, res) => {
     const userID = req.params.userID;
     const dayOffOption = req.body.dayOffOption;
     const workDate = req.body.workDate;
+    const flexiInput = req.body.flexiInput
+    const tilInput = req.body.tilInput
 
     console.log("USERid: " + userID)
     console.log("OffOption :" + dayOffOption)
@@ -198,7 +202,7 @@ const postDayOff = async (req, res) => {
         remainingHours = await updateTimesheet(userID, null, remainingHours, dayOffOption);
     }  else if (dayOffOption === "mix") {
         workActivity = "Day Off Using Mix Time";
-        remainingHours = await updateTimesheet(userID, null, remainingHours, dayOffOption);
+        remainingHours = await updateTimesheet(userID, null, remainingHours, dayOffOption, flexiInput, tilInput );
         
     }
 
