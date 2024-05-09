@@ -22,10 +22,11 @@
   </style>
 
   <!-- LEAVE DAY OFF MODAL -->
-
-
-  <% let flexiTilSum=Number(flexTilRdo.totaltil) + Number(flexTilRdo.totalflexi); let isFlexiAndTil=flexiTilSum < 8 ?
-    false : true; let isRDO=Number(flexTilRdo.totalrdo)> 0 ? true : false;
+  <% 
+  let flexiTilSum=Number(flexTilRdo.totaltil) + Number(flexTilRdo.totalflexi); 
+  
+  let isFlexiAndTil=flexiTilSum < 8 ? false : true; 
+  let isRDO=Number(flexTilRdo.totalrdo)> 0 ? true : false;
 
     let flexiBalance = Number(flexTilRdo.totalflexi);
     let tilBalance = Number(flexTilRdo.totaltil);
@@ -35,8 +36,15 @@
 
     if (isFlexiAndTil == true) {
 
-    if(flexiBalance < 4 || tilBalance < 4 ) { if (flexiBalance < 4) { flexiInput=flexiBalance; tilInput=8 -
-      flexiBalance; } if (tilBalance < 4) { tilInput=tilBalance; flexiInput=8 - tilBalance; } } } %>
+    if(flexiBalance < 4 || tilBalance < 4 ) { 
+
+      if (flexiBalance < 4) { 
+        flexiInput=flexiBalance; tilInput=8 -
+      flexiBalance; } 
+      if (tilBalance < 4) { 
+        tilInput=tilBalance; flexiInput=8 - tilBalance;
+       } } } %>
+
       <div class="modal fade leave_day_off_modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -59,6 +67,47 @@
 
                 <% if(isFlexiAndTil==true) {%>
 
+                  <% if (tilBalance >= 8 && flexiBalance < 1 || flexiBalance >=8 && tilBalance < 1 ) {%>
+
+                    <% if(tilBalance >= 8 && flexiBalance < 1 ){ %>
+                      <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+                        <input class="form-check-input" type="radio" name="dayOffOption" id="til" value="til">
+                        <label class="form-check-label" for="til">
+                          Time in Lieu (TIL): <span>
+                            <%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance
+                          </span>
+                        </label>
+                      </div>
+
+                      <div class="form-check flex-column" style="display: flex; align-items: start;">
+                            
+                            <label class="form-check-label disabled" for="flexi">
+                              Flexi Hours: <span>
+                                <%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance
+                              </span>
+                            </label>
+                          </div>
+                      <%} else if (flexiBalance >=8 && tilBalance < 1) {%>
+                        
+                        <div class="form-check" style="display: flex; align-items: center; gap: 5px;">
+                              <input class="form-check-input" type="radio" name="dayOffOption" id="flexi" value="flexi">
+                              <label class="form-check-label" for="flexi">
+                                Flexi Hours: <span>
+                                  <%= Number(flexTilRdo.totalflexi).toFixed(2) %> Hrs Balance
+                                </span>
+                              </label>
+                        </div>
+                        <div class="form-check flex-column" style="display: flex; align-items: start;">
+                      
+                      <label class="form-check-label disabled" for="til">
+                        Time in Lieu (TIL): <span>
+                          <%= Number(flexTilRdo.totaltil).toFixed(2) %> Hrs Balance
+                        </span>
+                      </label>
+                    </div>
+                      <%}%>
+
+                  <%} else {%>
                   <% if(tilBalance < 8){%>
 
                     <div class="form-check flex-column" style="display: flex; align-items: start;">
@@ -126,6 +175,7 @@
 
                                 </div>
                               </div>
+                              <%}%>
                               <% } else {%>
                                 <div>
                                   <p style="color: red;"> It seems that you dont have enough hours from Flexi and Til
@@ -148,6 +198,9 @@
                                   </label>
                                 </div>
                                 <%}%>
+                                
+                              
+
                                   <hr>
                                   <% if (isRDO) { %>
                                     <div class="form-check" style="display: flex; align-items: center; gap: 5px;">

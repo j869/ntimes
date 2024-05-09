@@ -8,16 +8,17 @@ const createTimesheetRoutes = (isAuthenticated) => {
     
 
     router.post("/flexiDayOff", isAuthenticated, async (req, res) => {
+        
         const userID = req.user.id;
         const dayOffOption = req.body.dayOffOption;
         const workDate = req.body.workDate
+        const flexiInput = req.body.flexiInput
+        const tilInput = req.body.tilInput
 
-        console.log("this is the most gwapo: " + dayOffOption)
-
-
+        // console.log("this is the most gwapo: " + dayOffOption)
 
         try {
-            await axios.post(`${API_URL}/flexiDayOff/${userID}`, { dayOffOption, workDate });
+            await axios.post(`${API_URL}/flexiDayOff/${userID}`, { dayOffOption, workDate, flexiInput, tilInput });
             res.redirect("/time")
    
         } catch (error) {

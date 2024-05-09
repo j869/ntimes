@@ -22,7 +22,7 @@ import {
 
 
 import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet } from "./controllers/managerController.js";
-import { isManager, getUserInfo } from "./controllers/userController.js";
+import { isManager, getUserInfo, checkUserExist } from "./controllers/userController.js";
 
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
@@ -104,6 +104,7 @@ app.get("/rdo/:id", db.getRdoById);
 
 app.get("/users/userInfo/:userID",getUserInfo);
 app.get("/users/isManager/:userID", isManager);
+app.post("/users/check", checkUserExist);
 
 // Locations CRUD ENDS
 app.get("/timesheetsbyid/:id", db.getTimesheetsById);
