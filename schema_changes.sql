@@ -26,6 +26,10 @@ CREATE TABLE ts_user_t (
     birth_date TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+INSERT INTO ts_user_t (user_id, role_id, first_name, last_name, middle_name, birth_date)
+VALUES (1, 1, 'John', 'Doe', 'Smith', '1990-05-15');
+
+
 
 -- Create a table for staff hierarchy
 CREATE TABLE staff_hierarchy (

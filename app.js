@@ -173,13 +173,12 @@ const isAdmin = (req, res, next) => {
 app.get("/", (req, res) => {
   const userInfo = req.session.userInfo;
 
-  console.log("THE USER INFO")
-  console.log(userInfo)
+  console.log("z1     THE USER INFO, ", userInfo)
 
    
   const username =
     req.user && req.user.username ? " for " + req.user.username : "[]";
-  console.log("z9    Home. User is " + username);
+  console.log("z9    Home ");
   res.render("home.ejs", { 
     userInfo: userInfo,
     user: req.user, 
@@ -192,6 +191,7 @@ app.get("/", (req, res) => {
 //-------------------------------
 
 const runManager = (req, res, next) => {
+  console.log("rm1");
   const userInfo = req.session.userInfo;
 
     const allowedRoutes =
@@ -204,15 +204,19 @@ const runManager = (req, res, next) => {
       '/logout'];
   
   if (userInfo != undefined && userInfo.position == "manager") {
-
+    console.log("rm2    " )
     app.use('/timesheet', createManagerRoutes(isAuthenticated))
+    console.log("rm3    " )
 
     if (allowedRoutes.includes(req.path)) {
       next();
     } else {
       res.status(403).json({ messages: ["Permission denied"] });
     }
+    console.log("rm4    " )
+
   } else {
+    console.log("rm9    " )
     next()
   }
 };
@@ -969,8 +973,9 @@ app.get("/login", (req, res) => {
   // const errors = req.flash('messages');
   // console.log("li2     messages : ", errors);
   // res.render('login.ejs', { user: req.user, title: 'numbat', body: '', messages: errors });
-  console.log("li9     ");
+  console.log("li3     ");
   const defaultEmail = process.env.DEFAULT_USER || "";
+  console.log("li4     ");
   res.render("login.ejs", {
     defaultEmail,
     user: req.user,
@@ -979,38 +984,47 @@ app.get("/login", (req, res) => {
     query: req.query,
     messages: req.flash("messages"),
   });
+  console.log("li9   ");
 });
 
 app.post("/login", function (req, res, next) {
+  console.log("lg1   ", req.body);
   passport.authenticate("local", function (err, user, info) {
     if (err) {
+      console.log("lg12   ", err);
       return next(err);
     }
     if (!user) {
+      console.log("lg13   ", err);
       req.flash("messages", "Invalid username or password. Please try again.");
       return res.redirect("/login");
     }
     req.logIn(user, async function (err) {
       if (err) {
+        console.log("lg20   ", err);
         return next(err);
       }
 
+      console.log("lg3   ", err);
       const isManager = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
-      
+      console.log("lg31   ", isManager.data[0]);
+
       req.session.userInfo = isManager.data[0]
 
       
-      if (isManager.data[0] != undefined && isManager.data[0].position == "manager") {
+      if (isManager.data[0] != undefined && isManager.data[0].role_id == 2) {
+        console.log("lg40   ", err);
         return res.redirect("/timesheet/pending")
       } 
 
+      console.log("lg9   ", err);
       return res.redirect("/time");
     });
   })(req, res, next);
 });
 
 app.get("/logout", (req, res) => {
-  console.log("lo1");
+  console.log("lo1    user is logging out");
   req.logout(() => {
     res.redirect("/");
   });
@@ -1189,9 +1203,9 @@ passport.use(
 
     try {
       //const result = await db.query("SELECT password, verified_email FROM users WHERE email = $1 ", [                username,            ]);
-      console.log(`ps1     Fetching user: ${API_URL}/login/${username}`);
+      console.log(`ps1     `);     //Fetching user: ${API_URL}/login/${username}
       const result = await axios.get(`${API_URL}/login/${username}`);
-      //console.log("ps2     result: ", result);
+      console.log("ps2     ");
 
       const user = result.data[0];
 
@@ -1212,23 +1226,31 @@ passport.use(
       // Compare passwords
       console.log("ps6");
       const storedHashedPassword = user.password;
-      bcrypt.compare(password, storedHashedPassword, (err, valid) => {
-        console.log("ps7");
-        if (err) {
-          console.log("ps8");
-          return cb(null, false, { messages: ["Error comparing passwords."] });
-        } else {
-          console.log("ps9");
-          if (valid) {
-            console.log("ps10 password correct");
-            return cb(null, user, { messages: ["Success."] });
-          } else {
-            console.log("ps11");
-            return cb(null, false, { messages: ["Incorrect password."] });
-          }
-        }
-      });
-      console.log("ps12");
+      const valid = await bcrypt.compare(password, storedHashedPassword);       //, (err, valid) => {
+      //   console.log("ps7");
+      //   if (valid) {
+      //     console.log("ps8");
+      //     return cb(null, false, { messages: ["Error comparing passwords."] });
+      //   } else {
+      //     console.log("ps9");
+      //     if (valid) {
+      //       console.log("ps10 password correct");
+      //       return cb(null, user, { messages: ["Success."] });
+      //     } else {
+      //       console.log("ps11");
+      //       return cb(null, false, { messages: ["Incorrect password."] });
+      //     }
+      //   }
+      // });
+      // console.log("ps12");
+      console.log("ps7");
+      if (valid) {
+        console.log("ps10 password correct");
+        return cb(null, user, { messages: ["Success."] });
+      } else {
+        console.log("ps11");
+        return cb(null, false, { messages: ["Incorrect password."] });
+      }
       // known issue: page should redirect to the register screen.  To reproduce this error enter an unknown username into the login screen
     } catch (err) {
       console.log("ps13");

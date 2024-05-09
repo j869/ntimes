@@ -2,7 +2,6 @@ import { Router } from "express";
 import axios from "axios";
 
 const createManagerRoutes = (isAuthenticated) => {
-
   const router = Router();
   const API_URL = process.env.API_URL;
 
@@ -10,7 +9,7 @@ const createManagerRoutes = (isAuthenticated) => {
 
 
   router.get("/pending", isAuthenticated, async (req, res) => {
-
+    console.log("mrp1     ")
     const data = await axios.get(`${API_URL}/timesheet/pending/${req.user.id}`);
     const userInfo = req.session.userInfo;
 
@@ -28,7 +27,7 @@ const createManagerRoutes = (isAuthenticated) => {
   });
 
   router.get("/approved", isAuthenticated, async (req, res) => {
-
+    console.log("mra1     ")
     const data = await axios.get(`${API_URL}/timesheet/approved/${req.user.id}`);
     const userInfo = req.session.userInfo;
 
@@ -44,7 +43,7 @@ const createManagerRoutes = (isAuthenticated) => {
   });
 
   router.post("/approveTs", isAuthenticated, async (req ,res) => {
-    
+    console.log("mrp1     ")
     const ts_id = req.body.ts_id
     const back_page = req.query.page
   try {
@@ -65,7 +64,7 @@ const createManagerRoutes = (isAuthenticated) => {
 
 
   router.post("/rejectTs", isAuthenticated, async (req ,res) => {
-    
+    console.log("mrj1     ")
     const ts_id = req.body.ts_id
     const back_page = req.query.page
   try {
@@ -85,7 +84,7 @@ const createManagerRoutes = (isAuthenticated) => {
 
 
   router.get("/rejected", isAuthenticated, async (req, res) => {
-
+    console.log("mrr1     ")
     const data = await axios.get(`${API_URL}/timesheet/reject/${req.user.id}`);
     const userInfo = req.session.userInfo;
 

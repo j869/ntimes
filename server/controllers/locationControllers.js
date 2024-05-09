@@ -1,6 +1,7 @@
 import { queryDatabase } from "../middleware.js";
 
 const getLocationById = (req, res) => {
+  console.log("lg1");
   const personID = req.params.id;
 
   const query = `SELECT "location".* FROM "location" INNER JOIN ts_timesheet_t ON "location".location_id = ts_timesheet_t.location_id WHERE ts_timesheet_t."id" = $1`;
@@ -9,6 +10,7 @@ const getLocationById = (req, res) => {
 };
 
 const deleteLocation = (req, res) => {
+  console.log("ld1");
   const { locationId } = req.body;
 
   const query = `DELETE FROM Location WHERE id = $1`;
@@ -17,12 +19,14 @@ const deleteLocation = (req, res) => {
 };
 
 const getAllLocation = (req, res) => {
+  console.log("lag1");
   const query = `SELECT "location".* FROM "location" ORDER BY "location".location_name ASC`;
 
   queryDatabase(query, [], res, "All locations fetched successfully");
 };
 
 const addLocation = (req, res) => {
+  console.log("la1");
   const { locationName, location_role, location_id } = req.body;
 
   const query = `INSERT INTO "location" ("location_name", "role_id", "location_id") VALUES ($1, $2, $3)`;
@@ -36,6 +40,7 @@ const addLocation = (req, res) => {
 };
 
 const editLocation = (req, res) => {
+  console.log("le1");
   const { locationName, location_role, location_id } = req.body;
   const locationId = req.params.id;
 

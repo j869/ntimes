@@ -3,7 +3,7 @@ import { queryDatabase, pool } from "../middleware.js";
 
 
 const getUserScheduleById = (req, res) => {
-    
+    console.log("sc1");
     const userId = req.params.userID
 
     const query = `SELECT
@@ -25,11 +25,10 @@ queryDatabase(query, [userId], res, "User fetched successfully");
 }
 
 const getTotalHourByDate = (req, res) => { 
-
+    console.log("to1");
     const { startDate, endDate } = req.body;
     const userId = req.params.userID
-    console.log(startDate)
-    console.log(endDate)
+    console.log("to2     ", startDate,  endDate, userId)
 
     // console.log("START DATE " + startDate)
 
@@ -52,7 +51,7 @@ GROUP BY
         if (error) {
             res.status(500).json({ error: error.message });
         } else {
-            console.log(results.rows); // Logging the results before sending the response
+            console.log("to9       ", results.rows); // Logging the results before sending the response
             res.status(200).json({ message: "User fetched successfully", data: results.rows });
         }
     });

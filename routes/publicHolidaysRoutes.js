@@ -3,6 +3,7 @@ import axios from "axios";
 
 
 const publicHolidaysRoutes = (isAuthenticated) => { 
+    console.log("phr1     ")
     const router = Router();
     const API_URL = process.env.API_URL;
 

@@ -2,12 +2,12 @@ import { Router } from "express";
 import axios, { all } from "axios";
 
 const createProfileRoutes = (isAuthenticated) => {
-
   const router = Router();
   const API_URL = process.env.API_URL;
 
   
   router.get("/edit", isAuthenticated, async (req, res) => {
+    console.log("rpe1     ")
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;
@@ -30,10 +30,12 @@ const createProfileRoutes = (isAuthenticated) => {
 })
 
   router.get("/check", isAuthenticated, (req, res) => {
+            console.log("rpg1     ")
             res.redirect("/profile")
             
   })
   router.post("/check", isAuthenticated, async (req, res) => {
+    console.log("rpp1     ")
     const email = req.body.email
     const password = req.body.password 
     const checkUser = await checkUserExists(email, password)
@@ -73,7 +75,7 @@ const createProfileRoutes = (isAuthenticated) => {
   })
 
   const checkUserExists = async (email, password) => {
- 
+    console.log("rpu1     ")
       // Correctly format the data as an object instead of an array
       const response = await axios.post(`${API_URL}/users/check`, { email, password });
     //     console.log("LAKsdja;lksjlkdja;lskdja;klsdjas;lkj")
@@ -90,6 +92,7 @@ const createProfileRoutes = (isAuthenticated) => {
 
 
   function getPayPeriods(startDate, endDate, scheduleDays) {
+    console.log("rpr1     ")
     const allDateSchedules = [];
     const payPeriods = [];
 
@@ -126,12 +129,14 @@ const createProfileRoutes = (isAuthenticated) => {
 
 // Function to get the name of the day of the week
 function getDayOfWeekName(dayOfWeek) {
+    console.log("rpy1     ")
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return days[dayOfWeek];
 }
 
 
 router.get("/", isAuthenticated, async (req, res) => {
+    console.log("rph1     ")
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;

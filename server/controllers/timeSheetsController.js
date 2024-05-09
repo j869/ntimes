@@ -3,7 +3,7 @@ import { pool } from "../middleware.js";
 
 
 const getTFR = (req, res) => { 
-    
+    console.log("tfr1");
     const userID = req.params.userID;
     const query = `SELECT
     COUNT(id) AS totalrdo,
@@ -21,6 +21,7 @@ WHERE
 
 
 const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption, flexiInput, tilInput) => {
+    console.log("uts1");
     let query;
     let flexiQuery;
     let tilQuery;
@@ -178,6 +179,7 @@ try{
 
 
 const postDayOff = async (req, res) => {
+    console.log("pdo1");
     const userID = req.params.userID;
     const dayOffOption = req.body.dayOffOption;
     const workDate = req.body.workDate;

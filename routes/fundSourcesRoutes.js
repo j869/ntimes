@@ -7,6 +7,7 @@ const createFundSourceRoutes = (isAuthenticated) => {
 
   // Get all fund sources
   router.get("/", isAuthenticated, async (req, res) => {
+    console.log("rfs1     ")
     try {
 
       const fundSources = await axios.get(`${API_URL}/fundSource`);
@@ -27,6 +28,7 @@ const createFundSourceRoutes = (isAuthenticated) => {
 
   // Create a new fund source
   router.post("/create", isAuthenticated, async (req, res) => {
+    console.log("rfc1     ")
     try {
       const { fund_source_num, fund_source_name } = req.body;
       await axios.post(`${API_URL}/fundSource/create`, { fund_source_num, fund_source_name });
@@ -39,6 +41,7 @@ const createFundSourceRoutes = (isAuthenticated) => {
 
   // Update an existing fund source
   router.post("/update", isAuthenticated, async (req, res) => {
+    console.log("rfu1     ")
     try {
       const { id, fund_source_num, fund_source_name } = req.body;
       await axios.post(`${API_URL}/fundSource/update`, { id, fund_source_num, fund_source_name });
@@ -51,6 +54,7 @@ const createFundSourceRoutes = (isAuthenticated) => {
 
   // Delete a fund source
   router.post("/delete", isAuthenticated, async (req, res) => {
+    console.log("rfd1     ")
     try {
       const { id } = req.body;
       await axios.post(`${API_URL}/fundSource/delete`, { id });

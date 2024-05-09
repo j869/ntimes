@@ -3,7 +3,7 @@ import { queryDatabase } from "../middleware.js";
 
 
 const getPendingTimeSheet = (req, res) => {
-    
+    console.log("Gwa1    ");
     const userId = req.params.userID
 	console.log("Gwapo ko" + userId)
 
@@ -28,7 +28,7 @@ queryDatabase(query, [userId], res, "Manager Timesheets fetched successfully");
 }
 
 const getApproveTimeSheet = (req, res) => { 
-    
+    console.log("gats1    ");
     const userId = req.params.userID
     const query = `SELECT
 	ts_timesheet_t.*
@@ -47,7 +47,7 @@ WHERE
 }
 
 const getRejectTimeSheet = (req, res) => { 
-    
+    console.log("grts1    ");
     const userId = req.params.userID
     const query = `SELECT
 	ts_timesheet_t.*
@@ -68,7 +68,7 @@ WHERE
 
 
 const approveTimesheet = (req, res) => {
-    
+    console.log("ppt1   ")
     const userId = req.query.userID 
     const ts_id = req.body.ts_id
 
@@ -79,7 +79,7 @@ const approveTimesheet = (req, res) => {
 
 
 const rejectTimesheet = (req, res) => { 
-
+	console.log("rpt1   ")
     const userId = req.query.userID 
     const ts_id = req.body.ts_id
 
