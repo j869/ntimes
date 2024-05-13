@@ -1,9 +1,29 @@
 import { Router } from "express";
 import axios, { all } from "axios";
+import bcrypt from "bcrypt";
 
 const createProfileRoutes = (isAuthenticated) => {
   const router = Router();
   const API_URL = process.env.API_URL;
+
+  router.post("/update", isAuthenticated,async (req, res) => {
+    const { firstName, lastName, email, username, newPassword, confirmPassword } = req.body;
+    const userId = req.user.id;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: 'New password and confirm password must match' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    try {
+      await axios.post(`${API_URL}/users/update`, { firstName, lastName, email, username, password: hashedPassword, userId });
+      res.redirect("/profile");
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  })
 
   
   router.get("/edit", isAuthenticated, async (req, res) => {
@@ -11,9 +31,10 @@ const createProfileRoutes = (isAuthenticated) => {
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;
+    const password = 123
 
-    const password = await bcrypt.compareSync(data.data[0].password, req.user.passwordHash);
-    console.log(password)
+ 
+    // console.log(password)
             res.render("editProfile.ejs", {
                 user: req.user,
                 password: password,         
@@ -53,7 +74,8 @@ const createProfileRoutes = (isAuthenticated) => {
         if(checkUser == true) { 
 
             res.render("editProfile.ejs", {
-                user: req.user,          
+                user: req.user,   
+                       
                 userSchedule: userSchedule.data,
                 userData: data.data[0],
                 userInfo: userInfo,

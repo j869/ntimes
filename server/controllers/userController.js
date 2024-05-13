@@ -96,11 +96,43 @@ const checkUserExist = async (req, res) => {
 
 
 
+// PROFILE PART
+const editProfile = async (req, res) => { 
+
+    const { firstName, lastName, email, username, password, userId } = req.body;
+
+    if (!firstName || !lastName || !email || !username || !password) {
+        return res.status(400).json({ error: 'All fields must be filled out.' });
+    }
+
+    // Check if the user exists in the personelle table
+    const userExists = await pool.query('SELECT * FROM personelle WHERE person_id = $1', [userId]);
+
+    // If the user does not exist, insert it
+    if (!userExists.rows.length) {
+        await pool.query('INSERT INTO personelle (person_id, first_name, last_name) VALUES ($1, $2, $3)', [userId, firstName, lastName]);
+    } else {
+        await pool.query('UPDATE personelle SET first_name = $2, last_name = $3 WHERE person_id = $1', [userId, firstName, lastName]);
+    }
+
+    try {
+        await pool.query(`
+        UPDATE users SET  email = $3, username = $4, password = $5 WHERE id = $6;
+        `, [firstName, lastName, email, username, password, userId]);
+        return res.status(200).json({ success: true, message: 'Profile updated successfully.' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
 
 export {
   
   getUserInfo,
   isManager,
-  checkUserExist
+  checkUserExist,
+  editProfile
 
 };

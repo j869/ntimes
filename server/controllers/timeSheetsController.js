@@ -31,8 +31,11 @@ const updateTimesheet = async (userID, hoursType, remainingHours, dayOffOption, 
         query = `SELECT id, activity, EXTRACT(DOW FROM work_date) AS dayOfWeek FROM ts_timesheet_t WHERE person_id = $1 AND EXTRACT(DOW FROM work_date) IN (0, 6) ORDER BY id ASC`;
     } else if (dayOffOption == "mix") {
 
+       
 
         query = `SELECT SUM(time_til) AS totalTil, SUM(time_flexi) AS totalFlexi FROM ts_timesheet_t WHERE person_id = $1`;
+
+        
         try {
             flexiQuery = await pool.query(`SELECT id, time_flexi FROM ts_timesheet_t WHERE time_flexi > 0 AND person_id = $1`, [userID]);
             tilQuery = await pool.query(`SELECT id, time_til FROM ts_timesheet_t WHERE time_til > 0 AND person_id = $1`, [userID]);
@@ -75,6 +78,7 @@ try{
 
                 for (let i = 0; i < flexi.length; i++) {
                     await pool.query(`UPDATE ts_timesheet_t SET time_flexi = $1 WHERE id = $2`, [0, flexi[i].id]);
+                    
                 }
             
                 for (let i = 0; i < til.length; i++) {
