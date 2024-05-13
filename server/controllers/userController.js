@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 
 const getUserInfo= (req, res) => {
-    
+    console.log("inf1    params, ", req.params);
     const userId = req.params.userID
 
     const query = `SELECT
@@ -19,10 +19,10 @@ FROM
 	ON 
 		users."id" = personelle.person_id
 WHERE
-	users."id" = $1`
-
+users."id" = $1`;
+console.log("inf5    query", query);
 queryDatabase(query, [userId], res, "User fetched successfully");
-
+console.log("inf9");
 }
 
 
@@ -32,6 +32,7 @@ queryDatabase(query, [userId], res, "User fetched successfully");
 
 
 const isManager = async (req, res) => {
+    console.log("gt1    params, ", req.params);
     try {
         const userId = req.params.userID;
         const query = `SELECT
@@ -60,7 +61,7 @@ const isManager = async (req, res) => {
 
 
 const checkUserExist = async (req, res) => { 
-
+    console.log("ck1     params, ", req.params);
     const { email, password } = req.body;
     
 

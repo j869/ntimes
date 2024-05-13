@@ -2,6 +2,7 @@ import { Router } from "express";
 import axios from "axios";
 
 const createLocationRoutes = (isAuthenticated) => {
+  console.log("lr1     ");
   const router = Router();
   const API_URL = process.env.API_URL;
 
@@ -18,6 +19,7 @@ const createLocationRoutes = (isAuthenticated) => {
   });
 
   router.post("/delete", isAuthenticated, async (req, res) => {
+    console.log("lrd1     ");
     const { locationId } = req.body;
 
     try {
@@ -32,6 +34,7 @@ const createLocationRoutes = (isAuthenticated) => {
   });
 
   router.post("/edit/:id", isAuthenticated, async (req, res) => {
+    console.log("lre1     ");
     const locationId = req.params.id;
     const { locationName, locationRole, location_id } = req.body;
 
@@ -54,6 +57,7 @@ const createLocationRoutes = (isAuthenticated) => {
   });
 
   router.post("/add", isAuthenticated, async (req, res) => {
+    console.log("lra1     ");
     const { locationName, locationRole, location_id } = req.body;
 
     const location_role = locationRole != "" ? locationRole : null;

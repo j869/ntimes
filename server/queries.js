@@ -135,7 +135,6 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
       res.status(500).json({ error: "Error querying timesheets" });
       return;
     }
-    console.log("cyt91    ", result.rows[1]);
     console.log("cyt9   returning " + result.rows.length + " records ");
     res.status(200).json(result.rows);
   });
@@ -353,27 +352,27 @@ const getUserById = (req, res) => {
 };
 
 const getUserByUsername = (req, res) => {
-  console.log("qi1   ", req.params.username);
+  console.log("qw1   ", req.params.username);
   console.log(
-    "h1 SELECT * FROM users WHERE username = '" + req.params.username + "';"
+    "qw2 SELECT * FROM users WHERE username = '" + req.params.username + "';"
   );
 
   pool.query(
     "SELECT * FROM users WHERE username = '" + req.params.username + "';",
     (error, result) => {
-      console.log("h2");
+      console.log("qw2");
       if (error) {
-        console.log("h3 db error");
+        console.log("qw3      db error");
         throw error;
       }
       if (result.rows.length === 0) {
-        console.log("h4 No user found");
+        console.log("qw4      No user found");
         //throw new Error('No user found');
         res.status(404).json({ messages: ["No user found"] });
         return;
       }
       if (result.rows.length > 1) {
-        console.log("h5 several users with matching usernames");
+        console.log("qw5      several users with matching usernames");
         //test if result returns more than one row and throw an error
         throw new Error("Multiple users found");
         //the above will crash the server... instead use...
@@ -381,7 +380,7 @@ const getUserByUsername = (req, res) => {
         return;
       }
       //success case. return data
-      console.log("h9 user returned ok ");
+      console.log("qw9     user returned ok ");
       res.status(200).json(result.rows);
     }
   );
@@ -498,9 +497,9 @@ const createUser = (req, res) => {
 
         // INSERTING THE REGISTERED USER TO THE ts_user_t
 
-        !error && pool.query("INSERT INTO ts_user_t (person_id) VALUES ($1)", [userId], (error, result) => {
+        !error && pool.query("INSERT INTO ts_user_t (user_id) VALUES ($1)", [userId], (error, result) => {
           if (error) {
-            console.error("Adding User Error:", error);
+            console.error("k8    Adding User Error:", error);
             return res
               .status(500)
               .json({ messages: ["Error adding user to the database"] });

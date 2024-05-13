@@ -1,6 +1,7 @@
 import { queryDatabase } from "../middleware.js";
 
 const getActivitiesByUserId = (req, res) => {
+  console.log("ag1");
   const userID = req.params.id;
   const query = `SELECT
 	users.username, 
@@ -16,12 +17,14 @@ FROM
 };
 
 const getAllActivities = (req, res) => {
+  console.log("aga1");
   const query = "SELECT * FROM activities";
 
   queryDatabase(query, [], res, "Activity fetched Successfully");
 };
 
 const createActivity = (req, res) => {
+  console.log("ca1");
   const { name, programs, percentages, status, user_id } = req.body;
 console.log("createActivity: " + programs)
 
@@ -37,6 +40,7 @@ const thePrograms = `{${programs}}`
 };
 
 const updateActivity = (req, res) => {
+  console.log("ua1");
   const { name, programs, percentages, status, user_id } = req.body;
   const activityId = req.params.id;
 
@@ -51,6 +55,7 @@ const updateActivity = (req, res) => {
 };
 
 const deleteActivity = (req, res) => {
+  console.log("da1");
   const id = req.body.id
 
 
