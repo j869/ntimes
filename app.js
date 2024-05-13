@@ -270,6 +270,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   };
 
   // Filter the result.data array to include only the required fields
+
   const filteredData = result.data.map((entry) => ({
 
   
@@ -288,7 +289,8 @@ app.get("/time", isAuthenticated, async (req, res) => {
     activity: entry["activity"],
     notes: entry["notes"],
     status: entry["status"],
-    holiday_name: publicHolidays.data.find((holiday) => entry["work_date"].slice(0, 10) === holiday.holiday_date.slice(0, 10))?.holiday_name
+    holiday_name: publicHolidays.data.find((holiday) => entry["work_date"].slice(0, 10) === holiday.holiday_date.slice(0, 10))?.holiday_name,
+    is_weekend: (new Date(entry["work_date"]).getDay() === 0 || new Date(entry["work_date"]).getDay() === 6) ? 'yes' : null
   }));
 
   res.render("timesheet/main.ejs", {

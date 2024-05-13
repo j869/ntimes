@@ -6,7 +6,11 @@
     }
 
     .time-sheet-container .holiday {
-      background-color: antiquewhite;
+      background-color: rgb(233, 142, 24);
+    }
+
+    .time-sheet-container .weekend {
+      background-color: rgb(24, 233, 223);
     }
 
     .leave_day_off_modal label span {
@@ -339,13 +343,13 @@
                 <% tableData.forEach((timesheet, index)=> { %>
 
                   <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
-              <%= timesheet.holiday_name != null ? 'holiday' : ''%>">
+              <%= timesheet.holiday_name != null ? 'holiday' : ''%> 
+              <%= timesheet.is_weekend != null ? 'weekend' : ''%>">
                     <th class="hidden" scope="row">
                       <%= index + 1 %>
                     </th>
                     <td class="work-date" style="width: 200px;">
-                      <%= timesheet.work_date %> </br>
-                        <%= timesheet.holiday_name%>
+                      <%= timesheet.work_date %>                         
                     </td>
                     <td>
                       <%= timesheet.time_start %>
@@ -372,7 +376,7 @@
                       <%= timesheet.time_comm_svs %>
                     </td>
                     <td>
-                      <%= timesheet.comment %>
+                      <%= timesheet.holiday_name%> <%= timesheet.comment %>
                     </td>
                     <td class="hidden">
                       <%= timesheet.location_id %>
