@@ -20,6 +20,9 @@ if (userData) {
     birthDate = userData.birth_date ? new Date(userData.birth_date).toLocaleDateString() : "";
     age = userData.birth_date ? Math.floor((new Date() - new Date(userData.birth_date)) / (365.25 * 24 * 60 * 60 * 1000)) : "";
 }
+
+
+let incorrectPass = status == 404 ? true : false;
 %>
 
 
@@ -44,10 +47,12 @@ if (userData) {
         <div class="mb-3">
           <label for="inputPasswordRole" class="form-label">Input Password</label>
           <input type="hidden" name="email" value="<%= email%>">
-          <input type="text" class="form-control" id="inputPasswordRole" name="password" required>
+          <input type="password" class="form-control" id="inputPasswordRole" name="password" <%if(incorrectPass){%> style="border: solid red 2px; background:#ff000031"  <%}%> required>
+          <%if(incorrectPass){%><label for="inputPasswordRole" class="form-label" style="color: red;">Incorrect Password</label><%}%>
+
         </div>
 
-      </div>
+      </div>  
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-primary" onclick="">Enter</button>

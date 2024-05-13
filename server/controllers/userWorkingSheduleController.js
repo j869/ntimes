@@ -28,6 +28,7 @@ const getTotalHourByDate = (req, res) => {
 
     const { startDate, endDate } = req.body;
     const userId = req.params.userID
+    
     console.log(startDate)
     console.log(endDate)
 
