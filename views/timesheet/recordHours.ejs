@@ -43,14 +43,6 @@
                       </select>
                 </div>
                 <div class="form-group">
-                    <label for="fund_src">Fund:</label>
-                    <input type="text" id="fund_src" name="fund_src" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="activity">Activity:</label>
-                    <input type="text" id="activity" name="activity" class="form-control">
-                </div>
-                <div class="form-group">
                     <label for="comment">Comment:</label>
                     <textarea id="comment" name="comment" class="form-control" rows="6" cols="50"></textarea>
                 </div>
@@ -88,7 +80,7 @@
     </div>
 </div>
 
-<div class="container calculated">
+<div class="container calculated" style="visibility: hidden;">
     <div class="row">
         <div class="col-md-4">
             <!-- Flexitime -->
@@ -200,19 +192,30 @@
             const timeStartInput = document.getElementById('time_start');
             const timeFinishInput = document.getElementById('time_finish');
             const timeTotalInput = document.getElementById('time_total');
+            const timeLunchInput = document.getElementById('time_lunch');
+            const timeExtraBreakInput = document.getElementById('time_extra_break');
             const varianceInput = document.getElementById('variance');
             const varianceSelect = document.getElementById('variance_type');
             const commentTextarea = document.getElementById('comment');
 
             const timeStart = timeStartInput.value;
             const timeFinish = timeFinishInput.value;
+            const timeLunch = parseFloat(timeLunchInput.value) * 60 * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
+            const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
+            //const timeLunch = timeLunchInput.value; // Convert to float, default to 0 if empty
+            //const timeExtraBreak = timeExtraBreakInput.value; // Convert to float, default to 0 if empty
 
             if (timeStart && timeFinish) {
                 // Calculate time difference
                 const startTime = new Date('1970-01-01 ' + timeStart);
                 const finishTime = new Date('1970-01-01 ' + timeFinish);
-                const timeDifference = finishTime - startTime; // Difference in milliseconds
-                const totalHours = timeDifference / (1000 * 60 * 60); // Decimal variance in hours
+                //const timeLunch = new Date('1970-01-01 ' + timeLunch);
+                //const timeExtraBreak = new Date('1970-01-01 ' + timeExtraBreak);
+                console.log('timeDifference calculation: ', timeStart, timeFinish, timeLunch, timeExtraBreak	);
+                const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
+                console.log('timeDifference', timeDifference);
+                const totalHours = timeDifference  / (1000 * 60 * 60); // Decimal variance in hours
+                console.log('totalHours', totalHours);
 
                 let varianceHours = totalHours - 8;
                 varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
