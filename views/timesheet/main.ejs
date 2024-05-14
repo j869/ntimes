@@ -23,6 +23,12 @@
     .leave_day_off_modal .disabled span {
       color: rgb(145, 145, 145);
     }
+
+    .selected-row {
+      background-color: rgb(219, 233, 24);
+    }
+
+
   </style>
 
   <!-- LEAVE DAY OFF MODAL -->
@@ -288,7 +294,7 @@
 
 
 
-      <!-- <div class="container"> -->
+      
       <section class="main col pt-3 mx-4">
           <h1 class="page-title mb-4">Timesheet</h1>
           <div class="row">
@@ -304,7 +310,7 @@
 
               <a href="/plannedLeave" class="btn btndark" id="addEmergencyBtn">
                 <i class="fas fa-door-open                          "></i> Planned Leave</a>
-              <!-- <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Planned Leave</a> -->
+              
 
             </div>
 
@@ -342,9 +348,7 @@
               <tbody>
                 <% tableData.forEach((timesheet, index)=> { %>
 
-                  <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
-              <%= timesheet.holiday_name != null ? 'holiday' : ''%> 
-              <%= timesheet.is_weekend != null ? 'weekend' : ''%>">
+                  <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> <%= timesheet.is_weekend != null ? 'weekend' : ''%> <%= timesheet.holiday_name != null ? 'holiday' : ''%> ">
                     <th class="hidden" scope="row">
                       <%= index + 1 %>
                     </th>
@@ -411,7 +415,7 @@
           </div>
         </div>
       </section>
-      <!-- </div> -->
+     
 
       <%- include('../partials/footer', { locals }) %>
 
@@ -452,6 +456,19 @@
                   // window.location.href = `/timesheetEntry?date=${formattedDate}`;
                 }
               }
+            });
+          });
+
+          let lastClickedRow = null;
+
+          document.querySelectorAll('#timesheetTable tr').forEach((row, index) => {
+            row.addEventListener('click', () => {
+              console.log('clicked row: ', row);
+              if (lastClickedRow && lastClickedRow !== row) {
+                lastClickedRow.classList.remove('selected-row');
+              }
+              row.classList.toggle('selected-row');
+              lastClickedRow = row;
             });
           });
         </script>
