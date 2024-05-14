@@ -17,15 +17,15 @@
                 </div>
                 <div class="form-group">
                     <label for="time_finish">Time Finish:</label>
-                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:00"> 
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:06"> 
                 </div>
                 <div class="form-group">
                     <label for="time_lunch">Time Lunch (min):</label>
-                    <input type="number" value="30" id="time_lunch" name="time_lunch" class="form-control" required value="00:30">
+                    <input type="number" value="30" id="time_lunch" name="time_lunch" class="form-control" required value="30">
                 </div>
                 <div class="form-group">
                     <label for="time_extra_break">Break (min):</label>
-                    <input type="number"  value="0" id="time_extra_break" name="time_extra_break" class="form-control" required value="00:00">
+                    <input type="number"  value="0" id="time_extra_break" name="time_extra_break" class="form-control" required value="0">
                 </div>
                 <div class="form-group">
                     <label for="time_total">Time Total:</label>
@@ -80,7 +80,7 @@
     </div>
 </div>
 
-<div class="container calculated" style="visibility: hidden;">
+<div class="container calculated" >    <!--style="visibility: hidden;"-->
     <div class="row">
         <div class="col-md-4">
             <!-- Flexitime -->
@@ -142,27 +142,27 @@
 //         // You can use the userLocation variable in your script logic here
 //     });
 // <
-console.log("ANYTHIN")
+    console.log("a1")
 
     document.addEventListener('DOMContentLoaded', function () {
         //set Work Date
 
-        console.log("ANYTHING111")
+        console.log("b1")
 
         const workDateInput = document.getElementById('work_date');
         const forDate = '<%= locals.forDate %>'; 
            
-        console.log('forDate', forDate);
+        console.log('b2   forDate', forDate);
         if (forDate) {
             const year = forDate.substring(0, 4);  // Convert forDate to a Date object
             const month = forDate.substring(4, 6);
             const day = forDate.substring(6, 8);
             const formattedDate = new Date(`${year}-${month}-${day}`);
-            console.log('formattedDate', formattedDate);
+            console.log('b21   formattedDate', formattedDate);
             workDateInput.value = forDate;    // Set the value of workDateInput to the formatted date
         } else {
             const currentDate = new Date().toISOString().split('T')[0];
-            console.log('currentDate', currentDate);
+            console.log('b22  currentDate', currentDate);
             workDateInput.value = currentDate;
         }
 
@@ -181,19 +181,21 @@ console.log("ANYTHIN")
 
         // Add event listener for change event on variance_type select
         varianceTypeSelect.addEventListener('change', function() {
+            console.log("c1");
             // Clear inputs
-            console.log("ANYTHIGNfGHJKLGHJKL")
             inputsToClear.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.value = "";
             });
 
-            // Trigger the calculateTimeTotal function
+            // Trigger the calculateTimeTotal function on page load
             calculateTimeTotal();
         });
 
+        
         // Function to calculate time total
         function calculateTimeTotal() {
+            console.log("d1   calculateTimeTotal()");
             const timeStartInput = document.getElementById('time_start');
             const timeFinishInput = document.getElementById('time_finish');
             const timeTotalInput = document.getElementById('time_total');
@@ -205,24 +207,18 @@ console.log("ANYTHIN")
 
             const timeStart = timeStartInput.value;
             const timeFinish = timeFinishInput.value;
-            const timeLunch = parseFloat(timeLunchInput.value) * 60 * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
-            const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
-            //const timeLunch = timeLunchInput.value; // Convert to float, default to 0 if empty
-            //const timeExtraBreak = timeExtraBreakInput.value; // Convert to float, default to 0 if empty
+            const timeLunch = parseFloat(timeLunchInput.value) * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
+            const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
 
             if (timeStart && timeFinish) {
                 // Calculate time difference
                 const startTime = new Date('1970-01-01 ' + timeStart);
                 const finishTime = new Date('1970-01-01 ' + timeFinish);
-                //const timeLunch = new Date('1970-01-01 ' + timeLunch);
-                //const timeExtraBreak = new Date('1970-01-01 ' + timeExtraBreak);
-                console.log('timeDifference calculation: ', timeStart, timeFinish, timeLunch, timeExtraBreak	);
                 const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
-                console.log('timeDifference', timeDifference);
                 const totalHours = timeDifference  / (1000 * 60 * 60); // Decimal variance in hours
-                console.log('totalHours', totalHours);
 
-                let varianceHours = totalHours - 8;
+                const vIJustWantToSeeYouResolveConflicts = 8; 
+                let varianceHours = totalHours - vIJustWantToSeeYouResolveConflicts;
                 varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
 
                 // read variance Type 
@@ -265,6 +261,7 @@ console.log("ANYTHIN")
 
                 // Handle other input values based on variance type
                 let flexiHours = 0;
+                console.log('d3     varianceSelect.value', varianceSelect.value, varianceSelect.value === 'overtime')
                 switch(varianceSelect.value) {
                     case 'flexi':
                         flexiHours = varianceHours;
@@ -273,28 +270,28 @@ console.log("ANYTHIN")
                         tilHours = varianceHours;
                         break;
                     case 'overtime':
-                        console.log('varianceHours', varianceHours);
+                        console.log('d33    varianceHours', varianceHours);
                         if (varianceHours > 0) {   // available on a long day only
                             overtimeHours = varianceHours;    
                         } else {
                             overtimeHours = 0;
                         }
-                        console.log('overtimeHours', overtimeHours);
+                        console.log('d34   overtimeHours', overtimeHours);
                         break;
                     case 'leave':
-                        console.log('varianceHours', varianceHours);
+                        console.log('d35   varianceHours', varianceHours);
                         if (varianceHours < 0) {    //short day only
                             leaveHours = varianceHours;
                         } else {
                             leaveHours = 0;
                         }
-                        console.log('leaveHours', leaveHours);
+                        console.log('d36    leaveHours', leaveHours);
                         break;
                     case 'mixed':
-                        console.log('Selected option: Mixed');
+                        console.log('d37    Selected option: Mixed');
                         break;
                     default:
-                        console.log('Invalid option');
+                        console.log('d38    Invalid option');
                         break;
                 }
 
@@ -358,9 +355,17 @@ console.log("ANYTHIN")
         // Listen for changes in the time start and time finish inputs
         const timeStartInput = document.getElementById('time_start');
         const timeFinishInput = document.getElementById('time_finish');
+        const timeLunchInput = document.getElementById('time_lunch');
+        const timeExtraBreakInput = document.getElementById('time_extra_break');
         timeStartInput.addEventListener('input', calculateTimeTotal);
         timeFinishInput.addEventListener('input', calculateTimeTotal);
+        timeLunchInput.addEventListener('input', calculateTimeTotal);
+        timeExtraBreakInput.addEventListener('input', calculateTimeTotal);
+
+        // Trigger the calculateTimeTotal function on page load
+        calculateTimeTotal();
+
     });
 
-    console.log("v9", document.getElementById('variance_type').value);
+    console.log("a9")
 </script>

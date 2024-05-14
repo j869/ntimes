@@ -327,20 +327,13 @@
             <table class="table" id="timesheetTable">
               <thead>
                 <tr>
-                  <th scope="col" class="hidden">#</th>
                   <th scope="col">Work Date</th>
-                  <th scope="col">Time Start</th>
-                  <th scope="col">Time Finish</th>
                   <th scope="col">Time Total</th>
-                  <th scope="col" class="hidden">Time Accrued</th>
-                  <th scope="col" class="hidden">Time Til</th>
-                  <th scope="col" class="hidden">Time Leave</th>
-                  <th scope="col" class="hidden">Time Overtime</th>
-                  <th scope="col" class="hidden">Time Comm Svs</th>
+                  <th scope="col" >Flexi</th>
+                  <th scope="col" >TiL</th>
+                  <th scope="col" >Leave</th>
+                  <th scope="col" >OT</th>
                   <th scope="col">Comment</th>
-                  <th scope="col" class="hidden">Location ID</th>
-                  <th scope="col">Activity</th>
-                  <th scope="col" class="hidden">Notes</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
@@ -349,47 +342,26 @@
                 <% tableData.forEach((timesheet, index)=> { %>
 
                   <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> <%= timesheet.is_weekend != null ? 'weekend' : ''%> <%= timesheet.holiday_name != null ? 'holiday' : ''%> ">
-                    <th class="hidden" scope="row">
-                      <%= index + 1 %>
-                    </th>
                     <td class="work-date" style="width: 200px;">
                       <%= timesheet.work_date %>                         
                     </td>
                     <td>
-                      <%= timesheet.time_start %>
-                    </td>
-                    <td>
-                      <%= timesheet.time_finish %>
-                    </td>
-                    <td>
                       <%= timesheet.time_total %>
                     </td>
-                    <td class="hidden">
+                    <td >
                       <%= timesheet.time_accrued %>
                     </td>
-                    <td class="hidden">
+                    <td >
                       <%= timesheet.time_til %>
                     </td>
-                    <td class="hidden">
+                    <td >
                       <%= timesheet.time_leave %>
                     </td>
-                    <td class="hidden">
+                    <td >
                       <%= timesheet.time_overtime %>
-                    </td>
-                    <td class="hidden">
-                      <%= timesheet.time_comm_svs %>
                     </td>
                     <td>
                       <%= timesheet.holiday_name%> <%= timesheet.comment %>
-                    </td>
-                    <td class="hidden">
-                      <%= timesheet.location_id %>
-                    </td>
-                    <td>
-                      <%= timesheet.activity %>
-                    </td>
-                    <td class="hidden">
-                      <%= timesheet.notes %>
                     </td>
                     <% if (timesheet.id) { %>
                       <td>
