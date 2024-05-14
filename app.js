@@ -279,7 +279,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
     time_start: entry["time_start"],
     time_finish: entry["time_finish"],
     time_total: entry["time_total"],
-    time_accrued: entry["time_accrued"],
+    time_accrued: entry["time_flexi"],
     time_til: entry["time_til"],
     time_leave: entry["time_leave"],
     time_overtime: entry["time_overtime"],
@@ -332,8 +332,7 @@ const isValidTimeFormat = (value) => {
   return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value); // Custom validation function for time format (hh:mm)
 };
 
-app.post(
-  "/timesheetEntry",
+app.post("/timesheetEntry",
   isAuthenticated,
   [
     // Validate request body
@@ -341,23 +340,23 @@ app.post(
       .optional()
       .isISO8601()
       .toDate()
-      .withMessage("Invalid date format"),
+      .withMessage("Timesheet not saved.  Invalid date format"),
     body("time_start")
       .optional()
       .custom(isValidTimeFormat)
-      .withMessage("Invalid time format for time_start (hh:mm)"),
+      .withMessage("Timesheet not saved.  Invalid time format for time_start (hh:mm)"),
     body("time_finish")
       .optional()
       .custom(isValidTimeFormat)
-      .withMessage("Invalid time format for time_finish (hh:mm)"),
+      .withMessage("Timesheet not saved.  Invalid time format for time_finish (hh:mm)"),
     body("time_lunch")
       .optional()
-      .custom(isValidTimeFormat)
-      .withMessage("Invalid time format for time_lunch (hh:mm)"),
+      .isInt({ min: 0, max: 360 })
+      .withMessage("Timesheet not saved.  Please enter the number of minutes taken for lunch (eg. 90)"),
     body("time_extra_break")
       .optional()
-      .custom(isValidTimeFormat)
-      .withMessage("Invalid time format for time_extra_break (hh:mm)"),
+      .isInt({ min: 0, max: 360 })
+      .withMessage("Timesheet not saved.  Please enter the number of minutes taken for break (eg. 45)"),
     //body('time_total').optional().custom(isValidTimeFormat).withMessage('Invalid time format for time_total (hh:mm)'),      //calculated field
     body("location_id")
       .optional()
@@ -442,7 +441,7 @@ app.post(
         time_leave.trim() !== "" ? parseFloat(time_leave) : 0;
       let time_overtime_numeric =
         time_overtime.trim() !== "" ? parseFloat(time_overtime) : 0;
-      const on_duty = activity.startsWith("Rest Day") ? 0 : 1;
+      const on_duty = 0        //activity.startsWith("Rest Day") ? 0 : 1;       //deleted 14May2024
 
       let time_flexi = null;
       let time_til = null;

@@ -100,12 +100,12 @@ WHERE
 
 const getCurrentYearTimesheetsForUser = (req, res) => {
   // Extract username or person_id from request, assuming it's available in req.params
-  console.log("cyt1   ", req.params);
+  console.log("cyt1   queries.js > getCurrentYearTimesheetsForUser() ");
   const personID = req.params.id;
 
   // Get the current year
   const currentYear = new Date().getFullYear();
-  console.table({ currentYear });
+  //console.table({ currentYear });
 
   // Construct the SQL query to fetch timesheets for the current year and specific user
   const query = `
@@ -141,7 +141,7 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
 };
 
 const createTimesheet = (req, res) => {
-  console.log("ct1   ", req.body);
+  console.log("ct1   ");
   const {
     person_id,
     username,
@@ -177,7 +177,7 @@ const createTimesheet = (req, res) => {
       if (error) {
         throw error;
       }
-      console.log("ct2    ", req.body);
+      console.log("ct2          INSERT INTO ts_timesheet_t ... ", time_flexi, time_til, time_leave, time_overtime);
 
       //Build SQL
       const query = `INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_category, "status", on_duty, rwe_day) 
@@ -212,10 +212,7 @@ const createTimesheet = (req, res) => {
       ];
 
       // Log the SQL
-      console.log(`ct3      
-    INSERT INTO ts_timesheet_t (person_id, username, work_date, time_start, time_finish, time_total, time_flexi, time_til, time_leave, time_overtime, time_comm_svs, t_comment, location_id, activity, notes, time_lunch, time_extra_break, fund_src, variance, variance_type, entry_date, duty_category, "status", on_duty, rwe_day) 
-    VALUES (${person_id}, '${username}', '${work_date}', '${time_start}', '${time_finish}', '${time_total}', '${time_flexi}', '${time_til}', '${time_leave}', ${time_overtime}, '${time_comm_svs}', '${t_comment}', ${location_id}, '${activity}', '${notes}', '${time_lunch}', '${time_extra_break}', '${fund_src}', '${variance}', '${variance_type}', '${entry_date}', ${duty_category}, '${status}', ${on_duty}, ${rwe_day})
-    RETURNING id`);
+      console.log(`ct3      `);
 
       // Execute the query
       pool.query(query, values, (error, result) => {
