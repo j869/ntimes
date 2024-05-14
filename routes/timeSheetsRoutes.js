@@ -27,6 +27,36 @@ const createTimesheetRoutes = (isAuthenticated) => {
         }
     });
 
+
+    router.get("/:id", isAuthenticated, async (req,res) => {
+            const ts_id = req.params.id
+
+          try {
+           const data =  await axios.post(`${API_URL}/timesheets/getTimesheetById/${ts_id}`, { userID: req.user.id });
+           console.log("GWPO KO")
+           console.log(data.data.timesheets)
+
+
+           if( data.data.timesheets == "") {
+            res.redirect("/time")
+           }
+
+           res.render("timesheet/individualTimeSheet.ejs", {
+            title: "Timesheet",
+            user: req.user,
+            data: data.data.timesheets[0],
+            messages: req.flash("messages"),
+          });
+          } catch (error) {
+            res.redirect("/time")
+          }
+          
+            
+    })
+
+
+    
+
     return router;
 };
 

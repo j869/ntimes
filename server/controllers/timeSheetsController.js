@@ -230,6 +230,37 @@ const postDayOff = async (req, res) => {
     
 };
 
+
+const getIndividualTimesheetsById = async (req, res) => {
+    const userId = req.body.userID;
+    const ts_Id = req.params.id
+
+    const timesheetQuery = `SELECT
+	"location".location_name, 
+	ts_timesheet_t.*
+FROM
+	ts_timesheet_t
+	INNER JOIN
+	"location"
+	ON 
+		ts_timesheet_t.location_id = "location".location_id
+WHERE
+	ts_timesheet_t."id" = $1
+ AND
+	ts_timesheet_t.person_id = $2`;
+
+    const values = [ts_Id , userId];
+
+    try {
+        const { rows } = await pool.query(timesheetQuery, values);
+        res.status(200).json({ timesheets: rows });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+
 const checkTimesheetExist = async (req, res) => { 
     
     const userId = req.body.userID
@@ -257,4 +288,9 @@ const checkTimesheetExist = async (req, res) => {
 
 
 
-export {getTFR , postDayOff, checkTimesheetExist}
+export {
+    getTFR , 
+    postDayOff, 
+    checkTimesheetExist,
+    getIndividualTimesheetsById
+}

@@ -1,113 +1,99 @@
 <%- include('../partials/header', { title, user, messages: messages }) %>
-
+<h1>Timesheet</h1>
 <div class="container">
+
     <div class="row">
         <div class="col-md-3">
-            <form id="timesheetForm" action="/timesheetEntry" method="POST">
-                <div class="form-group">
-                    <label for="work_date">Work Date:</label>
-                    <input type="date" id="work_date" name="work_date" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="time_start">Time Start:</label>
-                    <input type="time" id="time_start" name="time_start" class="form-control" required value="09:00">
-                </div>
-                <div class="form-group">
-                    <label for="time_finish">Time Finish:</label>
-                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:00"> 
-                </div>
-                <div class="form-group">
-                    <label for="time_lunch">Time Lunch:</label>
-                    <input type="time" id="time_lunch" name="time_lunch" class="form-control" required value="00:30">
-                </div>
-                <div class="form-group">
-                    <label for="time_extra_break">Break:</label>
-                    <input type="time" id="time_extra_break" name="time_extra_break" class="form-control" required value="00:00">
-                </div>
-                <div class="form-group">
-                    <label for="time_total">Time Total:</label>
-                    <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly value="08:00">
-                </div>
-
+            <div class="form-group">
+                <label for="work_date">Work Date:</label>
+                <p id="work_date" name="work_date" required><%= new Date(data.work_date).toLocaleDateString() %></p>
             </div>
-            <div class="col-md-9">
-                <div class="form-group">
-                    <label for="location_id">Location:</label>
-                    <select id="location_id" name="location_id" class="form-control">
-                        <option value="1" selected>Office</option>
-                        <option value="2">Home</option>
-                        <option value="3">Patrol</option>
-                        <option value="4">Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="fund_src">Fund:</label>
-                    <input type="text" id="fund_src" name="fund_src" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="activity">Activity:</label>
-                    <input type="text" id="activity" name="activity" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="comment">Comment:</label>
-                    <textarea id="comment" name="comment" class="form-control" rows="6" cols="50"></textarea>
-                </div>
-
+            <div class="form-group">
+                <label for="time_start">Time Start:</label>
+                <p id="time_start" name="time_start" required><%= data.time_start %></p>
             </div>
+            <div class="form-group">
+                <label for="time_finish">Time Finish:</label>
+                <p id="time_finish" name="time_finish" required><%= data.time_finish %></p>
+            </div>
+            <div class="form-group">
+                <label for="time_lunch">Time Lunch:</label>
+                <p id="time_lunch" name="time_lunch" required><%= data.time_lunch %></p>
+            </div>
+            <div class="form-group">
+                <label for="time_extra_break">Break:</label>
+                <p id="time_extra_break" name="time_extra_break" required><%= data.time_extra_break %></p>
+            </div>
+            <div class="form-group">
+                <label for="time_total">Time Total:</label>
+                <p id="time_total" name="time_total" readonly><%= data.time_total %></p>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <label for="location_id">Location:</label>
+                <p id="location_id" name="location_id"><%= data.location_id %></p>
+            </div>
+            <div class="form-group">
+                <label for="fund_src">Fund:</label>
+                <p id="fund_src" name="fund_src"><%= data.fund_src %></p>
+            </div>
+            <div class="form-group">
+                <label for="activity">Activity:</label>
+                <p id="activity" name="activity"><%= data.activity %></p>
+            </div>
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <p id="comment" name="comment" rows="6" cols="50"><%= data.comment %></p>
+            </div>
+
+        </div>
 
         
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label id="variance_lbl" for="flexi_accrued">Variance:</label>
-                            <input type="text" id="variance" name="variance" class="form-control readonly" readonly>
-                        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label id="variance_lbl" for="flexi_accrued">Variance:</label>
+                        <p id="variance" name="variance" readonly><%= data.variance %></p>
                     </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <label id="variance_type_lbl" for="variance_type" >Variance Type:</label>
-                            <select id="variance_type" name="variance_type" class="form-control mandatory" >
-                                <option value="flexi">Flexitime</option>
-                                <option value="til"  >TIL</option>
-                                <option value="overtime">Overtime</option>
-                                <option value="leave">Leave</option>
-                                <option value="mixed">Custom Variance</option>
-                            </select>
-                        </div>                    
-                    </div>
-                </div>                
-                <div class="form-group">
-                    <label for="notes">Notes:</label>
-                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label id="variance_type_lbl" for="variance_type" >Variance Type:</label>
+                        <p id="variance_type" name="variance_type" class="mandatory" ><%= data.variance_type %></p>
+                    </div>                    
+                </div>
+            </div>                
+            <div class="form-group">
+                <label for="notes">Notes:</label>
+                <p id="notes" name="notes" rows="4" cols="50"><%= data.notes %></p>
             </div>
+        </div>
     </div>
 </div>
-</div>
-
 <div class="container calculated">
     <div class="row">
         <div class="col-md-4">
             <!-- Flexitime -->
             <div class="form-group">
                 <label for="flexi_accrued">Accrue Flexi:</label>
-                <input type="text" id="flexi_accrued" name="flexi_accrued" class="form-control calculated-field" step="3600" readonly>
+                <p id="flexi_accrued" name="flexi_accrued" step="3600" readonly><%= data.flexi_accrued %></p>
             </div>
         </div>
         <div class="col-md-4">
             <!-- TIL -->
             <div class="form-group">
                 <label for="til_accrued">Accrue TIL:</label>
-                <input type="text" id="til_accrued" name="til_accrued" class="form-control calculated-field" readonly>
+                <p id="til_accrued" name="til_accrued" readonly><%= data.til_accrued %></p>
             </div>
         </div>
         <div class="col-md-4">
             <!-- Overtime -->
             <div class="form-group">
                 <label for="time_overtime">Overtime:</label>
-                <input type="text" id="time_overtime" name="time_overtime" class="form-control calculated-field" readonly>
+                <p id="time_overtime" name="time_overtime" readonly><%= data.time_overtime %></p>
             </div>
         </div>
     </div>
@@ -116,25 +102,28 @@
             <!-- Flexitime -->
             <div class="form-group">
                 <label for="flexi_taken">Utilise Flexi:</label>
-                <input type="text" id="flexi_taken" name="flexi_taken" class="form-control calculated-field" readonly>
+                <p id="flexi_taken" name="flexi_taken" readonly><%= data.flexi_taken %></p>
             </div>
         </div>
         <div class="col-md-4">
             <!-- TIL -->
             <div class="form-group">
                 <label for="til_taken">Utilise TIL:</label>
-                <input type="text" id="til_taken" name="til_taken" class="form-control calculated-field" readonly>
+                <p id="til_taken" name="til_taken" readonly><%= data.til_taken %></p>
             </div>
         </div>
         <div class="col-md-4">
             <!-- Leave -->
             <div class="form-group">
                 <label for="time_leave">leave:</label>
-                <input type="text" id="time_leave" name="time_leave" class="form-control calculated-field" readonly>
+                <p id="time_leave" name="time_leave" readonly><%= data.time_leave %></p>
             </div>
         </div>
     </div>
 </div>
+</div>
+
+
 </form>
 
 <%- include('../partials/footer') %>

@@ -28,6 +28,7 @@ import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
 import { 
   checkTimesheetExist,
+  getIndividualTimesheetsById,
   getTFR,
   postDayOff
  } from "./controllers/timeSheetsController.js";
@@ -118,7 +119,9 @@ app.put("/timesheets", db.createTimesheet);
 app.post("/timesheets/:id/updateStatus", db.updateTimesheetStatus);
 app.delete("/timesheets/:id", db.deleteTimesheet);
 
+
 app.post("/timesheets/checkTimeSheetsExist", checkTimesheetExist);
+app.post("/timesheets/getTimesheetById/:id", getIndividualTimesheetsById);
 
 
 app.listen(port, () => {
