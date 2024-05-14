@@ -145,15 +145,22 @@ let incorrectPass = status == 404 ? true : false;
                   </thead>
 
                   <tbody>
-                    <% userSchedule[0] && userSchedule[0].schedule_day.forEach(schedule => { %>
+                    <% userSchedule[0] && userSchedule[0].schedule_day.forEach((schedule, index) => { %>
                     <tr>
                       <td><%= schedule%></td>
                       <td>
-                        <%= schedule == "Sunday" || schedule == "Saturday" ?
-                        0.00 : userSchedule[0].paid_hours %>
+                        <% 
+                          let paidHours = userSchedule[0].paid_hours[index];
+        
+                        %>
+
+                        <%=paidHours%>
+                          
+                   
                       </td>
                     </tr>
                     <% }) %>
+
                     <tr>
                       <td class="table-info fw-bold">Total Hours</td>
                       <td class="table-info"><%= totalHours%></td>
