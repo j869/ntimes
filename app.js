@@ -237,7 +237,7 @@ app.use("/activity", createActivityRoutes(isAuthenticated));
 
 
 // TIMESHEETS ROUTES
-app.use("/dayoff", createTimesheetRoutes(isAuthenticated))
+app.use("/timesheets", createTimesheetRoutes(isAuthenticated))
 
 // FUND SOURCS ROUTES
 app.use("/fundSource", createFundSourceRoutes(isAuthenticated));

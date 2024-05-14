@@ -84,7 +84,7 @@
         <div class="modal-dialog">
           
           <div class="modal-content">
-            <form action="/dayoff/flexiDayOff" method="post">
+            <form action="/timesheets/flexiDayOff" method="post">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Take a Full Day Off</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -424,10 +424,10 @@
                             aria-hidden="true"></i></a>
                         <%}%>
                        
-                            <%if (timesheet.status != "approved") {%>
-                              <a href="/timesheetEntry?userId=<%=user.id %>"><i class="fa-solid fa-eye view-icon"
+                            
+                              <a href="/timesheets/<%=timesheet.id%>"><i class="fa-solid fa-eye view-icon"
                             aria-hidden="true"></i></a>
-                        <%}%>
+                    
                         
                       </td>
                       <% } else { %>
