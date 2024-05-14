@@ -1,19 +1,8 @@
 <%- include('../../user/manager/managerSidebar', {userInfo: userInfo} ) %>
 
   <style>
-    .location-manager-container {
-      padding: 20px;
-    }
+   
 
-    .location .header {
-      margin-top: 30px;
-      margin-left: 120px;
-      margin-right: 120px;
-      display: flex;
-      justify-content: space-between;
-
-
-    }
 
     h4 {
       margin: 2rem 0rem 1rem;
@@ -35,7 +24,8 @@
   </style>
 
 
-<section class="col py-3 mx-4">
+
+  <h1 class="page-title my-4">Pending Timesheets</h1>
   <% if (locals.messages && locals.messages.length > 0) { %>
     <% messages.forEach(msg => { %>
       <div class="alert alert-primary" role="alert"><%= msg %></div>
@@ -50,12 +40,12 @@
     <div class="alert alert-primary" role="alert">Update Successfully</div>
   <% } %>
 
-  <h1 class="page-title mb-4">Pending Timesheets</h1>
+ 
 
   <% if (data.length === 0) { %>
     <div class="alert alert-info" role="alert">No Pending Timesheets</div>
   <% } else { %>
-    <div class="time-sheet-container table-responsive" style="width: max-content; padding: 20px;">
+    <div class="time-sheet-container table-responsive">
       <table class="table" id="timesheetTable">
         <thead>
           <tr>
@@ -129,16 +119,18 @@
                   <%= timesheet.notes %>
                 </td>
                 <% if (timesheet.id) { %>
-                  <td style="display: flex; flex-direction: row; gap: 10px  ">
+                  <td style="display: flex; flex-direction: row;">
                     
                     <form action="/timesheet/approveTs?page=pending" method="post">
                       <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
-                      <button class="btn btn-primary" type="submit">Approve</button>
+                      <button class="approve-icon" type="submit" style="border: none; background-color: transparent;">
+                        <i class="fa-solid fa-check" aria-hidden="true"></i></button>
                     </form>
 
                     <form action="/timesheet/rejectTs?page=pending" method="post">
                       <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
-                      <button class="btn btn-danger" type="submit">Reject</button>
+                      <button class="delete-icon" type="submit" style="border: none; background-color: transparent;">
+                        <i class="fa fa-solid fa-trash" aria-hidden="true"></i></button>
                     </form>
                   </td>
                   <% } else { %>

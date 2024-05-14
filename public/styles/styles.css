@@ -23,7 +23,7 @@ body {
 
 .mandatory {
   
-  background-color: #ffb2b2 !important; /*  */
+  background-color: #fcfffc !important; /*  */
   border: 2px solid red; /* Red border */
 
 }
@@ -79,7 +79,7 @@ body {
 }
 
 .bglight {
-  background-color: #329232;
+  background-color: #2ba84a;
 }
 
 .btnprimary {
@@ -126,7 +126,7 @@ body {
 }
 
 .delete-icon:hover {
-  color: #ff0000;
+  color: #040F0F;
   font-size: 20px;
 }
 
@@ -136,7 +136,7 @@ body {
 }
 
 .approve-icon:hover {
-  color: #2ba84a;
+  color: #040F0F;
   font-size: 20px;
 }
 
@@ -146,7 +146,7 @@ body {
 }
 
 .view-icon:hover {
-  color: rgb(0, 89, 255);
+  color: #040F0F;
   font-size: 20px;
 }
 
@@ -184,3 +184,32 @@ left: 0;
 background-color: lightblue;
 }
 
+
+  
+.time-sheet-container td {
+  background: transparent;
+}
+
+.time-sheet-container .holiday {
+  background-color: rgb(233, 142, 24);
+}
+
+.time-sheet-container .weekend {
+  background-color: #d0dcdc;
+}
+
+.leave_day_off_modal label span {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgb(0, 0, 116);
+}
+
+.leave_day_off_modal .disabled,
+.leave_day_off_modal .disabled span {
+  color: rgb(145, 145, 145);
+}
+
+.selected-row {
+  background-color: #2ba84a !important;
+
+}

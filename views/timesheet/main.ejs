@@ -1,32 +1,7 @@
 <%- include('../partials/header') %>
 
   <style>
-    .time-sheet-container td {
-      background: transparent;
-    }
-
-    .time-sheet-container .holiday {
-      background-color: rgb(233, 142, 24);
-    }
-
-    .time-sheet-container .weekend {
-      background-color: rgb(24, 233, 223);
-    }
-
-    .leave_day_off_modal label span {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: rgb(0, 0, 116);
-    }
-
-    .leave_day_off_modal .disabled,
-    .leave_day_off_modal .disabled span {
-      color: rgb(145, 145, 145);
-    }
-
-    .selected-row {
-      background-color: rgb(219, 233, 24) !important;
-    }
+  
 
 
   </style>
@@ -55,34 +30,9 @@
         tilInput=tilBalance; flexiInput=8 - tilBalance;
        } } } %>
 
-       <%if (queryMessage && queryMessage!= "") {%>
-        <button type="button" style="display: none;" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
-
-        <script>
-          document.addEventListener("DOMContentLoaded", function() {
-            let button = document.getElementById('liveToastBtn');
-            button.click();
-          });
-        </script>
-
-<div class="toast-container position-fixed top-0 end-0 p-3" data-bs-autohide="true">
-  <div id="liveToast" class="toast text-bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-      <strong class="me-auto">Timesheet Already Filled</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      Please select another Date!
-    </div>
-  </div>
-</div>
-
-        <%}%>
-      
       <div class="modal fade leave_day_off_modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
-          
           <div class="modal-content">
             <form action="/timesheets/flexiDayOff" method="post">
               <div class="modal-header">
@@ -455,6 +405,7 @@
               }
             });
           });
+
           let lastClickedRow = null;
 
           document.querySelectorAll('#timesheetTable tr').forEach((row, index) => {
@@ -489,20 +440,6 @@
                 addLeaveBtn.href = '';
                 workDateInput.value = '';
               }
-
-              // Hide buttons if no row is selected and the selected row and its td has a value
-              if (!lastClickedRow && row.querySelector('td.work-date').textContent.trim()) {
-                addTimesheetBtn.style.display = 'none';
-                addEmergencyBtn.style.display = 'none';
-                addLeaveBtn.style.display = 'none';
-              } else {
-                addTimesheetBtn.style.display = 'block';
-                addEmergencyBtn.style.display = 'block';
-                addLeaveBtn.style.display = 'block';
-              }
             });
           });
-
-
-          
         </script>
