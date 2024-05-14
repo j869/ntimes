@@ -20,12 +20,12 @@
                     <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:00"> 
                 </div>
                 <div class="form-group">
-                    <label for="time_lunch">Time Lunch:</label>
-                    <input type="time" id="time_lunch" name="time_lunch" class="form-control" required value="00:30">
+                    <label for="time_lunch">Time Lunch (min):</label>
+                    <input type="number" value="30" id="time_lunch" name="time_lunch" class="form-control" required value="00:30">
                 </div>
                 <div class="form-group">
-                    <label for="time_extra_break">Break:</label>
-                    <input type="time" id="time_extra_break" name="time_extra_break" class="form-control" required value="00:00">
+                    <label for="time_extra_break">Break (min):</label>
+                    <input type="number"  value="0" id="time_extra_break" name="time_extra_break" class="form-control" required value="00:00">
                 </div>
                 <div class="form-group">
                     <label for="time_total">Time Total:</label>
@@ -142,12 +142,16 @@
 //         // You can use the userLocation variable in your script logic here
 //     });
 // <
-
+console.log("ANYTHIN")
 
     document.addEventListener('DOMContentLoaded', function () {
         //set Work Date
+
+        console.log("ANYTHING111")
+
         const workDateInput = document.getElementById('work_date');
-        const forDate = '<%= locals.forDate %>';    
+        const forDate = '<%= locals.forDate %>'; 
+           
         console.log('forDate', forDate);
         if (forDate) {
             const year = forDate.substring(0, 4);  // Convert forDate to a Date object
@@ -155,7 +159,7 @@
             const day = forDate.substring(6, 8);
             const formattedDate = new Date(`${year}-${month}-${day}`);
             console.log('formattedDate', formattedDate);
-            workDateInput.value = formattedDate.toISOString().split('T')[0];    // Set the value of workDateInput to the formatted date
+            workDateInput.value = forDate;    // Set the value of workDateInput to the formatted date
         } else {
             const currentDate = new Date().toISOString().split('T')[0];
             console.log('currentDate', currentDate);
@@ -178,6 +182,7 @@
         // Add event listener for change event on variance_type select
         varianceTypeSelect.addEventListener('change', function() {
             // Clear inputs
+            console.log("ANYTHIGNfGHJKLGHJKL")
             inputsToClear.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 input.value = "";

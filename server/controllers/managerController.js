@@ -90,26 +90,7 @@ const rejectTimesheet = (req, res) => {
 }
 
 
-const getManager = (req,res) => { 
 
-	const query = `SELECT
-	users."id", 
-	users.username, 
-	users.email, 
-	personelle."position", 
-	personelle.first_name, 
-	personelle.last_name
-FROM
-	personelle
-	INNER JOIN
-	users
-	ON 
-		personelle.person_id = users."id"
-		
-	WHERE position = 'manager'`
-
-	queryDatabase(query, [], res, "Manager Fetched Successfully")
-}
 
 
 
@@ -120,5 +101,5 @@ export {
   getPendingTimeSheet,
   approveTimesheet,
   rejectTimesheet,
-  getManager,
+  
 };
