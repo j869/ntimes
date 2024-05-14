@@ -225,9 +225,36 @@ const postDayOff = async (req, res) => {
     } else {
         res.status(400).json({ message: "Not enough balance for day off" });
     }
+
+  
+    
 };
 
+const checkTimesheetExist = async (req, res) => { 
+    
+    const userId = req.body.userID
+    const date = req.body.date
+
+    const timesheetQuery = `SELECT id FROM ts_timesheet_t WHERE work_date = $1 AND person_id = $2`;
+    const values = [date, userId];
+    console.log(values)
+
+    try {
+        const { rows } = await pool.query(timesheetQuery, values);
+        if (rows.length > 0) {
+            res.status(200).json({ timesheetExists: true });
+        } else {
+            res.status(200).json({ timesheetExists: false });
+        }
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: error.message });
+    }
+}
 
 
 
-export {getTFR , postDayOff}
+
+
+
+export {getTFR , postDayOff, checkTimesheetExist}

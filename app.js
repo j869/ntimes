@@ -293,9 +293,13 @@ app.get("/time", isAuthenticated, async (req, res) => {
     is_weekend: (new Date(entry["work_date"]).getDay() === 0 || new Date(entry["work_date"]).getDay() === 6) ? 'yes' : null
   }));
 
+
+  const queryMessage = req.query.m
+
   res.render("timesheet/main.ejs", {
     title: "Timesheet",
     user: req.user,
+    queryMessage: queryMessage,
     flexTilRdo: flexTilRdo.data[0],
     tableData: filteredData,
     messages: req.flash("messages"),
@@ -306,22 +310,35 @@ app.get("/time", isAuthenticated, async (req, res) => {
 app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   console.log(`y1   `, req.query.date);
 
-  const userId = req.query.userId;
+  const userId = req.user.id; // Use req.user.id instead of req.query.userId
   const date = req.query.date; // Pick up the date from the URL parameter
+
+  if (!date) {
+    res.redirect("/time?m=dateAlreadyExist");
+  }
 
   const locationResponse = await axios.get(`${API_URL}/location`);
   const location = locationResponse.data; // Extract the data from the Axios response
 
-  const selectedDate = req.query.date
+  const selectedDate = req.query.date;
 
-  res.render("timesheet/recordHours.ejs", {
-    forDate: date,
-    user: req.user,
-    selectedDate: selectedDate,
-    location: location, // Pass the extracted location data
-    title: "Enter Timesheet",
-    messages: req.flash("messages"),
-  });
+  const timesheetExists = await axios.post(`${API_URL}/timesheets/checkTimeSheetsExist`, { date: selectedDate, userID: userId });
+
+  
+  if (timesheetExists.data.timesheetExists) {
+    res.redirect("/time?m=dateAlreadyExist");
+  } else {
+    res.render("timesheet/recordHours.ejs", {
+      forDate: date,
+      user: req.user,
+      selectedDate: selectedDate,
+      location: location, // Pass the extracted location data
+      title: "Enter Timesheet",
+      messages: req.flash("messages"),
+    });
+  }
+
+  
 });
 
 app.get("/recordHours", (req, res) => {
@@ -539,14 +556,28 @@ app.get("/emergencyEntry", isAuthenticated, async (req, res) => {
     };
   }
 
+  const date = req.query.date; // Pick up the date from the URL parameter
 
-  res.render("timesheet/emergencyResponse.ejs", {
-    formData,
-    selectedDate: selectedDate,
-    user: req.user,
-    title: "Enter Timesheet",
-    messages: req.flash("messages"),
-  });
+  if (!date) {
+    res.redirect("/time?m=dateAlreadyExist");
+  }
+
+  const timesheetExists = await axios.post(`${API_URL}/timesheets/checkTimeSheetsExist`, { date: selectedDate, userID: req.user.id});
+
+  if (timesheetExists.data.timesheetExists) {
+    res.redirect("/time?m=dateAlreadyExist");
+  } else {
+    res.render("timesheet/emergencyResponse.ejs", {
+      formData,
+      selectedDate: selectedDate,
+      user: req.user,
+      title: "Enter Timesheet",
+      messages: req.flash("messages"),
+    });
+  }
+
+
+  
 });
 
 app.post(
@@ -679,6 +710,18 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
 
     // console.log(publicHolidays.data)
 
+
+    const date = req.query.date; // Pick up the date from the URL parameter
+
+    if (!date) {
+      res.redirect("/time?m=dateAlreadyExist");
+    }
+  
+    const timesheetExists = await axios.post(`${API_URL}/timesheets/checkTimeSheetsExist`, { date: selectedDate, userID: req.user.id});
+  
+    if (timesheetExists.data.timesheetExists) {
+      res.redirect("/time?m=dateAlreadyExist");
+    } else {
   // Render the leavePlanned.ejs file
   res.render("timesheet/leavePlanned.ejs", {
     workDays: filteredData,
@@ -688,6 +731,7 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
     user: req.user,
     messages: req.flash("messages"),
   });
+}
 });
 
 
@@ -1023,9 +1067,10 @@ app.post("/login", function (req, res, next) {
       req.session.userInfo = isManager.data[0]
 
       
-      if (isManager.data[0] != undefined && isManager.data[0].role_id == 2) {
+      if (isManager.data[0] != undefined && isManager.data[0].position == 'manager') {
         console.log("lg40   ", err);
         return res.redirect("/timesheet/pending")
+        
       } 
 
       console.log("lg9   ", err);
