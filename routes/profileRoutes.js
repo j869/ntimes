@@ -46,8 +46,7 @@ const createProfileRoutes = (isAuthenticated) => {
 
                  // Pass the individual total hours to the template
             });
- 
-    
+
 })
 
   router.get("/check", isAuthenticated, (req, res) => {
@@ -161,7 +160,11 @@ router.get("/", isAuthenticated, async (req, res) => {
     console.log("rph1     ")
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    // const myManager = await axios.get(`${API_URL}/users/getMyManager/${req.user.id}`);
+
     const userInfo = req.session.userInfo;
+
+    // console.log(myManager)
 
     // Check if userScheduleResponse.data is empty
     if (!userScheduleResponse.data || userScheduleResponse.data.length === 0) {
@@ -171,6 +174,7 @@ router.get("/", isAuthenticated, async (req, res) => {
             payPeriods: [],
             userSchedule: [],
             totalHours: 0,
+            
             userData: data.data[0],
             userInfo: userInfo,
             messages: req.flash(""),

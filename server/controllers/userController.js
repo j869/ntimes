@@ -71,7 +71,7 @@ const checkUserExist = async (req, res) => {
   
     try {
       const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-      console.log(user.rows)
+      // console.log(user.rows)
 
       if (!user) {
         return res.status(200).json({ exists: false });
@@ -127,12 +127,72 @@ const editProfile = async (req, res) => {
 }
 
 
+const getManager = async (req,res) => { 
+
+	const query = `SELECT
+	users."id", 
+	users.username, 
+	users.email, 
+	personelle."position", 
+	personelle.first_name, 
+	personelle.last_name
+FROM
+	personelle
+	INNER JOIN
+	users
+	ON 
+		personelle.person_id = users."id"
+		
+	WHERE position = 'manager'`
+
+	try {
+		const result = await pool.query(query);
+		res.status(200).json(result.rows);
+	} catch (error) {
+		console.error('Error fetching manager:', error);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
+const getMyManager = async (res, req) => { 
+  
+  const userId = 5;
+  console.log("userid " + userId)
+  
+
+  const query = `SELECT
+	users.email, 
+	personelle.*
+FROM
+	staff_hierarchy
+	INNER JOIN
+	users
+	ON 
+		staff_hierarchy.manager_id = users."id"
+	INNER JOIN
+	personelle
+	ON 
+		users."id" = personelle.person_id
+WHERE
+	user_id = $1`
+
+	try {
+		const result = await pool.query(query, [userId]);
+		res.status(200).json(result.rows);
+	} catch (error) {
+		console.error('Error fetching my manager:', error);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
 
 export {
   
   getUserInfo,
   isManager,
   checkUserExist,
-  editProfile
+  editProfile,
+  getMyManager,
+  getManager
 
 };
