@@ -43,6 +43,12 @@
 
         <!-- FOR THE DATEPOCKER -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+        <!-- <link href="https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css" rel="stylesheet" integrity="sha256-V6lu+OdYNKTKTsVFBuQsyIlDiRWiOmtC8VQ8Lzdm2i4=" crossorigin="anonymous"> -->
+
+        
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -51,6 +57,9 @@
         <script>
           console.log("Header variables", <% - JSON.stringify(locals) %>);
         </script>
+
+
+
 </head>
 
 <body>
@@ -90,6 +99,7 @@
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
               </li>
+            
               <%if(!isManager) {%>
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Timesheet' ) { %>

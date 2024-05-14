@@ -27,6 +27,7 @@ import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyM
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
 import { 
+  checkTimesheetExist,
   getTFR,
   postDayOff
  } from "./controllers/timeSheetsController.js";
@@ -109,12 +110,16 @@ app.post("/users/update", editProfile);
 app.get("/users/getManager/:userID", getManager );
 app.get("/users/getMyManager/:userID", getMyManager);
 
-// Locations CRUD ENDS
+
+// FOR TIMESHEETS ROUTES
 app.get("/timesheetsbyid/:id", db.getTimesheetsById);
 app.get("/timesheets/:id", db.getCurrentYearTimesheetsForUser);
 app.put("/timesheets", db.createTimesheet);
 app.post("/timesheets/:id/updateStatus", db.updateTimesheetStatus);
 app.delete("/timesheets/:id", db.deleteTimesheet);
+
+app.post("/timesheets/checkTimeSheetsExist", checkTimesheetExist);
+
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
