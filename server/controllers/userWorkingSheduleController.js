@@ -31,7 +31,6 @@ const getTotalHourByDate = (req, res) => {
     console.log("to2     ", startDate,  endDate, userId)
 
     // console.log("START DATE " + startDate)
-
     const query = `
     SELECT
     ts_timesheet_t.person_id,
@@ -44,9 +43,6 @@ WHERE
 GROUP BY
     ts_timesheet_t.person_id;
     `
-
-    
-
     pool.query(query, [startDate, endDate, userId], (error, results) => {
         if (error) {
             res.status(500).json({ error: error.message });
@@ -65,6 +61,4 @@ export {
   
   getUserScheduleById,
   getTotalHourByDate
- 
-
 };

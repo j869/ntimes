@@ -51,6 +51,11 @@ CREATE TABLE IF work_schedule (
   "end_date" timestamp
 );
 
+ALTER TABLE work_schedule
+ALTER COLUMN "paid_hours" TYPE varchar(255)[] USING "paid_hours"::varchar(255)[];
+
+
+
 INSERT INTO work_schedule ("schedule_day", "paid_hours", "start_date", "end_date")
 VALUES ('{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}', 7.60, '2023-12-31 18:31:18', '2024-12-31 18:31:28');
 
