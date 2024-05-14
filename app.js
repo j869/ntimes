@@ -312,9 +312,12 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   const locationResponse = await axios.get(`${API_URL}/location`);
   const location = locationResponse.data; // Extract the data from the Axios response
 
+  const selectedDate = req.query.date
+
   res.render("timesheet/recordHours.ejs", {
     forDate: date,
     user: req.user,
+    selectedDate: selectedDate,
     location: location, // Pass the extracted location data
     title: "Enter Timesheet",
     messages: req.flash("messages"),
@@ -517,6 +520,8 @@ app.post(
 app.get("/emergencyEntry", isAuthenticated, async (req, res) => {
   console.log(`yg1   `);
 
+  const selectedDate = req.query.date
+
   let formData = {}; // Declare formData before assigning values to it
 
   try {
@@ -534,8 +539,10 @@ app.get("/emergencyEntry", isAuthenticated, async (req, res) => {
     };
   }
 
+
   res.render("timesheet/emergencyResponse.ejs", {
     formData,
+    selectedDate: selectedDate,
     user: req.user,
     title: "Enter Timesheet",
     messages: req.flash("messages"),
@@ -649,6 +656,7 @@ app.post(
 );
 
 app.get("/plannedLeave", isAuthenticated, async (req, res) => {
+  const selectedDate = req.query.date
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
 
@@ -674,6 +682,7 @@ app.get("/plannedLeave", isAuthenticated, async (req, res) => {
   // Render the leavePlanned.ejs file
   res.render("timesheet/leavePlanned.ejs", {
     workDays: filteredData,
+    selectedDate: selectedDate,
     publicHolidays: publicHolidays.data,
     title: "Leave Request",
     user: req.user,

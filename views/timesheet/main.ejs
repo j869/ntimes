@@ -70,7 +70,7 @@
                   <label class="form-check-label" for="til">
                     Date:
                   </label>
-                  <input type="date" name="workDate" id="" required>
+                  <input type="date" name="workDate" id="workDateInput" value="" required>
 
                 </div>
 
@@ -308,7 +308,7 @@
             </div>
             <div class="col-auto">
 
-              <a href="/plannedLeave" class="btn btndark" id="addEmergencyBtn">
+              <a href="/plannedLeave" class="btn btndark" id="addLeaveBtn">
                 <i class="fas fa-door-open                          "></i> Planned Leave</a>
               
 
@@ -464,11 +464,35 @@
           document.querySelectorAll('#timesheetTable tr').forEach((row, index) => {
             row.addEventListener('click', () => {
               console.log('clicked row: ', row);
-              if (lastClickedRow && lastClickedRow !== row) {
+              const workDate = row.querySelector('td.work-date').textContent.trim();
+              console.log('work date: ', workDate);
+              
+              if (lastClickedRow && lastClickedRow!== row) {
                 lastClickedRow.classList.remove('selected-row');
               }
+
               row.classList.toggle('selected-row');
               lastClickedRow = row;
+
+              // Add the selected date to the anchor
+              const addTimesheetBtn = document.getElementById('addTimesheetBtn');
+              const addEmergencyBtn = document.getElementById('addEmergencyBtn')
+              const addLeaveBtn = document.getElementById('addLeaveBtn')
+              const workDateInput = document.getElementById('workDateInput')
+
+              if (row.classList.contains('selected-row')) {
+                const adjustedDate = new Date(workDate);
+                adjustedDate.setDate(adjustedDate.getDate() + 1);
+                addTimesheetBtn.href = `/timesheetEntry?date=${adjustedDate.toISOString().split('T')[0]}`;
+                addEmergencyBtn.href = `/emergencyEntry?date=${adjustedDate.toISOString().split('T')[0]}`;
+                addLeaveBtn.href = `/plannedLeave?date=${adjustedDate.toISOString().split('T')[0]}`;
+                workDateInput.value = `${adjustedDate.toISOString().split('T')[0]}`
+              } else {
+                addTimesheetBtn.href = '';
+                addEmergencyBtn.href = '';
+                addLeaveBtn.href = '';
+                workDateInput.value = '';
+              }
             });
           });
         </script>
