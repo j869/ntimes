@@ -134,6 +134,16 @@
               <%}%>
  
 <%if (isManager == true) { %>
+  <li class="nav-item">
+    <% if (locals.title && locals.title==='Timesheet' ) { %>
+      <a href="/time" class="nav-link active" id="active">
+        <% } else { %>
+          <a href="/time" class="nav-link link-light">
+            <% } %>
+              <i class="bi bi-calendar-week-fill"></i> <span
+                class="ms-1 d-none d-sm-inline">Timesheet</span>
+          </a>
+  </li>
 
               <li>
                 <% if (locals.title && locals.title==='Pending Timesheets' ) { %>
