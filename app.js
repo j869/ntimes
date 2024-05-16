@@ -202,6 +202,11 @@ const runManager = (req, res, next) => {
      '/timesheet/multipleApproveTs',
      '/timesheet/multipleRejectTs',
      '/timesheet/rejectTs',
+     '/time',
+     '/emergencyEntry',
+     '/timesheetEntry',
+     '/deleteTimesheet/:id',
+     '/plannedLeave',
       '/login', 
       '/logout'];
   
@@ -210,7 +215,7 @@ const runManager = (req, res, next) => {
     app.use('/timesheet', createManagerRoutes(isAuthenticated))
     console.log("rm3    " )
 
-    if (allowedRoutes.includes(req.path)) {
+    if (allowedRoutes.includes(req.path) || req.path.startsWith('/deleteTimesheet/') || req.path.startsWith('/timesheets/')) {
       next();
     } else {
       res.status(403).json({ messages: ["Permission denied"] });
@@ -222,7 +227,6 @@ const runManager = (req, res, next) => {
     next()
   }
 };
-
 app.use(runManager);
 
 // PROILE ROUTE HERE
@@ -299,9 +303,13 @@ app.get("/time", isAuthenticated, async (req, res) => {
   const queryMessage = req.query.m
   console.log("aldk;aslk", queryMessage)
 
+  const userInfo = req.session.userInfo;
+
+
   res.render("timesheet/main.ejs", {
     title: "Timesheet",
     user: req.user,
+    userInfo: userInfo,
     queryMessage: queryMessage,
     flexTilRdo: flexTilRdo.data[0],
     tableData: filteredData,
@@ -654,7 +662,8 @@ app.post(
           "messages",
           'We redirected you because you nominated that the timekeeper did not record the work day. Choose an activity like "Bushfire Readiness" from the activity column'
         );
-        return res.redirect("/timesheetEntry");
+        const formattedDate = new Date(work_date).toISOString().split('T')[0];
+        return res.redirect(`/emergencyEntry?date=${formattedDate}`);
       }
       console.log(`eg50      ${API_URL}/timesheets`);
       const result = await axios.put(`${API_URL}/timesheets`, {
