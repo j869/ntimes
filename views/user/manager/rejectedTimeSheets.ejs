@@ -34,21 +34,60 @@
     }
   </style>
 
+  
+<!-- ALERTSSS START -->
+
+
+<div id="liveAlertPlaceholder"></div>
+<button type="button" class="btn btn-primary" style="display: none;" id="liveAlertBtn"></button>
+
+  <%if (statusMessage != "" && statusMessage != undefined) {%>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const button = document.getElementById("liveAlertBtn")
+        button.click()
+      });
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+const appendAlert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+
+  alertPlaceholder.append(wrapper)
+}
+
+const alertTrigger = document.getElementById('liveAlertBtn')
+const alertMessage = '<%=statusMessage%>';
+
+let alertType; 
+
+if (alertMessage == "Something went wrong. Try Again!") {
+  alertType = 'danger'
+} else if (alertMessage == "Update Successfully!") {
+  alertType = 'success'
+}
+
+
+if (alertTrigger) {
+  alertTrigger.addEventListener('click', () => {
+    appendAlert(alertMessage, alertType)
+  })
+}
+      
+      </script>
+    <%}%>
+
+<!-- ALERTSSS ENDSSS -->
+
 
 <section class="col py-3 mx-4">
-  <% if (locals.messages && locals.messages.length > 0) { %>
-    <% messages.forEach(msg => { %>
-      <div class="alert alert-primary" role="alert"><%= msg %></div>
-    <% }) %>
-  <% } %>
+  
 
-  <% if (typeof messages !== 'undefined' && messages.error) { %>
-    <div class="alert alert-danger" role="alert"><%= messages.error %></div>
-  <% } %>
-
-  <% if (typeof status !== 'undefined' && status === '202') { %>
-    <div class="alert alert-primary" role="alert">Update Successfully</div>
-  <% } %>
 
   <h1 class="page-title mb-4">Rejected Timesheets</h1>
 
@@ -56,6 +95,11 @@
     <div class="alert alert-info" role="alert">No Rejected Timesheets</div>
   <% } else { %>
     <div class="time-sheet-container table-responsive" style="width: max-content; padding: 20px;">
+      <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2">
+        <button id="markAllBtn" class="btn btn-primary">Mark all</button>
+        <button id="approveMarkBtn" class="btn btn-success" style="display: none;">Approve marked</button>
+  
+      </div>
       <table class="table" id="timesheetTable">
         <thead>
           <tr>
@@ -66,16 +110,12 @@
                   <th scope="col">Time Start</th>
                   <th scope="col">Time Finish</th>
                   <th scope="col">Time Total</th>
-                  <th scope="col" class="hidden">Time Accrued</th>
-                  <th scope="col" class="hidden">Time Til</th>
-                  <th scope="col" class="hidden">Time Leave</th>
-                  <th scope="col" class="hidden">Time Overtime</th>
-                  <th scope="col" class="hidden">Time Comm Svs</th>
-                  <th scope="col">Comment</th>
+       
                   <th scope="col" class="hidden">Location ID</th>
                   <th scope="col">Activity</th>
-                  <th scope="col" class="hidden">Notes</th>
+              
                   <th scope="col">Actions</th>
+                  <th scope="col">Mark</th>
                 </tr>
               </thead>
           </tr>
@@ -101,33 +141,15 @@
                 <td>
                   <%= timesheet.time_total %>
                 </td>
-                <td class="hidden">
-                  <%= timesheet.time_accrued %>
-                </td>
-                <td class="hidden">
-                  <%= timesheet.time_til %>
-                </td>
-                <td class="hidden">
-                  <%= timesheet.time_leave %>
-                </td>
-                <td class="hidden">
-                  <%= timesheet.time_overtime %>
-                </td>
-                <td class="hidden">
-                  <%= timesheet.time_comm_svs %>
-                </td>
-                <td>
-                  <%= timesheet.comment %>
-                </td>
-                <td class="hidden">
-                  <%= timesheet.location_id %>
+               
+              
+                <td >
+                  <%= timesheet.location_name %>
                 </td>
                 <td>
                   <%= timesheet.activity %>
                 </td>
-                <td class="hidden">
-                  <%= timesheet.notes %>
-                </td>
+         
                 <% if (timesheet.id) { %>
                   <td style="display: flex; flex-direction: row; gap: 10px  ">
                   
@@ -137,6 +159,10 @@
                     </form>
 
                 
+                  </td>
+
+                  <td>
+                    <input type="checkbox" name="mark" value="<%= timesheet.id %>" class="mark-checkbox">
                   </td>
                   <% } else { %>
                     <td>&nbsp;</td>
@@ -148,6 +174,90 @@
     </div>
   <% } %>
 </section>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const markAllBtn = document.getElementById("markAllBtn");
+    const approveMarkBtn = document.getElementById("approveMarkBtn");
+    const rejectMarkBtn = document.getElementById("rejectMarkBtn");
+    const markCheckboxes = document.querySelectorAll(".mark-checkbox");
+
+    markAllBtn.addEventListener("click", () => {
+      let isMarkChecked = false
+
+markCheckboxes.forEach(checkbox => {
+
+  if(checkbox.checked == true){
+    isMarkChecked = true
+  } 
+  return; 
+
+  
+});
+
+if (isMarkChecked){
+  markCheckboxes.forEach(checkbox => {
+  checkbox.checked = false 
+});
+} else {
+  markCheckboxes.forEach(checkbox => {
+  checkbox.checked = true 
+});
+}
+
+      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+      if (markedCheckboxes.length > 0) {
+        approveMarkBtn.style.display = "block";
+        rejectMarkBtn.style.display = "block";
+        markAllBtn.textContent = "Unmark All";
+      } else {
+        approveMarkBtn.style.display = "none";
+        rejectMarkBtn.style.display = "none";
+        markAllBtn.textContent = "Mark All";
+      }
+    });
+
+    approveMarkBtn.addEventListener("click", () => {
+      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+      const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
+      console.log(markedIds)
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/timesheet/multipleApproveTs?page=rejected';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'ids';
+      input.value = JSON.stringify(markedIds);
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+
+      
+    });
+
+    markCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener("change", () => {
+        const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+        if (markedCheckboxes.length > 0) {
+          approveMarkBtn.style.display = "block";
+          rejectMarkBtn.style.display = "block";
+          markAllBtn.textContent = "Unmark All";
+        } else {
+          approveMarkBtn.style.display = "none";
+          rejectMarkBtn.style.display = "none";
+          markAllBtn.textContent = "Mark All";
+        }
+      });
+    });
+
+    
+
+  });
+
+
+</script>
 
   <script>
     function confirmDelete(locationId) {

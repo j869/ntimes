@@ -14,14 +14,23 @@ const createManagerRoutes = (isAuthenticated) => {
     const userInfo = req.session.userInfo;
 
    
-   
-    console.dir(userInfo)
+    
+
+    const status = req.query.status;
+    let statusMessage = "";
+
+    if (status == 202) {
+      statusMessage = "Update Successfully!"
+    } else if (status == 500) {
+      statusMessage = "Something went wrong. Try Again!"
+    }
 
     res.render("user/manager/pendingTimeSheets.ejs", {
       user: req.user,
       data: data.data,
       userInfo: userInfo,
       messages: req.flash(""),
+      statusMessage: statusMessage,
       title: "Pending Timesheets",
     });
   });
@@ -31,16 +40,26 @@ const createManagerRoutes = (isAuthenticated) => {
     const data = await axios.get(`${API_URL}/timesheet/approved/${req.user.id}`);
     const userInfo = req.session.userInfo;
 
+    const status = req.query.status;
+    let statusMessage = "";
+
+    if (status == 202) {
+      statusMessage = "Update Successfully!"
+    } else if (status == 500) {
+      statusMessage = "Something went wrong. Try Again!"
+    }
+
 
     res.render("user/manager/approvedTimeSheets.ejs", {
       user: req.user,
       data: data.data,
       userInfo: userInfo,
-
+      statusMessage: statusMessage,
       messages: req.flash(""),
       title: "Approved Timesheets",
     });
   });
+
 
   router.post("/approveTs", isAuthenticated, async (req ,res) => {
     console.log("mrp1     ")
@@ -54,14 +73,69 @@ const createManagerRoutes = (isAuthenticated) => {
     
   } catch (error) {
     console.error("Error updating location:", error);
+    res.redirect(`/timesheet/${back_page}?status=500`);
+
     res
       .status(500)
       .json({ success: false, error: "Error updating location" });
   }
 
 
+
+
+
   })
 
+  
+  router.post("/multipleApproveTs", isAuthenticated, async(req,res) => {
+    const ts_ids = JSON.parse(req.body.ids)
+    const back_page = req.query.page
+
+    // console.log("gwawad", ts_ids)
+
+
+  try {
+
+    await Promise.all(ts_ids.map(ts_id => 
+      axios.post(`${API_URL}/timesheet/approveTs/${req.user.id}`, {ts_id})
+    ));
+
+    res.redirect(`/timesheet/${back_page}?status=202`);
+
+    
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Error updating location" });
+  }
+
+  })
+
+  router.post("/multipleRejectTs", isAuthenticated, async(req,res) => {
+    const ts_ids = JSON.parse(req.body.ids)
+    const back_page = req.query.page
+
+    // console.log("gwawad", ts_ids)
+
+
+  try {
+
+    await Promise.all(ts_ids.map(ts_id => 
+      axios.post(`${API_URL}/timesheet/rejectTs/${req.user.id}`, {ts_id})
+    ));
+
+    res.redirect(`/timesheet/${back_page}?status=202`);
+
+    
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Error updating location" });
+  }
+
+  })
 
   router.post("/rejectTs", isAuthenticated, async (req ,res) => {
     console.log("mrj1     ")
@@ -89,11 +163,22 @@ const createManagerRoutes = (isAuthenticated) => {
     const userInfo = req.session.userInfo;
 
 
+    const status = req.query.status;
+    let statusMessage = "";
+
+    if (status == 202) {
+      statusMessage = "Update Successfully!"
+    } else if (status == 500) {
+      statusMessage = "Something went wrong. Try Again!"
+    }
+
+
+
     res.render("user/manager/rejectedTimeSheets.ejs", {
       user: req.user,
       data: data.data,
       userInfo: userInfo,
-
+      statusMessage: statusMessage,
       messages: req.flash(""),
       title: "Rejected Timesheets",
     });

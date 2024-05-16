@@ -53,17 +53,26 @@
       flexiBalance; } 
       if (tilBalance < 4) { 
         tilInput=tilBalance; flexiInput=8 - tilBalance;
-       } } } %>
+       } } } 
+       
+    %>
 
-       <%if (queryMessage && queryMessage!= "") {%>
+    
+
+       <%if (queryMessage && queryMessage != "") {%>
         <button type="button" style="display: none;" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
 
         <script>
           document.addEventListener("DOMContentLoaded", function() {
+            
+          
             let button = document.getElementById('liveToastBtn');
+            console.log("button", button)
             button.click();
           });
         </script>
+
+        
 
 <div class="toast-container position-fixed top-0 end-0 p-3" data-bs-autohide="true">
   <div id="liveToast" class="toast text-bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
@@ -277,7 +286,7 @@
           </div>
         </div>
       </div>
-      <!-- LEAVE DAY OFF MODAL ENDS -->
+     
 
       <script>
         const mixRadio = document.getElementById('mix');
@@ -286,13 +295,29 @@
         const tilInput = document.getElementById('tilHours');
         const errorDiv = document.getElementById('errorDiv');
 
-        mixRadio.addEventListener('change', () => {
+    
+        console.log("mixRADIO" , mixRadio)
+
+        if (mixRadio) {
+          console.log('a;lkdsfjaklsdjf;lkasdj;flaksdfjk')
+        //   mixRadio.addEventListener('change', () => {
+        //   if (mixRadio.checked) {
+        //     mixOptions.style.display = 'flex';
+        //   } else {
+        //     mixOptions.style.display = 'none';
+        //   }
+        // });
+
+         mixRadio.addEventListener('change', () => {
           if (mixRadio.checked) {
             mixOptions.style.display = 'flex';
           } else {
             mixOptions.style.display = 'none';
           }
         });
+        }
+        
+       
 
         const checkTotalHours = () => {
           const totalHours = parseFloat(flexiInput.value) + parseFloat(tilInput.value);
@@ -309,8 +334,12 @@
           }
         };
 
-        flexiInput.addEventListener('input', checkTotalHours);
+        if(flexiInput && tilInput) {
+
+          flexiInput.addEventListener('input', checkTotalHours);
         tilInput.addEventListener('input', checkTotalHours);
+        }
+
       </script>
 
 
@@ -349,6 +378,7 @@
           </div>
 
           <div class="time-sheet-container table-responsive">
+            
             <table class="table" id="timesheetTable">
               <thead>
                 <tr>
@@ -360,6 +390,7 @@
                   <th scope="col" >OT</th>
                   <th scope="col">Comment</th>
                   <th scope="col">Actions</th>
+                 
                 </tr>
               </thead>
 
@@ -402,7 +433,9 @@
                     
                         
                       </td>
+                      
                       <% } else { %>
+                        <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <% } %>
                   </tr>
@@ -410,13 +443,20 @@
               </tbody>
             </table>
           </div>
+
+        
         </div>
+
+        
       </section>
      
 
       <%- include('../partials/footer', { locals }) %>
 
         <script>
+
+
+
           //   console.log(<= tableData%>);
           // CSS class to hide columns
           const hideColumns = () => {
@@ -502,6 +542,16 @@
               }
             });
           });
+
+          const toastTrigger = document.getElementById('liveToastBtn')
+const toastLiveExample = document.getElementById('liveToast')
+
+if (toastTrigger) {
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+  toastTrigger.addEventListener('click', () => {
+    toastBootstrap.show()
+  })
+}
 
 
           

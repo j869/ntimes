@@ -494,7 +494,7 @@ const createUser = (req, res) => {
 
         // INSERTING THE REGISTERED USER TO THE ts_user_t
 
-        !error && pool.query("INSERT INTO ts_user_t (user_id) VALUES ($1)", [userId], (error, result) => {
+        !error && pool.query("INSERT INTO ts_user_t (person_id) VALUES ($1)", [userId], (error, result) => {
           if (error) {
             console.error("k8    Adding User Error:", error);
             return res

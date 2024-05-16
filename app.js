@@ -199,6 +199,8 @@ const runManager = (req, res, next) => {
      '/timesheet/approved',
      '/timesheet/rejected',
      '/timesheet/approveTs',
+     '/timesheet/multipleApproveTs',
+     '/timesheet/multipleRejectTs',
      '/timesheet/rejectTs',
       '/login', 
       '/logout'];
@@ -295,6 +297,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
 
 
   const queryMessage = req.query.m
+  console.log("aldk;aslk", queryMessage)
 
   res.render("timesheet/main.ejs", {
     title: "Timesheet",
@@ -1049,8 +1052,14 @@ app.post("/login", function (req, res, next) {
       return next(err);
     }
     if (!user) {
-      console.log("lg13   ", err);
-      req.flash("messages", "Invalid username or password. Please try again.");
+      console.log("lg13   ", info);
+      
+
+      if(info && info.messages[0] == "Incorrect password.") {
+        req.flash("messages", "Invalid username or password. Please try again.");
+      } else {
+        req.flash("messages", "Email has not been verified. Please check your email for the verification link.");
+      }
       return res.redirect("/login");
     }
     req.logIn(user, async function (err) {
