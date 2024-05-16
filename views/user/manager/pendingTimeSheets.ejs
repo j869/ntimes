@@ -1,19 +1,8 @@
 <%- include('../../user/manager/managerSidebar', {userInfo: userInfo} ) %>
 
   <style>
-    .location-manager-container {
-      padding: 20px;
-    }
+   
 
-    .location .header {
-      margin-top: 30px;
-      margin-left: 120px;
-      margin-right: 120px;
-      display: flex;
-      justify-content: space-between;
-
-
-    }
 
     h4 {
       margin: 2rem 0rem 1rem;
@@ -153,16 +142,18 @@ if (alertTrigger) {
                 </td>
                
                 <% if (timesheet.id) { %>
-                  <td style="display: flex; flex-direction: row; gap: 10px  ">
+                  <td style="display: flex; flex-direction: row;">
                     
                     <form action="/timesheet/approveTs?page=pending" method="post">
                       <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
-                      <button class="btn btn-primary" type="submit">Approve</button>
+                      <button class="approve-icon" type="submit" style="border: none; background-color: transparent;">
+                        <i class="fa-solid fa-check" aria-hidden="true"></i></button>
                     </form>
 
                     <form action="/timesheet/rejectTs?page=pending" method="post">
                       <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
-                      <button class="btn btn-danger" type="submit">Reject</button>
+                      <button class="delete-icon" type="submit" style="border: none; background-color: transparent;">
+                        <i class="fa fa-solid fa-trash" aria-hidden="true"></i></button>
                     </form>
                   </td>
                   <td>
