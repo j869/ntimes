@@ -98,15 +98,26 @@ const checkUserExist = async (req, res) => {
 
 // PROFILE PART
 const editProfile = async (req, res) => { 
+    console.log("req.body:", req.body);
+    const { firstName, lastName, email, username, password, userId, managerID } = req.body;
 
-    const { firstName, lastName, email, username, password, userId } = req.body;
+    console.log("req.body.firstName:", firstName);
+    console.log("req.body.lastName:", lastName);
+    console.log("req.body.email:", email);
+    console.log("req.body.username:", username);
+    console.log("req.body.password:", password);
+    console.log("req.body.userIdm:", userId);
+    console.log("req.body.managerID:", managerID);
 
-    if (!firstName || !lastName || !email || !username || !password) {
+    if (!firstName ||!lastName ||!email ||!username ||!password) {
         return res.status(400).json({ error: 'All fields must be filled out.' });
     }
 
+ 
+
     // Check if the user exists in the personelle table
     const userExists = await pool.query('SELECT * FROM personelle WHERE person_id = $1', [userId]);
+    const selectedManager = await pool.query('SELECT * FROM staff_hierarchy WHERE user_id = $1', [userId]);
 
     // If the user does not exist, insert it
     if (!userExists.rows.length) {
@@ -115,10 +126,18 @@ const editProfile = async (req, res) => {
         await pool.query('UPDATE personelle SET first_name = $2, last_name = $3 WHERE person_id = $1', [userId, firstName, lastName]);
     }
 
+    if (!selectedManager.rows.length) {
+        await pool.query('INSERT INTO staff_hierarchy (user_id, manager_id) VALUES ($1, $2) ',[userId, managerID]);
+      
+    } else {
+      await pool.query('UPDATE staff_hierarchy SET manager_id = $2 WHERE user_id = $1',[userId, managerID]);
+
+    }
+
     try {
         await pool.query(`
-        UPDATE users SET  email = $3, username = $4, password = $5 WHERE id = $6;
-        `, [firstName, lastName, email, username, password, userId]);
+        UPDATE users SET  email = $1, username = $2, password = $3 WHERE id = $4
+        `,[email, username, password, userId]);
         return res.status(200).json({ success: true, message: 'Profile updated successfully.' });
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -128,7 +147,7 @@ const editProfile = async (req, res) => {
 
 
 const getManager = async (req,res) => { 
-
+console.log("AKSJDHASJKDHASJKLDHASJKLDHAKLSJDHAKLSJHDKLAJSDHASKLJDH")
 	const query = `SELECT
 	users."id", 
 	users.username, 
@@ -146,7 +165,7 @@ FROM
 	WHERE position = 'manager'`
 
 	try {
-		const result = await pool.query(query);
+		const result = await pool.query(query, []);
 		res.status(200).json(result.rows);
 	} catch (error) {
 		console.error('Error fetching manager:', error);
@@ -154,9 +173,9 @@ FROM
 	}
 }
 
-const getMyManager = async (res, req) => { 
+const getMyManager = async (req, res) => { 
   
-  const userId = 5;
+  const userId = req.params.userID;
   console.log("userid " + userId)
   
 
@@ -184,7 +203,6 @@ WHERE
 		res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
 
 export {
   

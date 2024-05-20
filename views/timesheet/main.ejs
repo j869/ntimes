@@ -35,17 +35,28 @@
     
 
        <%if (queryMessage && queryMessage != "") {%>
-        <button type="button" style="display: none;" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
-
+        <div
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+          <strong>Timesheet already filled</strong> Please Select Another date!
+        </div>
+        
         <script>
-          document.addEventListener("DOMContentLoaded", function() {
-            
-          
-            let button = document.getElementById('liveToastBtn');
-            console.log("button", button)
-            button.click();
+          var alertList = document.querySelectorAll(".alert");
+          alertList.forEach(function (alert) {
+            new bootstrap.Alert(alert);
           });
         </script>
+        
+
+       
 
         
 

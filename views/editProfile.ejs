@@ -71,6 +71,7 @@ if (userData) {
                             </div>
                         </div>
                        
+                        
                         <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">Email</h6>
@@ -87,6 +88,20 @@ if (userData) {
                                 <input type="text" class="form-control" value="<%= username%>" id="username" name="username">
                             </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <h6 class="mb-0">Manager</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                                <select name="managerID" class="form-control"  id="">
+                                    <% managers.forEach((manager) => {%>
+                                        <option <%=myManager && myManager.person_id == manager.id ? "selected" : "" %> value="<%=manager.id%>"><%= `${manager.first_name} ${manager.last_name}`%></option>
+                                    <%}) %>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="row mb-3">
                             <div class="col-sm-3">
                                 <h6 class="mb-0">New Password</h6>

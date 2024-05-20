@@ -27,6 +27,7 @@ import createFundSourceRoutes from "./routes/fundSourcesRoutes.js";
 import createManagerRoutes from "./routes/managerRoutes.js";
 import { userInfo } from "os";
 import createProfileRoutes from "./routes/profileRoutes.js";
+import createNotificaitonRoute from "./routes/notificationRoutes.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express();
@@ -203,6 +204,9 @@ const runManager = (req, res, next) => {
      '/timesheet/multipleRejectTs',
      '/timesheet/rejectTs',
      '/time',
+     '/profile',
+     '/profile/update',
+     '/profile/check',
      '/emergencyEntry',
      '/timesheetEntry',
      '/deleteTimesheet/:id',
@@ -228,6 +232,9 @@ const runManager = (req, res, next) => {
   }
 };
 app.use(runManager);
+
+// NOTIFICATION ROUTER HEREss
+app.use("/notification", createNotificaitonRoute(isAuthenticated));
 
 // PROILE ROUTE HERE
 app.use("/profile", createProfileRoutes(isAuthenticated));
@@ -1079,7 +1086,7 @@ app.post("/login", function (req, res, next) {
 
       console.log("lg3   ", err);
       const isManager = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
-      console.log("lg31   ", isManager.data[0]);
+      console.log("lg31   ", isManager.data[0]); 
 
       req.session.userInfo = isManager.data[0]
 

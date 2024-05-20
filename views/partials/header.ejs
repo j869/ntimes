@@ -90,6 +90,25 @@
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
               </li>
+              <li class="nav-item">
+                <% if (locals.title && locals.title==='Notification' ) { %>
+                  <a href="/notification" class="nav-link active d-flex position-relative" id="active">
+                    <% } else { %>
+                      <a href="/notification" class="nav-link link-light d-flex position-relative">
+                        <% } %>
+                          <i class="bi bi-bell"></i> <span
+                            class="ms-1 d-none d-sm-inline">Notification</span>
+                            <span
+                            class="badge bg-danger"
+                            style="margin-left: 5px; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 20px; height: 20px;"
+                            >12</span
+                          >
+                    
+                    
+                  </a>
+              </li>
+
+              
               <%if(!isManager) {%>
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Timesheet' ) { %>
@@ -99,9 +118,10 @@
                         <% } %>
                           <i class="bi bi-calendar-week-fill"></i> <span
                             class="ms-1 d-none d-sm-inline">Timesheet</span>
-                      </a>
+                  </a>
               </li>
 
+              <%if (user && user.role == "admin") {%>
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Users' ) { %>
                   <a href="/users" class="nav-link active" id="active">
@@ -131,6 +151,9 @@
                           <i class="bi bi-activity"></i> <span class="ms-1 d-none d-sm-inline">Activity</span>
                       </a>
               </li> 
+              <%}%>
+
+             
               <%}%>
  
 <%if (isManager == true) { %>
