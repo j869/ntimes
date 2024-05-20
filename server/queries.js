@@ -339,10 +339,10 @@ const getUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   console.log("qh1   ", req.params.id);
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id)
   pool.query("SELECT * FROM users WHERE id = $1", [id], (error, results) => {
     if (error) {
-      throw error;
+      throw(error);
     }
     res.status(200).json(results.rows);
   });

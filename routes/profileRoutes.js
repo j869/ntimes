@@ -7,8 +7,10 @@ const createProfileRoutes = (isAuthenticated) => {
   const API_URL = process.env.API_URL;
 
   router.post("/update", isAuthenticated,async (req, res) => {
-    const { firstName, lastName, email, username, newPassword, confirmPassword } = req.body;
+    const { firstName, lastName, email, username, newPassword, confirmPassword, managerID } = req.body;
     const userId = req.user.id;
+
+    
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ error: 'New password and confirm password must match' });
@@ -17,7 +19,7 @@ const createProfileRoutes = (isAuthenticated) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     try {
-      await axios.post(`${API_URL}/users/update`, { firstName, lastName, email, username, password: hashedPassword, userId });
+      await axios.post(`${API_URL}/users/update`, { firstName, lastName, email, username, password: hashedPassword, userId, managerID });
       res.redirect("/profile");
     } catch (error) {
       console.error("Error updating user profile:", error);
@@ -65,16 +67,21 @@ const createProfileRoutes = (isAuthenticated) => {
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;
+  
 
+    const myManager = await axios.get(`${API_URL}/users/getMyManager/${req.user.id}`);  
+    const managers = await axios.get(`${API_URL}/users/getManager/${req.user.id}`);  
 
-   
+    // console.log("Managers", managers.data)
+//    console.log("MyManager" , myManager)
 
     try {
         if(checkUser == true) { 
 
             res.render("editProfile.ejs", {
                 user: req.user,   
-                       
+                myManager: myManager.data[0],
+                managers: managers.data,
                 userSchedule: userSchedule.data,
                 userData: data.data[0],
                 userInfo: userInfo,
@@ -110,15 +117,13 @@ const createProfileRoutes = (isAuthenticated) => {
    
   };
 
-
-
   function getPayPeriods(startDate, endDate, scheduleDays) {
     console.log("rpr1     ")
     const allDateSchedules = [];
     const payPeriods = [];
 
-    let currentDate = new Date(startDate);
 
+    let currentDate = new Date(startDate);
     // Populate allDateSchedules with all scheduled days within the date range
     while (currentDate <= endDate) {
         const dayOfWeek = currentDate.getDay();
@@ -160,11 +165,11 @@ router.get("/", isAuthenticated, async (req, res) => {
     console.log("rph1     ")
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
-    // const myManager = await axios.get(`${API_URL}/users/getMyManager/${req.user.id}`);
+    const myManager = await axios.get(`${API_URL}/users/getMyManager/${req.user.id}`);
 
     const userInfo = req.session.userInfo;
 
-    // console.log(myManager)
+    console.log("my manager", myManager.data)
 
     // Check if userScheduleResponse.data is empty
     if (!userScheduleResponse.data || userScheduleResponse.data.length === 0) {
@@ -174,8 +179,9 @@ router.get("/", isAuthenticated, async (req, res) => {
             payPeriods: [],
             userSchedule: [],
             totalHours: 0,
-            
+            myManager: [],
             userData: data.data[0],
+            myManager: myManager.data[0],
             userInfo: userInfo,
             messages: req.flash(""),
             title: "Pending Timesheets",
@@ -242,6 +248,7 @@ router.get("/", isAuthenticated, async (req, res) => {
             userSchedule: userScheduleResponse.data,
             totalHours: totalHours,
             userData: data.data[0],
+            myManager: myManager.data[0],
             userInfo: userInfo,
             messages: req.flash(""),
             title: "Pending Timesheets",
