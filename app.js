@@ -1333,7 +1333,7 @@ passport.use(
       }
       // known issue: page should redirect to the register screen.  To reproduce this error enter an unknown username into the login screen
     } catch (err) {
-      console.log("ps13");
+      console.log("ps13   ", err);
 
       // Check for status 404 User not found
       if (err.response.status === 404) {

@@ -142,7 +142,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Activity Manager' ) { %>
                   <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
                     <% } else { %>
@@ -168,7 +168,7 @@
           </a>
   </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Pending Timesheets' ) { %>
                   <a href="/timesheet/pending" class="nav-link active" id="active">
                     <% } else { %>
@@ -178,7 +178,7 @@
                       </a>
               </li>
              
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Approved Timesheets' ) { %>
                   <a href="/timesheet/approved" class="nav-link active" id="active">
                     <% } else { %>
@@ -188,7 +188,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Rejected Timesheets' ) { %>
                   <a href="/timesheet/rejected" class="nav-link active" id="active">
                     <% } else { %>

@@ -350,18 +350,15 @@ const getUserById = (req, res) => {
 
 const getUserByUsername = (req, res) => {
   console.log("qw1   ", req.params.username);
-  console.log(
-    "qw2 SELECT * FROM users WHERE username = '" + req.params.username + "';"
-  );
-
-  pool.query(
-    "SELECT * FROM users WHERE username = '" + req.params.username + "';",
+  console.log("qw2 SELECT * FROM users WHERE username = '" + req.params.username + "';");
+  
+  pool.query("SELECT * FROM users WHERE username = '" + req.params.username + "';",
     (error, result) => {
-      console.log("qw2");
-      if (error) {
-        console.log("qw3      db error");
-        throw error;
-      }
+      // console.log("qw2    ");
+      // if (error) {
+      //   console.log("qw3      db error");
+      //   throw error;
+      // }
       if (result.rows.length === 0) {
         console.log("qw4      No user found");
         //throw new Error('No user found');

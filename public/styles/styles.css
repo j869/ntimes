@@ -50,7 +50,7 @@ body {
   width: 100%;
 }
 
-.sidebar li:hover a { 
+.nav-item:hover a { 
    color: #fcfffc;
   background: #2ba84a;
 }
@@ -191,11 +191,11 @@ background-color: lightblue;
 }
 
 .time-sheet-container .holiday {
-  background-color: rgb(233, 142, 24);
+  background-color: #9a94bc;
 }
 
 .time-sheet-container .weekend {
-  background-color: #d0dcdc;
+  background-color: #c1fba4;
 }
 
 .leave_day_off_modal label span {
@@ -210,6 +210,6 @@ background-color: lightblue;
 }
 
 .selected-row {
-  background-color: #2ba84a !important;
+  background-color: #7bf1a8 !important;
 
 }
