@@ -2,14 +2,14 @@
 
   <section class="d-flex py-3 justify-content-center">
     <div class="container pt-2 m-0 loginprompt">
-      <img src="../images/logo2.png"/>
+      <img src="../images/new.png"/>
       <hr>
       <% if (user) { %>
         <p>Hello, <%= user.username %>.</p>
         <a class="btn btndark" href="/logout" role="button">Logout</a>
         <% } else { %>
           <a class="btn btndark btn-lg" href="/register" role="button">Register</a>
-          <a class="btn btnprimary btn-lg" href="/login" role="button">Login</a>
+          <a class="btn btnsecondary btn-lg" href="/login" role="button">Login</a>
           <% } %>
     </div>
   </section>
