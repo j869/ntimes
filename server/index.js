@@ -22,7 +22,7 @@ import {
 
 
 import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet } from "./controllers/managerController.js";
-import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager } from "./controllers/userController.js";
+import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager, assignManager } from "./controllers/userController.js";
 
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
@@ -36,6 +36,7 @@ import {
 
 import { getFundSources, getFundSourceById, createFundSource, updateFundSource, deleteFundSource } from "./controllers/fundSourcesConstroller.js"
 import { getTotalHourByDate, getUserScheduleById } from "./controllers/userWorkingSheduleController.js";
+import { createNotification, getAllNotificationsByUserId, getCountUnseenNotifications, getRecentNotifications, markAsSeen } from "./controllers/notificationController.js";
 
 
 const port = 4000;
@@ -53,7 +54,6 @@ app.post("/tfr/:userID", getTFR);
 app.post("/flexiDayOff/:userID", postDayOff);
 
 
-
 // ROUTES FOR THE FUND SOURCE CONTROLLER
 app.get("/fundSource", getFundSources);
 app.get("/fundSource/:id", getFundSourceById);
@@ -65,8 +65,6 @@ app.post("/fundSource/delete", deleteFundSource);
 // ROUTES FOR USER WORKING SCHEDULE
 app.get("/userSchedule/:userID", getUserScheduleById);
 app.post("/totalHours/:userID", getTotalHourByDate);
-
-
 
 
 // ROUTES FOR PUBLIC HOLIDAyS
@@ -94,6 +92,15 @@ app.post("/timesheet/rejectTs/:userID",rejectTimesheet );
 app.post("/timesheet/approveTs/:userID", approveTimesheet);
 
 
+// NOTIFICATION ROUTES
+app.get("/notification/getByUserId", getAllNotificationsByUserId);
+app.post("/notification/add", createNotification);
+app.get("/notification/recent", getRecentNotifications)
+app.get("/notification/unseen/:userID", getCountUnseenNotifications)
+app.get("/notification/seen/:userID", markAsSeen)
+
+
+
 // Define other routes
 app.get("/users", db.getUsers);
 app.get("/login/:username", db.getUserByUsername);
@@ -110,6 +117,7 @@ app.post("/users/check", checkUserExist);
 app.post("/users/update", editProfile);
 app.get("/users/getManager/:userID", getManager );
 app.get("/users/getMyManager/:userID", getMyManager);
+app.post("/users/assignManager/:managerID", assignManager)
 
 
 // FOR TIMESHEETS ROUTES

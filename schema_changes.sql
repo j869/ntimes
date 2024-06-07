@@ -75,3 +75,35 @@ CREATE TABLE user_work_schedule (
 
 
 
+
+
+
+
+
+CREATE TABLE notification (
+    notification_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    read_status BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE
+);
+
+
+-- Recipient Table
+CREATE TABLE recipient (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    manager_id INT,
+    notification_id INT NOT NULL,
+    seen BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (manager_id) REFERENCES users(id),
+    FOREIGN KEY (notification_id) REFERENCES notification(notification_id)
+);
+
+ALTER TABLE notification
+ADD COLUMN timesheet_id INT,
+ADD CONSTRAINT notification_timesheet_id_fkey FOREIGN KEY (timesheet_id) REFERENCES timesheets(id) ON DELETE SET NULL ON UPDATE NO ACTION;

@@ -1,11 +1,18 @@
 import { Router } from "express";
 import axios from "axios";
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 const createManagerRoutes = (isAuthenticated) => {
   const router = Router();
   const API_URL = process.env.API_URL;
 
 
+  // Set a timeout for all axios requests
+  const axiosInstance = axios.create({
+    timeout: 5000, // 5 seconds timeout
+  });
 
 
   router.get("/pending", isAuthenticated, async (req, res) => {
@@ -183,6 +190,28 @@ const createManagerRoutes = (isAuthenticated) => {
       title: "Rejected Timesheets",
     });
   });
+
+
+  router.post("/approveManager", isAuthenticated, async (req, res) => {
+    const managerID = req.body.managerID;
+    const userID = req.body.userID;
+    const notificationID = req.body.notificationID;
+
+    console.log("userID: " + userID);
+    console.log("managerID: " + managerID);
+    console.log("notificationID: " + notificationID);
+
+    try {
+        await axios.post(`${API_URL}/users/assignManager/${managerID}?userID=${userID}&notificationID=${notificationID}`);
+        res.redirect("/notification");
+    } catch (err) {
+        console.log("ASSIGNing Manager error: ", err);
+        res.status(500).send("Error assigning manager");
+    }
+});
+
+
+
 
 
 

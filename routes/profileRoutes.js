@@ -197,10 +197,10 @@ router.get("/", isAuthenticated, async (req, res) => {
     const endDate = new Date(userScheduleResponse.data[0].end_date);
     const payPeriods = getPayPeriods(startDate, endDate, scheduleDays);
 
-    userScheduleResponse.data[0].schedule_day.forEach(day => {
-        if (day !== "Saturday" && day !== "Sunday") {
-            totalHours += paidHours;
-        }
+    console.log("userChedule",userScheduleResponse.data[0])
+
+    userScheduleResponse.data[0].paid_hours.forEach(paidHour=> {
+       totalHours += parseFloat(paidHour)
     });
     let initiateStartDate = false;
 

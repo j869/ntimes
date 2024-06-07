@@ -1,154 +1,156 @@
-<%- include('partials/header', { title: 'Notification', user, messages: messages
-}) %>
+<%- include('partials/header', { title: 'Notification', user }) %>
 
+<%
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return `${date.toLocaleDateString(undefined, options)}`;
+}
 
+function calculateDaysAgo(created_at) {
+  const createdAt = new Date(created_at);
+  const today = new Date();
+  const diffTime = Math.abs(today - createdAt);
+  let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+  return diffDays < 2 ? "today" : `${diffDays} Days Ago`;
+}
+%>
 
-<!-- INPUT PASSWORD  -->
+<div class="container h-100 mt-0">
+  <h1 class="mb-3">Notifications</h1>
 
-
-<div class="container">
-    
-<h1>Notifications</h1>
-
- 
-    <div class="row">
-  
-        <div class="col-lg-12 right">
-            <div class="card shadow-sm rounded bg-white mb-3">
-                <div class="card-header border-bottom p-3">
-                    <h6 class="m-0">Recent</h6>
-                </div>
-                <div class="card-body p-0">
-                    <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
-
-                       
-                        <div class="font-weight-bold mr-3">
-                            <div class="text-truncate">Timesheet Submitted</div>
-                            <div class="small">Your timesheet for the week has been submitted and is pending approval.</div>
-                        </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">3d</div>
-                        </span>
-                    </div>
-                                        <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
-
-                  
-                        <div class="font-weight-bold mr-3">
-                            <div class="mb-2">Timesheet Approved</div>
-                            <div class="small">Your timesheet for the week has been approved.</div>
-                            <button type="button" class="btn btn-outline-success btn-sm">View Timesheet</button>
-                        </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right ">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">4d</div>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card shadow-sm rounded bg-white mb-3">
-                <div class="card-header border-bottom p-3">
-                    <h6 class="m-0">Earlier</h6>
-                </div>
-                <div class="card-body p-0">
-                                        <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
-
-        
-                        <div class="font-weight-bold mr-3">
-                            <div class="text-truncate">Timesheet Rejected</div>
-                            <div class="small">Your timesheet for the week has been rejected. Please resubmit.</div>
-                        </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right" style="">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">3d</div>
-                        </span>
-                    </div>
-                                        <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
-
-
-                        <div class="font-weight-bold mr-3">
-                            <div class="text-truncate">Timesheet Overdue</div>
-                            <div class="small">Your timesheet for the week is overdue. Please submit as soon as possible.</div>
-                        </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">3d</div>
-                        </span>
-                    </div>
-               
-                                        <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
-
-                       
-                        <div class="font-weight-bold mr-3">
-                            <div>
-                                <span class="font-weight-normal">Timesheet Reminder</span> for the week ending on 12/31/2022.
-                                <div class="small text-success"><i class="fa fa-check-circle"></i> You have not submitted your timesheet yet.</div>
-                            </div>
-                        </div>
-                        <span class="ml-auto mb-auto">
-                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="text-right text-muted pt-1">4d</div>
-                        </span>
-                    </div>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-lg-12 right">
+      <div class="card shadow-sm rounded bg-white mb-3">
+        <div class="card-header border-bottom p-3">
+          <h5 class="m-0">All Notifications</h5>
         </div>
+        <div id="notifications-container">
+          <!-- Notifications will be injected here -->
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
+<script>
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${monthNames[date.getMonth()]} ${day}, ${year}`;
+  };
 
+  function calculateDaysAgo(created_at) {
+    const createdAt = new Date(created_at);
+    const today = new Date();
+    const diffTime = Math.abs(today - createdAt);
+    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+    return diffDays < 2 ? "today" : `${diffDays} Days Ago`;
+  }
+
+  async function fetchNotifications() {
+    const userID = <%= user.id%>;
+    const response = await fetch('/notification/fetch');
+    const notifications = await response.json();
+    const container = document.getElementById('notifications-container');
+    container.innerHTML = '';
+
+    
+
+    console.log("response", notifications);
+
+    notifications.forEach(notification => {
+      let notificationElement = '';
+      let title = notification.title;
+      let message = notification.message;
+
+      if (notification.notification_type === 'timesheet') {
+        const backgroundColor = title === "Timesheet Submitted" ? "#cdcd551f !important"
+                              : title === "Timesheet Approved" ? "#55cd551f !important"
+                              : title === "Timesheet Rejected" ? "#cd55551f !important"
+                              : "";
+        
+        if (notification.user_id === notification.sender_id) {
+          title = notification.sender_title;
+          message = notification.sender_message;
+        } else if (notification.user_id === notification.receiver_id) {
+          title = notification.receiver_title;
+          message = notification.receiver_message;
+        }
+
+        notificationElement = `
+          <div class="card-body p-0">
+            <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header" style="background-color:${backgroundColor};">
+              <div class="font-weight-bold mr-3 d-flex justify-content-between">
+                <div class="">
+                  <h6 class="mb-2 text-20">${title}</h6>
+                  <div class="small">${message.replace(/the week/g, formatDate(notification.work_date))}</div>
+                  <div class="text-right text-muted pt-1">${calculateDaysAgo(notification.created_at)}</div>
+                </div>
+              </div>
+              <span class="ml-auto mb-auto">
+                <div class="btn">
+                  <a href="timesheets/${notification.timesheet_id}" class="btn btn-outline-success btn-sm">View Timesheet</a>
+                </div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
+                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>`;
+      } else if (notification.notification_type === 'Manager Request') {
+        notificationElement = `
+          <div class="card-body p-0">
+            <div class="p-3 d-flex align-items-center justify-content-between gap-3 bg-light border-bottom osahan-post-header">
+              <div class="font-weight-bold mr-3 d-flex justify-content-between">
+                <div class="">
+                  <h6 class="mb-2 text-20">${userID == notification.receiver_id ? notification.title : notification.sender_title}</h6>
+                  <div class="small">${userID == notification.receiver_id ? notification.message : notification.sender_message}</div>
+                  <div class="text-right text-muted pt-1">Today</div>
+                </div>
+              </div>
+              <span class="ml-auto mb-auto">
+             
+                <div class="btn-group">
+                  <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
+                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>`;
+      }
+
+      container.insertAdjacentHTML('beforeend', notificationElement);
+    });
+  }
+
+  async function markAsSeen() { 
+    await fetch('/notification/markAsSeen');
+    console.log('Notifications marked as seen');
+  }
+
+  setInterval(fetchNotifications, 5000); // Poll every 5 seconds
+  document.addEventListener('DOMContentLoaded', fetchNotifications);
+  setInterval(markAsSeen, 5000); // Poll every 5 seconds
+  document.addEventListener('DOMContentLoaded', markAsSeen);
+
+</script>
 
 <%- include('partials/footer', {user}) %>
-
-

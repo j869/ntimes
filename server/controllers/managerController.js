@@ -1,4 +1,7 @@
-import { queryDatabase } from "../middleware.js";
+
+import { queryDatabase, pool } from "../middleware.js";
+
+
 
 
 
@@ -67,28 +70,78 @@ WHERE
 
 
 
-const approveTimesheet = (req, res) => {
+const approveTimesheet = async (req, res) => {
     console.log("ppt1   ")
     const userId = req.query.userID 
     const ts_id = req.body.ts_id
 
-    const query = `UPDATE ts_timesheet_t SET status = 'approved' , activity = 'Approved by the Manager' WHERE id = $1`
+	await pool.query("SELECT * FROM notification WHERE timesheet_id = $1", [ts_id], async (err, result) => {
+		
+		if (err) {
+		  console.error("Database error fetching notification:", err);
+		 
+		  return;
+		} else {
+		  const notificationId = result.rows[0].notification_id
 
-    queryDatabase(query, [ts_id], res, "Timesheet updated Successfully!")
+		  console.log("NotoficationID: ", notificationId);
+
+		  const query = `UPDATE ts_timesheet_t SET status = 'approved' , activity = 'Approved by the Manager' WHERE id = $1`
+        
+		  await pool.query(
+			`UPDATE notification SET 
+			title = 'Timesheet Approved',
+			message = 'Your timesheet for the week has been approved by the Manager.',
+			read_status = false, 
+			created_at = NOW() WHERE notification_id = $1
+			 `,[notificationId], (error) => { console.error("something went wrong in updating the notification", error)});
+
+
+			await queryDatabase(query, [ts_id], res, "Timesheet updated Successfully!")
+		}
+	  });
+
+    
 }
 
 
-const rejectTimesheet = (req, res) => { 
+
+
+
+const rejectTimesheet = async (req, res) => { 
 	console.log("rpt1   ")
     const userId = req.query.userID 
     const ts_id = req.body.ts_id
 
-    const query = `UPDATE ts_timesheet_t SET status = 'reject' , activity = 'Rejected by the Manager' WHERE id = $1`
+  
+	await pool.query("SELECT * FROM notification WHERE timesheet_id = $1", [ts_id], async (err, result) => {
+		
+		if (err) {
+		  console.error("Database error fetching notification:", err);
+		 
+		  return;
+		} else {
+		  const notificationId = result.rows[0].notification_id
 
-    queryDatabase(query, [ts_id], res, "Timesheet updated Successfully!")
+		  console.log("NotoficationID: ", notificationId);
+
+		  const query = `UPDATE ts_timesheet_t SET status = 'reject' , activity = 'Rejected by the Manager' WHERE id = $1`
+
+		  await pool.query(
+			`UPDATE notification SET 
+			title = 'Timesheet Rejected',
+			message = 'Your timesheet for the week has been rejected by the Manager.',
+			read_status = false, 
+			created_at = NOW() WHERE notification_id = $1
+			 `,[notificationId], (error) => { console.error("something went wrong in updating the notification", error)});
+
+
+			await queryDatabase(query, [ts_id], res, "Timesheet updated Successfully!")
     
-}
+		}
+	  });
 
+}
 
 
 
@@ -101,5 +154,6 @@ export {
   getPendingTimeSheet,
   approveTimesheet,
   rejectTimesheet,
+
   
 };

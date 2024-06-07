@@ -20,6 +20,8 @@ WHERE
     
 	`   
 
+    
+
 queryDatabase(query, [userId], res, "User fetched successfully");
 
 }
