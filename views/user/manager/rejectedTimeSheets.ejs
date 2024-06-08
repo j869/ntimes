@@ -73,14 +73,17 @@
       <!-- ALERTSSS ENDSSS -->
 
 
-      <section class="main col pt-3 mx-4">
-        <h1 class="page-title">Rejected Timesheets</h1>
+      <div class="main col py-3 px-4 sticky-top titlebar">
+        <h1 class="pagetitle pb-2">Rejected Timesheets</h1>
+      </div>
+
+      <div class="pt-0 mx-4">
 
         <% if (data.length===0) { %>
           <div class="alert alert-info" role="alert">No Rejected Timesheets</div>
           <% } else { %>
             <div class="time-sheet-container table-responsive">
-              <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2">
+              <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2 pb-2">
                 <button id="markAllBtn" class="btn btndark">Mark all</button>
                 <button id="approveMarkBtn" class="btn btnprimary" style="display: none;">Approve marked</button>
 
@@ -153,7 +156,7 @@
               </table>
             </div>
             <% } %>
-      </section>
+      </div>
 
       <script>
         document.addEventListener("DOMContentLoaded", () => {

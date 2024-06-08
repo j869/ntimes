@@ -1,46 +1,48 @@
 <%- include('../partials/header', { title, user, messages: messages }) %>
-<section class="main col pt-3 mx-4">
-    <h1 class="page-title mb-4">Timesheet</h1>
+<div class="main col py-3 px-4 sticky-top titlebar">
+    <h1 class="pagetitle pb-2">Timesheet</h1>
+</div> 
+<div class="pt-0 mx-4">  
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
                 <label for="work_date">Work Date:</label>
-                <p id="work_date" name="work_date" class="readonly" required><%= new Date(data.work_date).toLocaleDateString() %></p>
+                <p id="work_date" name="work_date" class="onlyread" required><%= new Date(data.work_date).toLocaleDateString() %></p>
             </div>
             <div class="form-group">
                 <label for="time_start">Time Start:</label>
-                <p id="time_start" name="time_start" class="readonly" required><%= data.time_start %></p>
+                <p id="time_start" name="time_start" class="onlyread" required><%= data.time_start %></p>
             </div>
             <div class="form-group">
                 <label for="time_finish">Time Finish:</label>
-                <p id="time_finish" name="time_finish" class="readonly" required><%= data.time_finish %></p>
+                <p id="time_finish" name="time_finish" class="onlyread" required><%= data.time_finish %></p>
             </div>
             <div class="form-group">
                 <label for="time_lunch">Time Lunch:</label>
-                <p id="time_lunch" name="time_lunch" class="readonly" required><%= data.time_lunch %></p>
+                <p id="time_lunch" name="time_lunch" class="onlyread" required><%= data.time_lunch %></p>
             </div>
             <div class="form-group">
                 <label for="time_extra_break">Break:</label>
-                <p id="time_extra_break" name="time_extra_break" class="readonly" required><%= data.time_extra_break %></p>
+                <p id="time_extra_break" name="time_extra_break" class="onlyread" required><%= data.time_extra_break %></p>
             </div>
             <div class="form-group">
                 <label for="time_total">Time Total:</label>
-                <p id="time_total" name="time_total" class="readonly" readonly><%= data.time_total %></p>
+                <p id="time_total" name="time_total" class="onlyread" readonly><%= data.time_total %></p>
             </div>
 
         </div>
         <div class="col-md-9">
             <div class="form-group">
                 <label for="location_id">Location:</label>
-                <p id="location_id" name="location_id" class="readonly"><%= data.location_name %></p>
+                <p id="location_id" name="location_id" class="onlyread"><%= data.location_name %></p>
             </div>
             <div class="form-group">
                 <label for="fund_src">Fund:</label>
-                <p id="fund_src" name="fund_src" class="readonly"><%= data.fund_src %></p>
+                <p id="fund_src" name="fund_src" class="onlyread"><%= data.fund_src %></p>
             </div>
             <div class="form-group">
                 <label for="activity">Activity:</label>
-                <p id="activity" name="activity" class="readonly"><%= data.activity %></p>
+                <p id="activity" name="activity" class="onlyread"><%= data.activity %></p>
             </div>
             <div class="form-group">
                 <label for="comment">Comment:</label>
@@ -72,8 +74,8 @@
             </div>
         </div>
     </div>
-</section>
-<div class="main col pt-3 mx-4 my-5">
+
+
     <div class="row">
         <div class="col-md-4">
             <!-- Flexitime -->
@@ -120,11 +122,11 @@
             </div>
         </div>
     </div>
-</div>
+
 </div>
 
 
-</form>
+
 
 <%- include('../partials/footer') %>
 

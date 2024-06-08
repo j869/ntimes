@@ -26,8 +26,6 @@ textarea {
 }
 
 body {
-  background-color: #f7f9fc;
-  color: #333;
   line-height: 1.6;
 }
 
@@ -116,19 +114,7 @@ li {
 li:last-child {
   border-bottom: none;
 }
-/* 
-a.edit {
-  background-color: #007bff;
-  /* margin-right: 10px; */
 
-/* 
-a.delete {
-  background-color: #e74c3c;
-} */
-/* 
-a.delete:hover {
-  background-color: #c0392b;
-} */
 
 #newPostBtn {
   margin: 20px 0;
