@@ -312,7 +312,7 @@ app.get("/time", isAuthenticated, async (req, res) => {
   }));
 
   const queryMessage = req.query.m;
-  console.log("aldk;aslk", queryMessage);
+  // console.log("aldk;aslk", queryMessage);
 
   const userInfo = req.session.userInfo;
 
@@ -339,6 +339,72 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   }
 
   const locationResponse = await axios.get(`${API_URL}/location`);
+  const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+  let userSchedules = []
+
+  if(!userScheduleResponse.data.length < 1) {
+    const scheduleDays = userScheduleResponse.data[0].schedule_day;
+    const paidHours = userScheduleResponse.data[0].paid_hours;
+    const startDate = new Date(userScheduleResponse.data[0].start_date);
+    const endDate = new Date(userScheduleResponse.data[0].end_date);
+
+    userSchedules = getPayPeriods(startDate, endDate, scheduleDays, paidHours);
+    console.log("user schedules: ", userSchedules);
+        
+  
+  }
+
+
+  function getDayOfWeekName(dayOfWeek) {
+    console.log("rpy1     ")
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[dayOfWeek];
+}
+
+  function getPayPeriods(startDate, endDate, scheduleDays, paidHours) {
+    console.log("rpr1     ")
+    const allDateSchedules = [
+
+    ];
+    
+
+
+    let currentDate = new Date(startDate);
+    // Populate allDateSchedules with all scheduled days within the date range
+    let i = 0;
+    let paidHour = 0;
+    while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
+
+            if(i <= paidHours.length - 1) {
+              paidHour = paidHours[i]
+              
+              if(i == paidHours.length - 1) {
+                i = 0;
+              } else { 
+                i += 1;
+              }
+            } 
+
+            // console.log("date", date )
+            // console.log("Currentdate", new Date(currentDate) )
+
+            if (date == new Date(currentDate).toISOString().split("T")[0]) {
+              allDateSchedules.push({
+                date:  new Date(currentDate).toISOString().split("T")[0], 
+                paidHour: paidHour
+              });
+            }
+            
+            
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return allDateSchedules;
+}
+ 
   const location = locationResponse.data; // Extract the data from the Axios response
 
   const selectedDate = req.query.date;
@@ -354,6 +420,7 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
     res.render("timesheet/recordHours.ejs", {
       forDate: date,
       user: req.user,
+      userWorkSchedule: userSchedules,
       selectedDate: selectedDate,
       location: location, // Pass the extracted location data
       title: "Enter Timesheet",
@@ -369,6 +436,7 @@ app.get("/recordHours", (req, res) => {
 const isValidTimeFormat = (value) => {
   return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value); // Custom validation function for time format (hh:mm)
 };
+
 
 app.post(
   "/timesheetEntry",

@@ -17,7 +17,7 @@
                 </div>
                 <div class="form-group">
                     <label for="time_finish">Time Finish:</label>
-                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:06"> 
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="05:00"> 
                 </div>
                 <div class="form-group">
                     <label for="time_lunch">Time Lunch (min):</label>
@@ -196,6 +196,10 @@
         // Function to calculate time total
         function calculateTimeTotal() {
             console.log("d1   calculateTimeTotal()");
+
+            const paidHour = Math.ceil(<%= userWorkSchedule[0].paidHour %>); 
+
+
             const timeStartInput = document.getElementById('time_start');
             const timeFinishInput = document.getElementById('time_finish');
             const timeTotalInput = document.getElementById('time_total');
@@ -205,20 +209,26 @@
             const varianceSelect = document.getElementById('variance_type');
             const commentTextarea = document.getElementById('comment');
 
-            const timeStart = timeStartInput.value;
+             
+            
+            const timeStart = timeStartInput.value ;
             const timeFinish = timeFinishInput.value;
             const timeLunch = parseFloat(timeLunchInput.value) * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
             const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
+            
+           
+      
 
             if (timeStart && timeFinish) {
                 // Calculate time difference
                 const startTime = new Date('1970-01-01 ' + timeStart);
                 const finishTime = new Date('1970-01-01 ' + timeFinish);
-                const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
+                // const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
+                const timeDifference = finishTime - startTime  - timeExtraBreak ; // Difference in milliseconds
                 const totalHours = timeDifference  / (1000 * 60 * 60); // Decimal variance in hours
 
-                const vIJustWantToSeeYouResolveConflicts = 8; 
-                let varianceHours = totalHours - vIJustWantToSeeYouResolveConflicts;
+                
+                let varianceHours = totalHours - paidHour;
                 varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
 
                 // read variance Type 
@@ -230,12 +240,16 @@
                     varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
                     varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
                     varianceSelect.value = "";
+
                     document.getElementById('variance').style.display = 'none';
                     document.getElementById('variance_lbl').style.display = 'none';
                     document.getElementById('variance_type').style.display = 'none';  
                     document.getElementById('variance_type_lbl').style.display = 'none';  
                     commentTextarea.classList.remove('mandatory');
+
+
                 } else {
+
                     varianceInput.value = varianceHours;
                     commentTextarea.setAttribute("required", "required");
                     console.log('a33    ', commentTextarea.attributes);
@@ -245,6 +259,7 @@
                     document.getElementById('variance_type').style.display = 'block';
                     document.getElementById('variance_type_lbl').style.display = 'block';
                     commentTextarea.classList.add('mandatory');
+
                 };
 
                 if (varianceHours > 0) {
@@ -353,6 +368,8 @@
         }
 
         // Listen for changes in the time start and time finish inputs
+        const paidHour = Math.ceil(<%= userWorkSchedule[0].paidHour %>); 
+
         const timeStartInput = document.getElementById('time_start');
         const timeFinishInput = document.getElementById('time_finish');
         const timeLunchInput = document.getElementById('time_lunch');
@@ -361,6 +378,10 @@
         timeFinishInput.addEventListener('input', calculateTimeTotal);
         timeLunchInput.addEventListener('input', calculateTimeTotal);
         timeExtraBreakInput.addEventListener('input', calculateTimeTotal);
+
+        const startTimePlusFourHours = new Date('1970-01-01 ' + timeStartInput.value);
+        startTimePlusFourHours.setHours(Math.ceil(startTimePlusFourHours.getHours() + paidHour));
+        timeFinishInput.value = startTimePlusFourHours.toTimeString().slice(0, 5);
 
         // Trigger the calculateTimeTotal function on page load
         calculateTimeTotal();
