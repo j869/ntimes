@@ -260,6 +260,29 @@ WHERE
     }
 }
 
+const getPendingIndividualTimesheet = (req , res) => { 
+   
+    const ts_Id = req.params.id
+    const work_date = req.query.work_date
+    
+    const query = `
+    SELECT
+	ts_timesheet_t.*
+FROM
+	ts_timesheet_t
+WHERE
+	ts_timesheet_t.status <> 'approved' AND id = $1 AND work_date = $2
+    `
+
+    pool.query(query, [ts_Id, work_date], (err, result)=> { 
+        if(!err){ 
+            console.log("tsData", result.rows)
+            res.status(200).json(result.rows);
+        } else { 
+            res.status(500).json(err);
+        }
+    });
+}
 
 const checkTimesheetExist = async (req, res) => { 
     
@@ -284,6 +307,113 @@ const checkTimesheetExist = async (req, res) => {
 }
 
 
+const editTimesheet = async (req, res) => {
+  console.log("ct1   ");
+  const {
+    person_id,
+    username,
+    work_date,
+    time_start,
+    time_finish,
+    time_total,
+    time_flexi,
+    time_til,
+    time_leave,
+    time_overtime,
+    time_comm_svs,
+    t_comment,
+    location_id,
+    activity,
+    notes,
+    time_lunch,
+    time_extra_break,
+    fund_src,
+    variance,
+    variance_type,
+    entry_date,
+    rwe_day,
+    duty_category,
+    status,
+    on_duty,
+  } = req.body;
+
+  const ts_id = req.params.id;
+
+  try {
+    const { rows } = await pool.query("SELECT * FROM ts_timesheet_t WHERE id = $1", [ts_id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Timesheet not found" });
+    }
+
+    const query = `UPDATE ts_timesheet_t SET 
+      person_id = $1, 
+      username = $2, 
+      work_date = $3, 
+      time_start = $4, 
+      time_finish = $5, 
+      time_total = $6, 
+      time_flexi = $7, 
+      time_til = $8, 
+      time_leave = $9, 
+      time_overtime = $10, 
+      time_comm_svs = $11, 
+      t_comment = $12, 
+      location_id = $13, 
+      activity = $14, 
+      notes = $15, 
+      time_lunch = $16, 
+      time_extra_break = $17, 
+      fund_src = $18, 
+      variance = $19, 
+      variance_type = $20, 
+      entry_date = $21, 
+      duty_category = $22, 
+      "status" = $23, 
+      on_duty = $24, 
+      rwe_day = $25 
+    WHERE id = $26 
+    RETURNING id`;
+    const values = [
+      person_id,
+      username,
+      work_date,
+      time_start,
+      time_finish,
+      time_total,
+      time_flexi,
+      time_til,
+      time_leave,
+      time_overtime,
+      time_comm_svs,
+      t_comment,
+      location_id,
+      activity,
+      notes,
+      time_lunch,
+      time_extra_break,
+      fund_src,
+      variance,
+      variance_type,
+      entry_date,
+      duty_category,
+      status,
+      on_duty,
+      rwe_day,
+      ts_id
+    ];
+
+    const updateResult = await pool.query(query, values);
+
+    console.log("ct9 Successfully updated timesheet with ID:", timesheetId);
+    return res.status(200).json({
+      id: timesheetId,
+      message: `Updated timesheet with ID ${timesheetId}`,
+    });
+  } catch (error) {
+    console.error("Error updating timesheet:", error);
+    return res.status(500).json({ error: "Error updating timesheet" });
+  }
+};
 
 
 
@@ -292,5 +422,7 @@ export {
     getTFR , 
     postDayOff, 
     checkTimesheetExist,
-    getIndividualTimesheetsById
+    getIndividualTimesheetsById,
+    getPendingIndividualTimesheet,
+    editTimesheet
 }

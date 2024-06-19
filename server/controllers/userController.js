@@ -94,11 +94,9 @@ const checkUserExist = async (req, res) => {
 
 }
 
-
-
 // PROFILE PART
 const editProfile = async (req, res) => { 
-    console.log("req.body:", req.body);
+    // console.log("req.body:", req.body);
     const { firstName, lastName, email, username, password, userId, managerID } = req.body;
 
     console.log("req.body.firstName:", firstName);
@@ -113,12 +111,9 @@ const editProfile = async (req, res) => {
         return res.status(400).json({ error: 'All fields must be filled out.' });
     }
 
- 
-
     // Check if the user exists in the personelle table
     const userExists = await pool.query('SELECT * FROM personelle WHERE person_id = $1', [userId]);
-    const selectedManager = await pool.query('SELECT * FROM staff_hierarchy WHERE user_id = $1', [userId]);
-
+   
     // If the user does not exist, insert it
     if (!userExists.rows.length) {
         await pool.query('INSERT INTO personelle (person_id, first_name, last_name) VALUES ($1, $2, $3)', [userId, firstName, lastName]);
@@ -126,13 +121,51 @@ const editProfile = async (req, res) => {
         await pool.query('UPDATE personelle SET first_name = $2, last_name = $3 WHERE person_id = $1', [userId, firstName, lastName]);
     }
 
-    if (!selectedManager.rows.length) {
-        await pool.query('INSERT INTO staff_hierarchy (user_id, manager_id) VALUES ($1, $2) ',[userId, managerID]);
-      
-    } else {
-      await pool.query('UPDATE staff_hierarchy SET manager_id = $2 WHERE user_id = $1',[userId, managerID]);
+    await pool.query('SELECT * FROM staff_hierarchy WHERE user_id = $1', [userId], async (err, result) => {
+      console.log("uc 1 staff_hierarchy", result)
+      if(!err) { 
+       
 
-    }
+        if(result.rowCount == 0)  {
+          await pool.query(`INSERT INTO staff_hierarchy (user_id, manager_id) VALUES ($1, $2)`, [userId, managerID]);
+          // console.log("ALKSD:LASJHD:LKASJD:LKASJDLKAJSD:KLAJSD:LKJAS:LDKJAS:LKJDA:LSKJDKL")
+        } else { 
+          await pool.query(`UPDATE staff_hierarchy SET  manager_id = $1 WHERE user_id = $2`, [managerID,userId]);
+          // console.log("ALKSD:LASJHD:LKASJD:LKASJDLKAJSD:KLAJSD:LKJAS:LDKJAS:LKJDA:LSKJDKL")
+          const oldManagerTitle = "Change Manager"
+          const oldMangerMessage =  `${firstName} ${lastName} (@${email}) Assign a new manager`
+
+
+          await pool.query(`
+          INSERT INTO notification (title,message, sender_message, sender_title, sender_id, receiver_id, notification_type, read_status, created_at, sender_read_status, receiver_read_status)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE, NOW(), FALSE, FALSE);
+          `, [oldManagerTitle, oldMangerMessage , oldManagerTitle, oldMangerMessage , result.rows[0].manager_id, result.rows[0].manager_id, "Manager Request"]) 
+          
+        }
+
+        
+    const receiverTitle = "Assign Manager"
+    const receiverMessage = `${firstName} ${lastName} (@${email}) Assign you as the manager`
+    const senderTitle = "Assign Manager"
+    const senderMessage = `You changed your Manager` 
+    const senderId = userId 
+    const receiverId = managerID
+    const notificationType = "Manager Request"
+
+
+    
+
+    await pool.query(`
+    INSERT INTO notification (title,message, sender_message, sender_title, sender_id, receiver_id, notification_type, read_status, created_at, sender_read_status, receiver_read_status)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE, NOW(), FALSE, FALSE);
+    `, [receiverTitle, receiverMessage,senderMessage, senderTitle, senderId, receiverId, notificationType ]) 
+  } else { 
+        console.log("error in updateing or insterting the manager: ", err);
+      }
+    });
+  
+
+    
 
     try {
         await pool.query(`
@@ -143,11 +176,13 @@ const editProfile = async (req, res) => {
         console.error('Error updating profile:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
+
+    
 }
 
 
 const getManager = async (req,res) => { 
-console.log("AKSJDHASJKDHASJKLDHASJKLDHAKLSJDHAKLSJHDKLAJSDHASKLJDH")
+// console.log("AKSJDHASJKDHASJKLDHASJKLDHAKLSJDHAKLSJHDKLAJSDHASKLJDH")
 	const query = `SELECT
 	users."id", 
 	users.username, 
@@ -204,6 +239,95 @@ WHERE
 	}
 }
 
+
+const assignManager =  async (req, res) => {
+		
+	const userId = res.body.userID
+	const notificationID = res.body.notificationID
+	const managerID = res.params.managerID
+
+	
+	await pool.query('SELECT * FROM staff_hierarchy WHERE user_id = $1', [userId], async (err, result) => {
+
+		if(err) { 
+			console.error("AssignManager getting staff error:", err);
+		} else {
+			if(result.rows.length == 0) {
+
+				await pool.query('INSERT INTO staff_hierarchy (user_id, manager_id) VALUES ($1, $2) ',[userId, managerID], async (err, result) => {
+
+					if (err) {
+					  console.error("INSERTING MANAGER ", err);
+				   
+					  return;
+					} else {
+					  console.log("Manager assigned successfully!")
+					}
+			  });
+
+		} else { 
+			await pool.query('UPDATE staff_hierarchy SET manager_id = $2 WHERE user_id = $1',[userId, managerID],  async (err, result) => {
+
+				if (err) {
+				  console.error("UPDATING MANAGER ", err);
+			   
+				  return;
+				} else {
+				  console.log("Manager assigned successfully!")
+				}
+		  });
+		}
+
+	}
+
+  const receiverTitle = "Manager Request Approved"
+
+  const receiverMessage = `You can now manage ${firstName} ${lastName} (@${email}) timesheet Entries`
+  const senderTitle = "Manager Request Approved"
+  const senderMessage = `The Manager approved your request. The manager can now manage your timesheet entries` 
+  const senderId = userId 
+  const receiverId = managerID
+
+  const approveManagerRequestQuery = `
+  UPDATE notification SET 
+  title = $1, message = $2, 
+  sender_message = $3, 
+  sender_title = $4,
+  receiver_message = $5,
+  receiver_title = $6, 
+  sender_id = $7,
+  receiver_id = $8,
+  created_at = NOW(),
+  sender_read_status = FALSE,
+  receiver_read_status = FALSE
+
+  WHERE notification_id = $9
+
+  
+  `
+
+
+  await pool.query(
+    approveManagerRequestQuery
+    , [receiverTitle, receiverMessage, senderMessage, senderTitle, receiverMessage, receiverTitle, senderId, receiverId, notificationID], (err, res) => {
+      if (err) {
+        console.log("Manager Approve", err)
+      }
+    })
+
+
+}
+
+
+);
+  
+	
+
+	 
+  }
+
+
+
 export {
   
   getUserInfo,
@@ -211,6 +335,7 @@ export {
   checkUserExist,
   editProfile,
   getMyManager,
-  getManager
+  getManager, 
+  assignManager
 
 };

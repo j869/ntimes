@@ -4,7 +4,8 @@ import { queryDatabase, pool } from "../middleware.js";
 
 const getUserScheduleById = (req, res) => {
     console.log("sc1");
-    const userId = req.params.userID
+    const userId = req.params.userID;
+
 
     const query = `SELECT
 	work_schedule.*
@@ -19,6 +20,8 @@ WHERE
     
     
 	`   
+
+    
 
 queryDatabase(query, [userId], res, "User fetched successfully");
 
@@ -55,10 +58,7 @@ GROUP BY
 }
 
 
-
-
 export {
-  
   getUserScheduleById,
   getTotalHourByDate
 };

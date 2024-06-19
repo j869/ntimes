@@ -1,4 +1,5 @@
 import { pool } from "./middleware.js";
+import { createNotification } from "./controllers/notificationController.js";
 
 //--------------------------------
 //----  ts_timesheet_t
@@ -140,7 +141,7 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
   });
 };
 
-const createTimesheet = (req, res) => {
+const createTimesheet = async (req, res) => {
   console.log("ct1   ");
   const {
     person_id,
@@ -215,19 +216,59 @@ const createTimesheet = (req, res) => {
       console.log(`ct3      `);
 
       // Execute the query
-      pool.query(query, values, (error, result) => {
+      pool.query(query, values, async (error, result) => {
         if (error) {
           console.error("Error creating timesheet:", error);
           return res.status(500).json({ error: "Error creating timesheet" });
         }
-        console.log("ct4");
+        // console.log("ct4");
+        pool.query(`
+        SELECT
+	staff_hierarchy.*
+FROM
+	staff_hierarchy
+WHERE
+	 user_id = $1
+        `, [person_id], (error, result) => {
+
+          
+            if (error) {
+              console.error("Error fetching Manager:", error);
+              return res.status(500).json({ error: "Error creating timesheet" });
+            }
+            
+
+            if (result.rows[0].length == 0) {
+              res.redirect("/profile")
+            }
+
+            
+
+          
+        }) 
+        
         const timesheetId = result.rows[0].id;
+        
+        // Assuming you have the required body for the notification controller
+        const notificationReq = {
+          body: {
+            title: "Timesheet Submitted",
+            message: `Your timesheet for the week has been submitted and is pending approval.`,
+            senderId: person_id,
+            receiverId: person_id,
+            timesheetId: timesheetId,
+          }
+        };
+       await createNotification(notificationReq, res)
+
         console.log("ct9 Successfully created timesheet with ID:", timesheetId);
         return res.status(201).json({
           id: timesheetId,
           message: `Added timesheet with ID ${timesheetId}`,
         });
       });
+
+
     }
   );
 };
@@ -350,18 +391,15 @@ const getUserById = (req, res) => {
 
 const getUserByUsername = (req, res) => {
   console.log("qw1   ", req.params.username);
-  console.log(
-    "qw2 SELECT * FROM users WHERE username = '" + req.params.username + "';"
-  );
-
-  pool.query(
-    "SELECT * FROM users WHERE username = '" + req.params.username + "';",
+  console.log("qw2 SELECT * FROM users WHERE username = '" + req.params.username + "';");
+  
+  pool.query("SELECT * FROM users WHERE username = '" + req.params.username + "';",
     (error, result) => {
-      console.log("qw2");
-      if (error) {
-        console.log("qw3      db error");
-        throw error;
-      }
+      // console.log("qw2    ");
+      // if (error) {
+      //   console.log("qw3      db error");
+      //   throw error;
+      // }
       if (result.rows.length === 0) {
         console.log("qw4      No user found");
         //throw new Error('No user found');

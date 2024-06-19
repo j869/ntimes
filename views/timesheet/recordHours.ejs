@@ -2,14 +2,16 @@
 
 
 
-<section class="main col pt-3 mx-4">
-    <h1 class="page-title mb-4">Timesheet Entry</h1>
-    <div class="row">
+    <div class="main col py-3 px-4 sticky-top titlebar">
+        <h1 class="pagetitle pb-2">Timesheet Entry</h1>
+    </div>
+    <div class="row pt-0 mx-4">
         <div class="col-md-3">
             <form id="timesheetForm" action="/timesheetEntry" method="POST">
                 <div class="form-group">
                     <label for="work_date">Work Date: </label>
-                    <input type="date" id="work_date" name="work_date" class="form-control" value="<%=selectedDate%>" required>
+                    <input type="date" id="work_date" name="work_date" class="form-control" value="<%=selectedDate%>"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="time_start">Time Start:</label>
@@ -17,7 +19,7 @@
                 </div>
                 <div class="form-group">
                     <label for="time_finish">Time Finish:</label>
-                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:06"> 
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="05:00"> 
                 </div>
                 <div class="form-group">
                     <label for="time_lunch">Time Lunch (min):</label>
@@ -32,103 +34,110 @@
                     <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly value="08:00">
                 </div>
 
-            </div>
-            <div class="col-md-9">
-                <div class="form-group">
-                    <label for="location_                                               id">Location:</label>
-                    <select id="location_id" name="location_id" class="form-control">
-                        <% location.forEach(loc => { %>
-                          <option value="<%= loc.location_id %>"><%= loc.location_name %></option>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <label for="location_                                               id">Location:</label>
+                <select id="location_id" name="location_id" class="form-control">
+                    <% location.forEach(loc=> { %>
+                        <option value="<%= loc.location_id %>">
+                            <%= loc.location_name %>
+                        </option>
                         <% }); %>
-                      </select>
-                </div>
-                <div class="form-group">
-                    <label for="comment">Comment:</label>
-                    <textarea id="comment" name="comment" class="form-control" rows="6" cols="50"></textarea>
-                </div>
-
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <textarea id="comment" name="comment" class="form-control" rows="11" cols="50"></textarea>
             </div>
 
-        
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label id="variance_lbl" for="flexi_accrued">Variance:</label>
-                            <input type="text" id="variance" name="variance" class="form-control readonly" readonly>
-                        </div>
+        </div>
+
+
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label id="variance_lbl" for="flexi_accrued">Variance:</label>
+                        <input type="text" id="variance" name="variance" class="form-control readonly" readonly>
                     </div>
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            <label id="variance_type_lbl" for="variance_type" >Variance Type:</label>
-                            <select id="variance_type" name="variance_type" class="form-control mandatory" >
-                                <option value="flexi">Flexitime</option>
-                                <option value="til"  >TIL</option>
-                                <option value="overtime">Overtime</option>
-                                <option value="leave">Leave</option>
-                                <option value="mixed">Custom Variance</option>
-                            </select>
-                        </div>                    
-                    </div>
-                </div>                
-                <div class="form-group">
-                    <label for="notes">Notes:</label>
-                    <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label id="variance_type_lbl" for="variance_type">Variance Type:</label>
+                        <select id="variance_type" name="variance_type" class="form-control mandatory">
+                            <option value="flexi">Flexitime</option>
+                            <option value="til">TIL</option>
+                            <option value="overtime">Overtime</option>
+                            <option value="leave">Leave</option>
+                            <option value="mixed">Custom Variance</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-    </div>
-</section>
+            <div class="form-group">
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
+            </div>
+            <button type="submit" class="btn btnprimary mt-2">Submit</button>
+        </div>
+    
 
-<div class="main col pt-3 mx-4 my-5" >    <!--style="visibility: hidden;"-->
-    <div class="row">
-        <div class="col-md-4">
-            <!-- Flexitime -->
-            <div class="form-group">
-                <label for="flexi_accrued">Accrue Flexi:</label>
-                <input type="text" id="flexi_accrued" name="flexi_accrued" class="form-control calculated-field" step="3600" readonly>
+
+    
+        <div class="row pt-4">
+            <div class="col-md-4">
+                <!-- Flexitime -->
+                <div class="form-group">
+                    <label for="flexi_accrued">Accrue Flexi:</label>
+                    <input type="text" id="flexi_accrued" name="flexi_accrued" class="form-control calculated-field"
+                        step="3600" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- TIL -->
+                <div class="form-group">
+                    <label for="til_accrued">Accrue TIL:</label>
+                    <input type="text" id="til_accrued" name="til_accrued" class="form-control calculated-field"
+                        readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Overtime -->
+                <div class="form-group">
+                    <label for="time_overtime">Overtime:</label>
+                    <input type="text" id="time_overtime" name="time_overtime" class="form-control calculated-field"
+                        readonly>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <!-- TIL -->
-            <div class="form-group">
-                <label for="til_accrued">Accrue TIL:</label>
-                <input type="text" id="til_accrued" name="til_accrued" class="form-control calculated-field" readonly>
+        <div class="row pb-4">
+            <div class="col-md-4">
+                <!-- Flexitime -->
+                <div class="form-group">
+                    <label for="flexi_taken">Utilise Flexi:</label>
+                    <input type="text" id="flexi_taken" name="flexi_taken" class="form-control calculated-field"
+                        readonly>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <!-- Overtime -->
-            <div class="form-group">
-                <label for="time_overtime">Overtime:</label>
-                <input type="text" id="time_overtime" name="time_overtime" class="form-control calculated-field" readonly>
+            <div class="col-md-4">
+                <!-- TIL -->
+                <div class="form-group">
+                    <label for="til_taken">Utilise TIL:</label>
+                    <input type="text" id="til_taken" name="til_taken" class="form-control calculated-field" readonly>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Leave -->
+                <div class="form-group">
+                    <label for="time_leave">leave:</label>
+                    <input type="text" id="time_leave" name="time_leave" class="form-control calculated-field" readonly>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <!-- Flexitime -->
-            <div class="form-group">
-                <label for="flexi_taken">Utilise Flexi:</label>
-                <input type="text" id="flexi_taken" name="flexi_taken" class="form-control calculated-field" readonly>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <!-- TIL -->
-            <div class="form-group">
-                <label for="til_taken">Utilise TIL:</label>
-                <input type="text" id="til_taken" name="til_taken" class="form-control calculated-field" readonly>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <!-- Leave -->
-            <div class="form-group">
-                <label for="time_leave">leave:</label>
-                <input type="text" id="time_leave" name="time_leave" class="form-control calculated-field" readonly>
-            </div>
-        </div>
-    </div>
-</div>
-</form>
+
+    </section>
 
 <%- include('../partials/footer') %>
 
@@ -167,58 +176,70 @@
         }
 
 
-        const varianceTypeSelect = document.getElementById('variance_type');
-        const inputsToClear = [
-            'flexi_accrued', 'flexi_taken', 'til_accrued', 'til_taken', 'time_overtime', 'time_leave'
-        ];
+                const varianceTypeSelect = document.getElementById('variance_type');
+                const inputsToClear = [
+                    'flexi_accrued', 'flexi_taken', 'til_accrued', 'til_taken', 'time_overtime', 'time_leave'
+                ];
 
-        //hide variance by default
-        document.getElementById('variance').style.display = 'none';
-        document.getElementById('variance_lbl').style.display = 'none';
-        document.getElementById('variance_type').style.display = 'none';  
-        document.getElementById('variance_type_lbl').style.display = 'none';          
-        document.getElementById('variance_type').value = '';  
+                //hide variance by default
+                document.getElementById('variance').style.display = 'none';
+                document.getElementById('variance_lbl').style.display = 'none';
+                document.getElementById('variance_type').style.display = 'none';
+                document.getElementById('variance_type_lbl').style.display = 'none';
+                document.getElementById('variance_type').value = '';
 
-        // Add event listener for change event on variance_type select
-        varianceTypeSelect.addEventListener('change', function() {
-            console.log("c1");
-            // Clear inputs
-            inputsToClear.forEach(inputId => {
-                const input = document.getElementById(inputId);
-                input.value = "";
-            });
+                // Add event listener for change event on variance_type select
+                varianceTypeSelect.addEventListener('change', function () {
+                    console.log("c1");
+                    // Clear inputs
+                    inputsToClear.forEach(inputId => {
+                        const input = document.getElementById(inputId);
+                        input.value = "";
+                    });
 
-            // Trigger the calculateTimeTotal function on page load
-            calculateTimeTotal();
-        });
+                    // Trigger the calculateTimeTotal function on page load
+                    calculateTimeTotal();
+                });
 
+
+                // Function to calculate time total
+                function calculateTimeTotal() {
+                    console.log("d1   calculateTimeTotal()");
         
-        // Function to calculate time total
-        function calculateTimeTotal() {
-            console.log("d1   calculateTimeTotal()");
-            const timeStartInput = document.getElementById('time_start');
-            const timeFinishInput = document.getElementById('time_finish');
-            const timeTotalInput = document.getElementById('time_total');
-            const timeLunchInput = document.getElementById('time_lunch');
-            const timeExtraBreakInput = document.getElementById('time_extra_break');
-            const varianceInput = document.getElementById('variance');
-            const varianceSelect = document.getElementById('variance_type');
-            const commentTextarea = document.getElementById('comment');
+            const paidHour = <%= userWorkSchedule[0].paidHour %>; 
 
-            const timeStart = timeStartInput.value;
+
+            const timeStartInput = document.getElementById('time_start');
+                    const timeFinishInput = document.getElementById('time_finish');
+                    const timeTotalInput = document.getElementById('time_total');
+                    const timeLunchInput = document.getElementById('time_lunch');
+                    const timeExtraBreakInput = document.getElementById('time_extra_break');
+                    const varianceInput = document.getElementById('variance');
+                    const varianceSelect = document.getElementById('variance_type');
+                    const commentTextarea = document.getElementById('comment');
+
+                    const defaultLunchBreak = 30
+
+             
+            
+            const timeStart = timeStartInput.value ;
             const timeFinish = timeFinishInput.value;
             const timeLunch = parseFloat(timeLunchInput.value) * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
             const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
+            
+           
+      
 
             if (timeStart && timeFinish) {
                 // Calculate time difference
                 const startTime = new Date('1970-01-01 ' + timeStart);
                 const finishTime = new Date('1970-01-01 ' + timeFinish);
                 const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
+                // const timeDifference = finishTime - startTime  - timeExtraBreak ; // Difference in milliseconds
                 const totalHours = timeDifference  / (1000 * 60 * 60); // Decimal variance in hours
 
-                const vIJustWantToSeeYouResolveConflicts = 8; 
-                let varianceHours = totalHours - vIJustWantToSeeYouResolveConflicts;
+                
+                let varianceHours = totalHours - paidHour;
                 varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
 
                 // read variance Type 
@@ -230,12 +251,16 @@
                     varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
                     varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
                     varianceSelect.value = "";
+
                     document.getElementById('variance').style.display = 'none';
                     document.getElementById('variance_lbl').style.display = 'none';
                     document.getElementById('variance_type').style.display = 'none';  
                     document.getElementById('variance_type_lbl').style.display = 'none';  
                     commentTextarea.classList.remove('mandatory');
+
+
                 } else {
+
                     varianceInput.value = varianceHours;
                     commentTextarea.setAttribute("required", "required");
                     console.log('a33    ', commentTextarea.attributes);
@@ -245,6 +270,7 @@
                     document.getElementById('variance_type').style.display = 'block';
                     document.getElementById('variance_type_lbl').style.display = 'block';
                     commentTextarea.classList.add('mandatory');
+
                 };
 
                 if (varianceHours > 0) {
@@ -353,6 +379,8 @@
         }
 
         // Listen for changes in the time start and time finish inputs
+        const paidHour = <%= userWorkSchedule[0].paidHour %>; 
+
         const timeStartInput = document.getElementById('time_start');
         const timeFinishInput = document.getElementById('time_finish');
         const timeLunchInput = document.getElementById('time_lunch');
@@ -361,6 +389,14 @@
         timeFinishInput.addEventListener('input', calculateTimeTotal);
         timeLunchInput.addEventListener('input', calculateTimeTotal);
         timeExtraBreakInput.addEventListener('input', calculateTimeTotal);
+
+        const startTime = new Date('1970-01-01 ' + timeStartInput.value);
+        const totalPaidHours = Math.floor(paidHour);
+        const totalPaidMinutes = Math.round((paidHour - totalPaidHours) * 60);
+        startTime.setHours(startTime.getHours() + totalPaidHours);
+        startTime.setMinutes(startTime.getMinutes() + totalPaidMinutes + parseInt(timeLunchInput.value));
+        timeFinishInput.value = startTime.toTimeString().slice(0, 5);
+        console.log("Start", startTime.toTimeString().slice(0, 5))
 
         // Trigger the calculateTimeTotal function on page load
         calculateTimeTotal();

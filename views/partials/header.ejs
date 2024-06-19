@@ -4,6 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+             
+  <script>
+
+    async function fetchNotificationNum() {
+    const response = await fetch('/notification/unseen');
+    const notifications = await response.json();
+    document.getElementById('notification-indicator').innerHTML = notifications[0].count;
+
+    if(notifications[0].count == 0) {
+      document.getElementById('notification-indicator').style.display = 'none';
+
+    }
+// 
+    // console.log("notification", notifications[0].count);
+
+    
+  }
+
+  setInterval(fetchNotificationNum, 5000); // Poll every 5 seconds
+  document.addEventListener('DOMContentLoaded', fetchNotificationNum);
+
+  </script>
 
   <%let isManager = false%>
   <% try { %>
@@ -49,7 +71,7 @@
         <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
         <script>
-          console.log("Header variables", <% - JSON.stringify(locals) %>);
+          // console.log("Header variables", % - JSON.stringify(locals) %>);
         </script>
 </head>
 
@@ -77,7 +99,7 @@
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgprimary">
           <div class="sidebar d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100" style="overflow: hidden;">
             <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
-              <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" alt="logo"></span>
+              <span class="d-none d-sm-inline"><img class="logo" src="../images/new2.png" alt="logo"></span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
               
@@ -99,9 +121,10 @@
                           <i class="bi bi-bell"></i> <span
                             class="ms-1 d-none d-sm-inline">Notification</span>
                             <span
+                            id="notification-indicator"
                             class="badge bg-danger"
                             style="margin-left: 5px; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 20px; height: 20px;"
-                            >12</span
+                            >0</span
                           >
                     
                     
@@ -142,7 +165,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Activity Manager' ) { %>
                   <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
                     <% } else { %>
@@ -168,7 +191,7 @@
           </a>
   </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Pending Timesheets' ) { %>
                   <a href="/timesheet/pending" class="nav-link active" id="active">
                     <% } else { %>
@@ -178,7 +201,7 @@
                       </a>
               </li>
              
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Approved Timesheets' ) { %>
                   <a href="/timesheet/approved" class="nav-link active" id="active">
                     <% } else { %>
@@ -188,7 +211,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Rejected Timesheets' ) { %>
                   <a href="/timesheet/rejected" class="nav-link active" id="active">
                     <% } else { %>
@@ -229,7 +252,7 @@
 
 
 
-        <section class="col py-3">
+        <section class="col p-0">
 
 
           <div id="messageContainer">
@@ -254,3 +277,6 @@
 
 
        
+
+
+ 
