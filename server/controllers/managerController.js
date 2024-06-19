@@ -20,7 +20,7 @@ FROM
 		ts_timesheet_t.person_id = staff_hierarchy.user_id
 WHERE
 	ts_timesheet_t.status = 'entered' AND
-	staff_hierarchy.manager_id = $1
+	staff_hierarchy.manager_id = $1 ORDER BY work_date DESC 
 	
 	`
 
@@ -43,7 +43,7 @@ FROM
 		ts_timesheet_t.person_id = staff_hierarchy.user_id
 WHERE
 	ts_timesheet_t.status = 'approved' AND
-	staff_hierarchy.manager_id = $1
+	staff_hierarchy.manager_id = $1 ORDER BY work_date DESC 
 	
 	`
     queryDatabase(query, [userId], res, "manager Timesheets fetched successfully!")
@@ -62,7 +62,7 @@ FROM
 		ts_timesheet_t.person_id = staff_hierarchy.user_id
 WHERE
 	ts_timesheet_t.status = 'reject' AND
-	staff_hierarchy.manager_id = $1
+	staff_hierarchy.manager_id = $1 ORDER BY work_date DESC 
 	
 	`
     queryDatabase(query, [userId], res, "manager Timesheets fetched successfully!")
@@ -82,7 +82,10 @@ const approveTimesheet = async (req, res) => {
 		 
 		  return;
 		} else {
-		  const notificationId = result.rows[0].notification_id
+
+		let notificationId;
+
+		   notificationId = result.rowCount != 0 ? result.rows[0].notification_id : 0;
 
 		  console.log("NotoficationID: ", notificationId);
 
@@ -121,7 +124,10 @@ const rejectTimesheet = async (req, res) => {
 		 
 		  return;
 		} else {
-		  const notificationId = result.rows[0].notification_id
+		  
+		let notificationId;
+
+		notificationId = result.rowCount != 0 ? result.rows[0].notification_id : 0;
 
 		  console.log("NotoficationID: ", notificationId);
 

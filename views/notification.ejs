@@ -70,7 +70,7 @@ function calculateDaysAgo(created_at) {
       let title = notification.title;
       let message = notification.message;
 
-      if (notification.notification_type === 'timesheet') {
+      if (notification.notification_type === 'timesheet' && title === "Timesheet Rejected" ) {
         const backgroundColor = title === "Timesheet Submitted" ? "#cdcd551f !important"
                               : title === "Timesheet Approved" ? "#55cd551f !important"
                               : title === "Timesheet Rejected" ? "#cd55551f !important"
@@ -98,14 +98,8 @@ function calculateDaysAgo(created_at) {
                 <div class="btn">
                   <a href="timesheets/${notification.timesheet_id}" class="btn btn-outline-success btn-sm">View Timesheet</a>
                 </div>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right">
-                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                  </div>
+                <div class="btn">
+                  <button class="btn btn-outline-danger btn-sm" onclick="deleteNotification(${notification.notification_id})">Delete</button>
                 </div>
               </span>
             </div>
@@ -118,23 +112,17 @@ function calculateDaysAgo(created_at) {
                 <div class="">
                   <h6 class="mb-2 text-20">${userID == notification.receiver_id ? notification.title : notification.sender_title}</h6>
                   <div class="small">${userID == notification.receiver_id ? notification.message : notification.sender_message}</div>
-                  <div class="text-right text-muted pt-1">Today</div>
+                  <div class="text-right text-muted pt-1">${calculateDaysAgo(notification.created_at)}</div>
                 </div>
               </div>
               <span class="ml-auto mb-auto">
-             
-                <div class="btn-group">
-                  <button type="button" class="btn btn-outline-success btn-sm rounded" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right">
-                    <button class="dropdown-item" type="button"><i class="mdi mdi-delete"></i> Delete</button>
-                    <button class="dropdown-item" type="button"><i class="mdi mdi-close"></i> Turn Off</button>
-                  </div>
+                <div class="btn">
+                  <button class="btn btn-outline-danger btn-sm" onclick="deleteNotification(${notification.notification_id})">Delete</button>
                 </div>
               </span>
             </div>
           </div>`;
+
       }
 
       container.insertAdjacentHTML('beforeend', notificationElement);
@@ -144,6 +132,19 @@ function calculateDaysAgo(created_at) {
   async function markAsSeen() { 
     await fetch('/notification/markAsSeen');
     console.log('Notifications marked as seen');
+  }
+
+  async function deleteNotification(notificationId) {
+   await fetch(`/notification/delete/${notificationId}`, {
+      method: 'get'
+    });
+
+    // if (response.ok) {
+    //   console.log('Notification deleted successfully');
+    //   fetchNotifications(); // Refresh notifications after deletion
+    // } else {
+    //   console.error('Failed to delete notification');
+    // }
   }
 
   setInterval(fetchNotifications, 5000); // Poll every 5 seconds

@@ -1,20 +1,6 @@
 <%- include('../../partials/header') %>
 
   <style>
-    .location-manager-container {
-      padding: 20px;
-    }
-
-    .location .header {
-      margin-top: 30px;
-      margin-left: 120px;
-      margin-right: 120px;
-      display: flex;
-      justify-content: space-between;
-
-
-    }
-
     h4 {
       margin: 2rem 0rem 1rem;
     }
@@ -28,252 +14,250 @@
     }
 
 
-    table tbody td, table tbody th, table thead th{ 
+    table tbody td,
+    table tbody th,
+    table thead th {
       font-size: 14px;
       text-align: center;
     }
   </style>
 
-  
-<!-- ALERTSSS START -->
+
+  <!-- ALERTSSS START -->
 
 
-<div id="liveAlertPlaceholder"></div>
-<button type="button" class="btn btn-primary" style="display: none;" id="liveAlertBtn"></button>
+  <div id="liveAlertPlaceholder"></div>
+  <button type="button" class="btn btn-primary" style="display: none;" id="liveAlertBtn"></button>
 
-  <%if (statusMessage != "" && statusMessage != undefined) {%>
-    
+  <%if (statusMessage !="" && statusMessage !=undefined) {%>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const button = document.getElementById("liveAlertBtn")
         button.click()
       });
       const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
-const appendAlert = (message, type) => {
-  const wrapper = document.createElement('div')
-  wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
-    `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-    '</div>'
-  ].join('')
+      const appendAlert = (message, type) => {
+        const wrapper = document.createElement('div')
+        wrapper.innerHTML = [
+          `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+          `   <div>${message}</div>`,
+          '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+          '</div>'
+        ].join('')
 
-  alertPlaceholder.append(wrapper)
-}
+        alertPlaceholder.append(wrapper)
+      }
 
-const alertTrigger = document.getElementById('liveAlertBtn')
-const alertMessage = '<%=statusMessage%>';
+      const alertTrigger = document.getElementById('liveAlertBtn')
+      const alertMessage = '<%=statusMessage%>';
 
-let alertType; 
+      let alertType;
 
-if (alertMessage == "Something went wrong. Try Again!") {
-  alertType = 'danger'
-} else if (alertMessage == "Update Successfully!") {
-  alertType = 'success'
-}
+      if (alertMessage == "Something went wrong. Try Again!") {
+        alertType = 'danger'
+      } else if (alertMessage == "Update Successfully!") {
+        alertType = 'success'
+      }
 
 
-if (alertTrigger) {
-  alertTrigger.addEventListener('click', () => {
-    appendAlert(alertMessage, alertType)
-  })
-}
-      
-      </script>
+      if (alertTrigger) {
+        alertTrigger.addEventListener('click', () => {
+          appendAlert(alertMessage, alertType)
+        })
+      }
+
+    </script>
     <%}%>
 
-<!-- ALERTSSS ENDSSS -->
+      <!-- ALERTSSS ENDSSS -->
 
 
-
-<section class="col py-3 mx-4">
- 
-
-  <h1 class="page-title mb-4">Approved Timesheets</h1>
-
-  <% if (data.length === 0) { %>
-    <div class="alert alert-info" role="alert">No Approved Timesheets</div>
-  <% } else { %>
-    <div class="time-sheet-container table-responsive" style="width: max-content; padding: 20px;">
-      <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2">
-        <button id="markAllBtn" class="btn btn-primary">Mark all</button>
-
-        <button id="rejectMarkBtn" class="btn btn-danger" style="display: none;">Reject marked</button>
+      <div class="main col py-3 px-4 sticky-top titlebar">
+        <h1 class="pagetitle pb-2">Approved Timesheets</h1>
       </div>
-      <table class="table" id="timesheetTable">
-        <thead>
-          <tr>
-            <thead>
-                <tr>
-                  <th scope="col" class="hidden">User Email</th>
-                  <th scope="col">Work Date</th>
-                  <th scope="col">Time Start</th>
-                  <th scope="col">Time Finish</th>
-                  <th scope="col">Time Total</th>
-              
-                  <th scope="col" class="hidden">Location Name</th>
-                  <th scope="col">Activity</th>
-                
-                  <th scope="col">Actions</th>
-                  <th scope="col">Mark</th>
-                </tr>
-              </thead>
-          </tr>
-        </thead>
-        <tbody>
-            <% data.forEach((timesheet, index)=> { %>
 
-              <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
+      <div class="pt-0 mx-4">
+
+        <% if (data.length===0) { %>
+          <div class="alert alert-info" role="alert">No Approved Timesheets</div>
+          <% } else { %>
+            <div class="time-sheet-container table-responsive">
+              <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2 pb-2">
+                <button id="markAllBtn" class="btn btndark">Mark all</button>
+                <button id="rejectMarkBtn" class="btn btn-danger" style="display: none;">Reject marked</button>
+
+              </div>
+              <table class="table" id="timesheetTable">
+                <thead>
+                  <tr>
+                    <thead>
+                      <tr>
+                        <th scope="col" class="hidden">User Email</th>
+                        <th scope="col">Work Date</th>
+                        <th scope="col">Time Start</th>
+                        <th scope="col">Time Finish</th>
+                        <th scope="col">Time Total</th>
+                        <th scope="col" class="hidden">Location Name</th>
+                        <th scope="col">Activity</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">Mark</th>
+                      </tr>
+                    </thead>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% data.forEach((timesheet, index)=> { %>
+
+                    <tr class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> 
           <%= timesheet.holiday_name != null ? 'holiday' : ''%>">
-                <th class="hidden" scope="row">
-                  <%= timesheet.username %>
-                </th>
-                <td class="work-date" style="width: 200px;">
-                  <%= new Date(timesheet.work_date).toDateString() %> </br>
-                    <%= timesheet.holiday_name%>
-                </td>
-                <td>
-                  <%= timesheet.time_start %>
-                </td>
-                <td>
-                  <%= timesheet.time_finish %>
-                </td>
-                <td>
-                  <%= timesheet.time_total %>
-                </td>
-            
-             
-                <td class="hidden">
-                  <%= timesheet.location_name %>
-                </td>
-                <td>
-                  <%= timesheet.activity %>
-                </td>
-               
-                <% if (timesheet.id) { %>
-                  <td style="display: flex; flex-direction: row; gap: 10px  ">
-                  
-                    <form action="/timesheet/rejectTs?page=approved" method="post">
-                        <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
-                        <button class="btn btn-danger" type="submit">Reject</button>
-                      </form>
+                      <th class="hidden" scope="row">
+                        <%= timesheet.username %>
+                      </th>
+                      <td class="work-date" style="width: 200px;">
+                        <%= new Date(timesheet.work_date).toDateString() %> </br>
+                          <%= timesheet.holiday_name%>
+                      </td>
+                      <td>
+                        <%= timesheet.time_start %>
+                      </td>
+                      <td>
+                        <%= timesheet.time_finish %>
+                      </td>
+                      <td>
+                        <%= timesheet.time_total %>
+                      </td>
+                      <td>
+                        <%= timesheet.location_name %>
+                      </td>
+                      <td>
+                        <%= timesheet.activity %>
+                      </td>
+                      <% if (timesheet.id) { %>
 
-                
-                  </td>
-                  <td>
-                    <input type="checkbox" name="mark" value="<%= timesheet.id %>" class="mark-checkbox">
-                  </td>
-                  <% } else { %>
-                    <td>&nbsp;</td>
-                    <% } %>
-              </tr>
-              <% }); %>
-          </tbody>
-      </table>
-    </div>
-  <% } %>
-</section>
+                        <td style="display: flex; flex-direction: row;">
+                          <form action="/timesheet/rejectTs?page=approved" method="post">
+                            <input type="hidden" name="ts_id" value="<%= timesheet.id%>">
+                            <button class="delete-icon" type="submit"
+                              style="border: none; background-color: transparent;">
+                              <i class="fa fa-solid fa-trash" aria-hidden="true"></i></button>
+                          </form>
+                        </td>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const markAllBtn = document.getElementById("markAllBtn");
+                        <td>
+                          <input type="checkbox" name="mark" value="<%= timesheet.id %>" class="mark-checkbox">
+                        </td>
+                        <% } else { %>
+                          <td>&nbsp;</td>
+                          <% } %>
+                    </tr>
+                    <% }); %>
+                </tbody>
+              </table>
+            </div>
+            <% } %>
+          </div>
 
-    const rejectMarkBtn = document.getElementById("rejectMarkBtn");
-    const markCheckboxes = document.querySelectorAll(".mark-checkbox");
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const markAllBtn = document.getElementById("markAllBtn");
 
-    markAllBtn.addEventListener("click", () => {
+          const rejectMarkBtn = document.getElementById("rejectMarkBtn");
+          const markCheckboxes = document.querySelectorAll(".mark-checkbox");
 
-      let isMarkChecked = false
+          markAllBtn.addEventListener("click", () => {
 
-      markCheckboxes.forEach(checkbox => {
+            let isMarkChecked = false
 
-        if(checkbox.checked == true){
-          isMarkChecked = true
-        } 
-        return; 
+            markCheckboxes.forEach(checkbox => {
 
-        
-      });
-
-      if (isMarkChecked){
-        markCheckboxes.forEach(checkbox => {
-        checkbox.checked = false 
-
-        
-      });
-      } else {
-        markCheckboxes.forEach(checkbox => {
-        checkbox.checked = true 
-
-        
-      });
-      }
-
-      
-      
+              if (checkbox.checked == true) {
+                isMarkChecked = true
+              }
+              return;
 
 
-    
-      
+            });
 
-      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-      if (markedCheckboxes.length > 0) {
-        rejectMarkBtn.style.display = "block";
-        markAllBtn.textContent = "Unmark All";
-      } else {
-        rejectMarkBtn.style.display = "none";
-        markAllBtn.textContent = "Mark All";
-      }
-    });
+            if (isMarkChecked) {
+              markCheckboxes.forEach(checkbox => {
+                checkbox.checked = false
 
-    rejectMarkBtn.addEventListener("click", () => {
-      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-      const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
-      console.log(markedIds)
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/timesheet/multipleRejectTs?page=approved';
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'ids';
-      input.value = JSON.stringify(markedIds);
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
 
-      
-    });
+              });
+            } else {
+              markCheckboxes.forEach(checkbox => {
+                checkbox.checked = true
 
-    markCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener("change", () => {
-        const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-        if (markedCheckboxes.length > 0) {
-         
-          rejectMarkBtn.style.display = "block";
-          markAllBtn.textContent = "Unmark All";
-        } else {
-         
-          rejectMarkBtn.style.display = "none";
-          markAllBtn.textContent = "Mark All";
+
+              });
+            }
+
+
+
+
+
+
+
+
+            const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+            if (markedCheckboxes.length > 0) {
+              rejectMarkBtn.style.display = "block";
+              markAllBtn.textContent = "Unmark All";
+            } else {
+              rejectMarkBtn.style.display = "none";
+              markAllBtn.textContent = "Mark All";
+            }
+          });
+
+          rejectMarkBtn.addEventListener("click", () => {
+            const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+            const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
+            console.log(markedIds)
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/timesheet/multipleRejectTs?page=approved';
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'ids';
+            input.value = JSON.stringify(markedIds);
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+
+
+          });
+
+          markCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+              const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+              if (markedCheckboxes.length > 0) {
+
+                rejectMarkBtn.style.display = "block";
+                markAllBtn.textContent = "Unmark All";
+              } else {
+
+                rejectMarkBtn.style.display = "none";
+                markAllBtn.textContent = "Mark All";
+              }
+            });
+          });
+
+
+
+        });
+
+
+      </script>
+
+
+      <script>
+        function confirmDelete(locationId) {
+          $("#confirmationModal").modal("show");
+          $("#confirmDeleteBtn").on("click", function () {
+            // Redirect to delete endpoint
+            window.location.href = `/deletelocation/${locationId}`;
+          });
         }
-      });
-    });
-
-    
-
-  });
-
-
-</script>
-
-
-  <script>
-    function confirmDelete(locationId) {
-      $("#confirmationModal").modal("show");
-      $("#confirmDeleteBtn").on("click", function () {
-        // Redirect to delete endpoint
-        window.location.href = `/deletelocation/${locationId}`;
-      });
-    }
-  </script>
-  <%- include('../../partials/footer') %>
+      </script>
+      <%- include('../../partials/footer') %>

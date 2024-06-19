@@ -18,10 +18,10 @@ const createManagerRoutes = (isAuthenticated) => {
   router.get("/pending", isAuthenticated, async (req, res) => {
     console.log("mrp1     ")
     const data = await axios.get(`${API_URL}/timesheet/pending/${req.user.id}`);
+    const timesheetIssues = await axios.get(`${API_URL}/timesheet/getAllIssues`);
     const userInfo = req.session.userInfo;
 
-   
-    
+    console.log("timesheetIssues" , timesheetIssues.data)
 
     const status = req.query.status;
     let statusMessage = "";
@@ -35,6 +35,7 @@ const createManagerRoutes = (isAuthenticated) => {
     res.render("user/manager/pendingTimeSheets.ejs", {
       user: req.user,
       data: data.data,
+      timesheetIssues: timesheetIssues.data,
       userInfo: userInfo,
       messages: req.flash(""),
       statusMessage: statusMessage,

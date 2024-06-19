@@ -99,7 +99,7 @@
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgprimary">
           <div class="sidebar d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100" style="overflow: hidden;">
             <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
-              <span class="d-none d-sm-inline"><img class="logo" src="../images/logo_grn.png" alt="logo"></span>
+              <span class="d-none d-sm-inline"><img class="logo" src="../images/new2.png" alt="logo"></span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
               
@@ -165,7 +165,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Activity Manager' ) { %>
                   <a href="/activity/<%= user.id%>" class="nav-link active" id="active">
                     <% } else { %>
@@ -191,7 +191,7 @@
           </a>
   </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Pending Timesheets' ) { %>
                   <a href="/timesheet/pending" class="nav-link active" id="active">
                     <% } else { %>
@@ -201,7 +201,7 @@
                       </a>
               </li>
              
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Approved Timesheets' ) { %>
                   <a href="/timesheet/approved" class="nav-link active" id="active">
                     <% } else { %>
@@ -211,7 +211,7 @@
                       </a>
               </li>
 
-              <li>
+              <li class="nav-item">
                 <% if (locals.title && locals.title==='Rejected Timesheets' ) { %>
                   <a href="/timesheet/rejected" class="nav-link active" id="active">
                     <% } else { %>
@@ -252,7 +252,7 @@
 
 
 
-        <section class="col py-3">
+        <section class="col p-0">
 
 
           <div id="messageContainer">

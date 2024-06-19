@@ -4,7 +4,7 @@ import env from "dotenv";
 env.config();
 const { Pool } = pg;
 export const pool = new Pool({
-  user: process.env.PG_USER || "me",
+  user: process.env.PG_USER || "MISSING .ENV IN SERVER FOLDER",
   host: process.env.PG_HOST || "localhost",
   database: process.env.PG_DATABASE || "api",
   password: process.env.PG_PASSWORD || "password",

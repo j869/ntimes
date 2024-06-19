@@ -28,7 +28,9 @@ import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
 import { 
   checkTimesheetExist,
+  editTimesheet,
   getIndividualTimesheetsById,
+  getPendingIndividualTimesheet,
   getTFR,
   postDayOff
  } from "./controllers/timeSheetsController.js";
@@ -36,7 +38,8 @@ import {
 
 import { getFundSources, getFundSourceById, createFundSource, updateFundSource, deleteFundSource } from "./controllers/fundSourcesConstroller.js"
 import { getTotalHourByDate, getUserScheduleById } from "./controllers/userWorkingSheduleController.js";
-import { createNotification, getAllNotificationsByUserId, getCountUnseenNotifications, getRecentNotifications, markAsSeen } from "./controllers/notificationController.js";
+import { createNotification, deleteNotification, getAllNotificationsByUserId, getCountUnseenNotifications, getRecentNotifications, markAsSeen } from "./controllers/notificationController.js";
+import { getAllIssues, scanIssues } from "./controllers/issuesController.js";
 
 
 const port = 4000;
@@ -91,6 +94,10 @@ app.get("/timesheet/reject/:userID", getRejectTimeSheet);
 app.post("/timesheet/rejectTs/:userID",rejectTimesheet );
 app.post("/timesheet/approveTs/:userID", approveTimesheet);
 
+app.get("/timesheet/getAllIssues", getAllIssues);
+app.put("/timesheet/scanIssues", scanIssues);
+
+
 
 // NOTIFICATION ROUTES
 app.get("/notification/getByUserId", getAllNotificationsByUserId);
@@ -98,6 +105,8 @@ app.post("/notification/add", createNotification);
 app.get("/notification/recent", getRecentNotifications)
 app.get("/notification/unseen/:userID", getCountUnseenNotifications)
 app.get("/notification/seen/:userID", markAsSeen)
+app.get("/notification/delete/:notificationID", deleteNotification);
+
 
 
 
@@ -130,6 +139,8 @@ app.delete("/timesheets/:id", db.deleteTimesheet);
 
 app.post("/timesheets/checkTimeSheetsExist", checkTimesheetExist);
 app.post("/timesheets/getTimesheetById/:id", getIndividualTimesheetsById);
+app.get("/timesheets/getPendingTimesheetById/:id", getPendingIndividualTimesheet);
+app.put("/timesheets/edit/:id", editTimesheet);
 
 
 app.listen(port, () => {

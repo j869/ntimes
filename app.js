@@ -268,7 +268,7 @@ app.use("/fundSource", createFundSourceRoutes(isAuthenticated));
 //#region regular users
 
 app.get("/time", isAuthenticated, async (req, res) => {
-  console.log(`t1    ${API_URL}/timesheets/${req.user.id}`);
+  // console.log(`t1    ${API_URL}/timesheets/${req.user.id}`);
 
   const result = await axios.get(`${API_URL}/timesheets/${req.user.id}`);
   const publicHolidays = await axios.get(`${API_URL}/publicHolidays`);
@@ -336,96 +336,100 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
 
   if (!date) {
     res.redirect("/time?m=dateAlreadyExist");
+    return; // Added return to stop further execution
   }
 
-  const locationResponse = await axios.get(`${API_URL}/location`);
-  const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
-  let userSchedules = []
+  try {
+    const locationResponse = await axios.get(`${API_URL}/location`);
+    const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    let userSchedules = [];
 
-  if(!userScheduleResponse.data.length < 1) {
-    const scheduleDays = userScheduleResponse.data[0].schedule_day;
-    const paidHours = userScheduleResponse.data[0].paid_hours;
-    const startDate = new Date(userScheduleResponse.data[0].start_date);
-    const endDate = new Date(userScheduleResponse.data[0].end_date);
+    if (!userScheduleResponse.data.length < 1) {
+      const scheduleDays = userScheduleResponse.data[0].schedule_day;
+      const paidHours = userScheduleResponse.data[0].paid_hours;
+      const startDate = new Date(userScheduleResponse.data[0].start_date);
+      const endDate = new Date(userScheduleResponse.data[0].end_date);
 
-    userSchedules = getPayPeriods(startDate, endDate, scheduleDays, paidHours);
-    console.log("user schedules: ", userSchedules);
-        
-  
-  }
-
-
-  function getDayOfWeekName(dayOfWeek) {
-    console.log("rpy1     ")
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return days[dayOfWeek];
-}
-
-  function getPayPeriods(startDate, endDate, scheduleDays, paidHours) {
-    console.log("rpr1     ")
-    const allDateSchedules = [
-
-    ];
-    
-
-
-    let currentDate = new Date(startDate);
-    // Populate allDateSchedules with all scheduled days within the date range
-    let i = 0;
-    let paidHour = 0;
-    while (currentDate <= endDate) {
-        const dayOfWeek = currentDate.getDay();
-        if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
-
-            if(i <= paidHours.length - 1) {
-              paidHour = paidHours[i]
-              
-              if(i == paidHours.length - 1) {
-                i = 0;
-              } else { 
-                i += 1;
-              }
-            } 
-
-            // console.log("date", date )
-            // console.log("Currentdate", new Date(currentDate) )
-
-            if (date == new Date(currentDate).toISOString().split("T")[0]) {
-              allDateSchedules.push({
-                date:  new Date(currentDate).toISOString().split("T")[0], 
-                paidHour: paidHour
-              });
-            }
-            
-            
-        }
-        currentDate.setDate(currentDate.getDate() + 1);
+      userSchedules = getPayPeriods(startDate, endDate, scheduleDays, paidHours);
+      console.log("user schedules: ", userSchedules);
     }
 
-    return allDateSchedules;
-}
- 
-  const location = locationResponse.data; // Extract the data from the Axios response
+    function getDayOfWeekName(dayOfWeek) {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[dayOfWeek];
+    }
 
-  const selectedDate = req.query.date;
+    function getPayPeriods(startDate, endDate, scheduleDays, paidHours) {
+      const allDateSchedules = [];
 
-  const timesheetExists = await axios.post(
-    `${API_URL}/timesheets/checkTimeSheetsExist`,
-    { date: selectedDate, userID: userId }
-  );
+      let currentDate = new Date(startDate);
+      let i = 0;
+      let paidHour = 0;
+      while (currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay();
+        if (getDayOfWeekName(dayOfWeek) == "Sunday" || getDayOfWeekName(dayOfWeek) == "Saturday") { 
 
-  if (timesheetExists.data.timesheetExists) {
-    res.redirect("/time?m=dateAlreadyExist");
-  } else {
-    res.render("timesheet/recordHours.ejs", {
-      forDate: date,
-      user: req.user,
-      userWorkSchedule: userSchedules,
-      selectedDate: selectedDate,
-      location: location, // Pass the extracted location data
-      title: "Enter Timesheet",
-      messages: req.flash("messages"),
-    });
+          if (i <= paidHours.length - 1) {
+            paidHour = paidHours[i] == 0 ? 7.6 : paidHours[i];
+            if (i == paidHours.length - 1) {
+              i = 0;
+            } else {
+              i += 1;
+            }
+          }
+          
+        } else if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
+          if (i <= paidHours.length - 1) {
+            paidHour = paidHours[i];
+            if (i == paidHours.length - 1) {
+              i = 0;
+            } else {
+              i += 1;
+            }
+          }
+
+          if (date == new Date(currentDate).toISOString().split("T")[0]) {
+            allDateSchedules.push({
+              date: new Date(currentDate).toISOString().split("T")[0],
+              paidHour: paidHour
+            });
+          }
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      return allDateSchedules;
+    }
+
+    const location = locationResponse.data;
+
+    const selectedDate = req.query.date;
+
+    const timesheetExists = await axios.post(
+      `${API_URL}/timesheets/checkTimeSheetsExist`,
+      { date: selectedDate, userID: userId }
+    );
+
+    if (timesheetExists.data.timesheetExists) {
+      res.redirect("/time?m=dateAlreadyExist");
+    } else {
+      if (userSchedules.length == 0) {
+        res.redirect("/time?m=noSchedule");
+      } else {
+        res.render("timesheet/recordHours.ejs", {
+          forDate: date,
+          user: req.user,
+          userWorkSchedule: userSchedules,
+          selectedDate: selectedDate,
+          location: location,
+          title: "Enter Timesheet",
+          messages: req.flash("messages"),
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error in timesheetEntry route:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -616,7 +620,36 @@ app.post(
       });
       console.log("n30   res.status: ", result.status);
 
+      const scanIssueResult = await axios.put(`${API_URL}/timesheet/scanIssues`, {
+        person_id: req.user.id,
+        username: req.user.username,
+        work_date,
+        time_start,
+        time_finish,
+        time_lunch,
+        time_extra_break,
+        time_total,
+        location_id,
+        fund_src,
+        activity,
+        t_comment: comment,
+        entry_date: currentDate,
+        variance,
+        variance_type,
+        notes,
+        time_flexi,
+        time_til,
+        time_leave,
+        time_overtime,
+        on_duty, // 1 for work day, 0 if activity name begins with "Rest Day", ie. "Rest Day (Planned Burning)".
+        duty_category: null,
+        status: "entered",
+        rwe_day: null, //
+      });
       console.log("n90    New timesheet created");
+
+      console.log("n30   res.status: ", scanIssueResult.status);
+
 
       req.flash("messages", "Thank you for entering your timesheet");
       return res.redirect("/time");
@@ -1133,6 +1166,7 @@ app.post("/editUser", isAdmin, async (req, res) => {
 //-------------------------------------------------
 //#region Authorisation
 
+
 app.get("/login", (req, res) => {
   console.log("li1     get login route");
   // const errors = req.flash('messages');
@@ -1430,7 +1464,7 @@ passport.use(
       }
       // known issue: page should redirect to the register screen.  To reproduce this error enter an unknown username into the login screen
     } catch (err) {
-      console.log("ps13");
+      console.log("ps13   ", err);
 
       // Check for status 404 User not found
       if (err.response.status === 404) {

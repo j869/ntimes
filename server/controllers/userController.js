@@ -96,7 +96,7 @@ const checkUserExist = async (req, res) => {
 
 // PROFILE PART
 const editProfile = async (req, res) => { 
-    console.log("req.body:", req.body);
+    // console.log("req.body:", req.body);
     const { firstName, lastName, email, username, password, userId, managerID } = req.body;
 
     console.log("req.body.firstName:", firstName);
@@ -121,15 +121,26 @@ const editProfile = async (req, res) => {
         await pool.query('UPDATE personelle SET first_name = $2, last_name = $3 WHERE person_id = $1', [userId, firstName, lastName]);
     }
 
-    await pool.query('SELECT user_id FROM staff_hierarchy WHERE user_id = $1', [userId], async (err, result) => {
+    await pool.query('SELECT * FROM staff_hierarchy WHERE user_id = $1', [userId], async (err, result) => {
+      console.log("uc 1 staff_hierarchy", result)
       if(!err) { 
-        if(result.length > 0)  {
-          await pool.query(`INSERT INTO staff_hierarchy (user_id, manager_id,) VALUES ($1, $2)`, [userId, managerID]);
+       
+
+        if(result.rowCount == 0)  {
+          await pool.query(`INSERT INTO staff_hierarchy (user_id, manager_id) VALUES ($1, $2)`, [userId, managerID]);
           // console.log("ALKSD:LASJHD:LKASJD:LKASJDLKAJSD:KLAJSD:LKJAS:LDKJAS:LKJDA:LSKJDKL")
         } else { 
           await pool.query(`UPDATE staff_hierarchy SET  manager_id = $1 WHERE user_id = $2`, [managerID,userId]);
           // console.log("ALKSD:LASJHD:LKASJD:LKASJDLKAJSD:KLAJSD:LKJAS:LDKJAS:LKJDA:LSKJDKL")
+          const oldManagerTitle = "Change Manager"
+          const oldMangerMessage =  `${firstName} ${lastName} (@${email}) Assign a new manager`
 
+
+          await pool.query(`
+          INSERT INTO notification (title,message, sender_message, sender_title, sender_id, receiver_id, notification_type, read_status, created_at, sender_read_status, receiver_read_status)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE, NOW(), FALSE, FALSE);
+          `, [oldManagerTitle, oldMangerMessage , oldManagerTitle, oldMangerMessage , result.rows[0].manager_id, result.rows[0].manager_id, "Manager Request"]) 
+          
         }
 
         
@@ -147,9 +158,8 @@ const editProfile = async (req, res) => {
     await pool.query(`
     INSERT INTO notification (title,message, sender_message, sender_title, sender_id, receiver_id, notification_type, read_status, created_at, sender_read_status, receiver_read_status)
     VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE, NOW(), FALSE, FALSE);
-    `, [receiverTitle, receiverMessage,senderMessage, senderTitle, senderId, receiverId, notificationType ])
-
-      } else { 
+    `, [receiverTitle, receiverMessage,senderMessage, senderTitle, senderId, receiverId, notificationType ]) 
+  } else { 
         console.log("error in updateing or insterting the manager: ", err);
       }
     });

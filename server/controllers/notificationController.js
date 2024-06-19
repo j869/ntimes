@@ -119,7 +119,7 @@ const markAsSeen = async (req, res) => {
 
 // Function to delete a notification
 const deleteNotification = async (req, res) => {
-  const { notificationId } = req.body;
+  const notificationId = req.params.notificationID;
 
   // First, delete the recipient entries associated with the notification
   const deleteRecipientQuery = `

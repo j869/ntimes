@@ -23,7 +23,7 @@ const createNotificationRoute = (isAuthenticated) => {
       );
 
       
-
+      // console.log("NR notification data", notifications.data);
       res.render("notification.ejs", {
         user: req.user,
         userInfo: userInfo,
@@ -50,6 +50,18 @@ const createNotificationRoute = (isAuthenticated) => {
       console.error('Error fetching notifications:', error.message);
       res.status(500).json({ error: 'Error fetching notifications' });
     }
+  });
+
+  router.get("/delete/:id", isAuthenticated, async (req, res) => {
+    try {
+      await axiosInstance.get(
+        `${API_URL}/notification/delete/${req.params.id}`
+      );
+      
+    } catch (error) {
+      console.error('Error fetching notifications:', error.message);
+      res.status(500).json({ error: 'Error fetching notifications' });
+    };
   });
 
   router.get("/unseen", isAuthenticated, async (req, res) => {
