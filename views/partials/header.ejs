@@ -4,6 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+             
+  <script>
+
+    async function fetchNotificationNum() {
+    const response = await fetch('/notification/unseen');
+    const notifications = await response.json();
+    document.getElementById('notification-indicator').innerHTML = notifications[0].count;
+
+    if(notifications[0].count == 0) {
+      document.getElementById('notification-indicator').style.display = 'none';
+
+    }
+// 
+    // console.log("notification", notifications[0].count);
+
+    
+  }
+
+  setInterval(fetchNotificationNum, 5000); // Poll every 5 seconds
+  document.addEventListener('DOMContentLoaded', fetchNotificationNum);
+
+  </script>
 
   <%let isManager = false%>
   <% try { %>
@@ -49,7 +71,7 @@
         <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
         <script>
-          console.log("Header variables", <% - JSON.stringify(locals) %>);
+          // console.log("Header variables", % - JSON.stringify(locals) %>);
         </script>
 </head>
 
@@ -99,9 +121,10 @@
                           <i class="bi bi-bell"></i> <span
                             class="ms-1 d-none d-sm-inline">Notification</span>
                             <span
+                            id="notification-indicator"
                             class="badge bg-danger"
                             style="margin-left: 5px; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 20px; height: 20px;"
-                            >12</span
+                            >0</span
                           >
                     
                     
@@ -254,3 +277,6 @@
 
 
        
+
+
+ 

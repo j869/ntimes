@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group">
                     <label for="time_finish">Time Finish:</label>
-                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="17:06">
+                    <input type="time" id="time_finish" name="time_finish" class="form-control" required value="05:00"> 
                 </div>
                 <div class="form-group">
                     <label for="time_lunch">Time Lunch (min):</label>
@@ -56,28 +56,65 @@
 
         </div>
 
-
+       
         <div class="col-md-12">
             <div class="row">
+            <%if(userWorkSchedule[0].schedule_id != 0) {%>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label id="variance_lbl" for="flexi_accrued">Variance:</label>
                         <input type="text" id="variance" name="variance" class="form-control readonly" readonly>
                     </div>
                 </div>
+               
                 <div class="col-md-9">
                     <div class="form-group">
                         <label id="variance_type_lbl" for="variance_type">Variance Type:</label>
                         <select id="variance_type" name="variance_type" class="form-control mandatory">
-                            <option value="flexi">Flexitime</option>
-                            <option value="til">TIL</option>
+                            <% if(userWorkSchedule[0].disable_flexi == false ) { %>
+                                <option value="flexi">Flexitime</option>
+                             <%}%>
+ 
+                             <% if(userWorkSchedule[0].disable_til == false ) { %>
+                                 <option value="til">TIL</option>
+                              <%}%>
                             <option value="overtime">Overtime</option>
                             <option value="leave">Leave</option>
                             <option value="mixed">Custom Variance</option>
                         </select>
                     </div>
                 </div>
+            <%} else {%>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label id="variance_lbl" for="flexi_accrued"></label>
+                        <input type="hidden" id="variance" name="variance" class="form-control readonly" readonly>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label id="variance_type_lbl" for="variance_type"></label>
+                        <select id="variance_type" style="display: none;" name="variance_type" class="form-control mandatory">
+                        
+                            
+                            <% if(userWorkSchedule[0].disable_flexi == false ) { %>
+                               <option value="flexi">Flexitime</option>
+                            <%}%>
+
+                            <% if(userWorkSchedule[0].disable_til == false ) { %>
+                                <option value="til">TIL</option>
+                             <%}%>
+
+                           
+                            <option value="overtime">Overtime</option>
+                            <option value="leave">Leave</option>
+                            <option value="mixed">Custom Variance</option>
+                        </select>
+                    </div>
+                </div>
+            <%}%>
             </div>
+       
             <div class="form-group">
                 <label for="notes">Notes:</label>
                 <textarea id="notes" name="notes" class="form-control" rows="4" cols="50"></textarea>
@@ -161,22 +198,23 @@
 
                 console.log("b1")
 
-                const workDateInput = document.getElementById('work_date');
-                const forDate = '<%= locals.forDate %>';
-
-                console.log('b2   forDate', forDate);
-                if (forDate) {
-                    const year = forDate.substring(0, 4);  // Convert forDate to a Date object
-                    const month = forDate.substring(4, 6);
-                    const day = forDate.substring(6, 8);
-                    const formattedDate = new Date(`${year}-${month}-${day}`);
-                    console.log('b21   formattedDate', formattedDate);
-                    workDateInput.value = forDate;    // Set the value of workDateInput to the formatted date
-                } else {
-                    const currentDate = new Date().toISOString().split('T')[0];
-                    console.log('b22  currentDate', currentDate);
-                    workDateInput.value = currentDate;
-                }
+        const workDateInput = document.getElementById('work_date');
+        const forDate = '<%= locals.forDate %>'; 
+           
+        const schedule_id = <%= userWorkSchedule[0].schedule_id%>
+        console.log('b2   forDate', forDate);
+        if (forDate) {
+            const year = forDate.substring(0, 4);  // Convert forDate to a Date object
+            const month = forDate.substring(4, 6);
+            const day = forDate.substring(6, 8);
+            const formattedDate = new Date(`${year}-${month}-${day}`);
+            console.log('b21   formattedDate', formattedDate);
+            workDateInput.value = forDate;    // Set the value of workDateInput to the formatted date
+        } else {
+            const currentDate = new Date().toISOString().split('T')[0];
+            console.log('b22  currentDate', currentDate);
+            workDateInput.value = currentDate;
+        }
 
 
                 const varianceTypeSelect = document.getElementById('variance_type');
@@ -208,7 +246,11 @@
                 // Function to calculate time total
                 function calculateTimeTotal() {
                     console.log("d1   calculateTimeTotal()");
-                    const timeStartInput = document.getElementById('time_start');
+        
+            const paidHour = <%= userWorkSchedule[0].paidHour %>; 
+
+
+            const timeStartInput = document.getElementById('time_start');
                     const timeFinishInput = document.getElementById('time_finish');
                     const timeTotalInput = document.getElementById('time_total');
                     const timeLunchInput = document.getElementById('time_lunch');
@@ -217,47 +259,66 @@
                     const varianceSelect = document.getElementById('variance_type');
                     const commentTextarea = document.getElementById('comment');
 
-                    const timeStart = timeStartInput.value;
-                    const timeFinish = timeFinishInput.value;
-                    const timeLunch = parseFloat(timeLunchInput.value) * 60 * 1000 || 0; // Convert to float in miliseconds, default to 0 if empty
-                    const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 1000 || 0; // Convert to float in miliseconds, default to 0 if empty
+                    const defaultLunchBreak = 30
 
-                    if (timeStart && timeFinish) {
-                        // Calculate time difference
-                        const startTime = new Date('1970-01-01 ' + timeStart);
-                        const finishTime = new Date('1970-01-01 ' + timeFinish);
-                        const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak; // Difference in milliseconds
-                        const totalHours = timeDifference / (1000 * 60 * 60); // Decimal variance in hours
+             
+            
+            const timeStart = timeStartInput.value ;
+            const timeFinish = timeFinishInput.value;
+            const timeLunch = parseFloat(timeLunchInput.value) * 60 * 1000     || 0; // Convert to float in miliseconds, default to 0 if empty
+            const timeExtraBreak = parseFloat(timeExtraBreakInput.value) * 60 * 1000       || 0; // Convert to float in miliseconds, default to 0 if empty
+            
+           
+      
 
-                        const vIJustWantToSeeYouResolveConflicts = 8;
-                        let varianceHours = totalHours - vIJustWantToSeeYouResolveConflicts;
-                        varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
+            if (timeStart && timeFinish) {
+                // Calculate time difference
+                const startTime = new Date('1970-01-01 ' + timeStart);
+                const finishTime = new Date('1970-01-01 ' + timeFinish);
+                const timeDifference = finishTime - startTime - timeLunch - timeExtraBreak ; // Difference in milliseconds
+                // const timeDifference = finishTime - startTime  - timeExtraBreak ; // Difference in milliseconds
+                const totalHours = timeDifference  / (1000 * 60 * 60); // Decimal variance in hours
 
-                        // read variance Type 
-                        if (varianceHours == 0) {
-                            varianceInput.value = "";
-                            commentTextarea.removeAttribute("required");
-                            console.log('a33    ', commentTextarea.attributes);
-                            varianceSelect.removeAttribute("required");
-                            varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
-                            varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
-                            varianceSelect.value = "";
-                            document.getElementById('variance').style.display = 'none';
-                            document.getElementById('variance_lbl').style.display = 'none';
-                            document.getElementById('variance_type').style.display = 'none';
-                            document.getElementById('variance_type_lbl').style.display = 'none';
-                            commentTextarea.classList.remove('mandatory');
-                        } else {
-                            varianceInput.value = varianceHours;
-                            commentTextarea.setAttribute("required", "required");
-                            console.log('a33    ', commentTextarea.attributes);
-                            varianceSelect.setAttribute("required", "required");
-                            document.getElementById('variance').style.display = 'block';
-                            document.getElementById('variance_lbl').style.display = 'block';
-                            document.getElementById('variance_type').style.display = 'block';
-                            document.getElementById('variance_type_lbl').style.display = 'block';
-                            commentTextarea.classList.add('mandatory');
-                        };
+                
+                let varianceHours = totalHours - paidHour;
+                varianceHours = varianceHours.toFixed(4); // Round to 4 decimal places
+                   
+                // read variance Type 
+                if (varianceHours == 0) {
+                    varianceInput.value = "";
+                    commentTextarea.removeAttribute("required");
+                    console.log('a33    ', commentTextarea.attributes);
+                    varianceSelect.removeAttribute("required");
+                    varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
+                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
+                    varianceSelect.value = "";
+
+                    document.getElementById('variance').style.display = 'none';
+                    document.getElementById('variance_lbl').style.display = 'none';
+                    document.getElementById('variance_type').style.display = 'none';  
+                    document.getElementById('variance_type_lbl').style.display = 'none';  
+                    commentTextarea.classList.remove('mandatory');
+
+
+                } else {
+
+                    if(schedule_id != 0){ 
+
+                        varianceInput.value = varianceHours;
+                    commentTextarea.setAttribute("required", "required");
+                    console.log('a33    ', commentTextarea.attributes);
+                    varianceSelect.setAttribute("required", "required");
+                    document.getElementById('variance').style.display = 'block';
+                    document.getElementById('variance_lbl').style.display = 'block';
+                    document.getElementById('variance_type').style.display = 'block';
+                    document.getElementById('variance_type_lbl').style.display = 'block';
+                    commentTextarea.classList.add('mandatory');
+
+                    }
+
+                    
+
+                };
 
                         if (varianceHours > 0) {
                             // console.log('long day.  overtime, no leave');
@@ -364,15 +425,25 @@
                     }
                 }
 
-                // Listen for changes in the time start and time finish inputs
-                const timeStartInput = document.getElementById('time_start');
-                const timeFinishInput = document.getElementById('time_finish');
-                const timeLunchInput = document.getElementById('time_lunch');
-                const timeExtraBreakInput = document.getElementById('time_extra_break');
-                timeStartInput.addEventListener('input', calculateTimeTotal);
-                timeFinishInput.addEventListener('input', calculateTimeTotal);
-                timeLunchInput.addEventListener('input', calculateTimeTotal);
-                timeExtraBreakInput.addEventListener('input', calculateTimeTotal);
+        // Listen for changes in the time start and time finish inputs
+        const paidHour = <%= userWorkSchedule[0].paidHour %>; 
+
+        const timeStartInput = document.getElementById('time_start');
+        const timeFinishInput = document.getElementById('time_finish');
+        const timeLunchInput = document.getElementById('time_lunch');
+        const timeExtraBreakInput = document.getElementById('time_extra_break');
+        timeStartInput.addEventListener('input', calculateTimeTotal);
+        timeFinishInput.addEventListener('input', calculateTimeTotal);
+        timeLunchInput.addEventListener('input', calculateTimeTotal);
+        timeExtraBreakInput.addEventListener('input', calculateTimeTotal);
+
+        const startTime = new Date('1970-01-01 ' + timeStartInput.value);
+        const totalPaidHours = Math.floor(paidHour);
+        const totalPaidMinutes = Math.round((paidHour - totalPaidHours) * 60);
+        startTime.setHours(startTime.getHours() + totalPaidHours);
+        startTime.setMinutes(startTime.getMinutes() + totalPaidMinutes + parseInt(timeLunchInput.value));
+        timeFinishInput.value = startTime.toTimeString().slice(0, 5);
+        console.log("Start", startTime.toTimeString().slice(0, 5))
 
                 // Trigger the calculateTimeTotal function on page load
                 calculateTimeTotal();

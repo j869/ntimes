@@ -1,20 +1,27 @@
 import { Router } from "express";
 import axios from "axios";
+import axiosRetry from 'axios-retry';
+
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 const createManagerRoutes = (isAuthenticated) => {
   const router = Router();
   const API_URL = process.env.API_URL;
 
 
+  // Set a timeout for all axios requests
+  const axiosInstance = axios.create({
+    timeout: 5000, // 5 seconds timeout
+  });
 
 
   router.get("/pending", isAuthenticated, async (req, res) => {
     console.log("mrp1     ")
     const data = await axios.get(`${API_URL}/timesheet/pending/${req.user.id}`);
+    const timesheetIssues = await axios.get(`${API_URL}/timesheet/getAllIssues`);
     const userInfo = req.session.userInfo;
 
-   
-    
+    console.log("timesheetIssues" , timesheetIssues.data)
 
     const status = req.query.status;
     let statusMessage = "";
@@ -28,6 +35,7 @@ const createManagerRoutes = (isAuthenticated) => {
     res.render("user/manager/pendingTimeSheets.ejs", {
       user: req.user,
       data: data.data,
+      timesheetIssues: timesheetIssues.data,
       userInfo: userInfo,
       messages: req.flash(""),
       statusMessage: statusMessage,
@@ -183,6 +191,28 @@ const createManagerRoutes = (isAuthenticated) => {
       title: "Rejected Timesheets",
     });
   });
+
+
+  router.post("/approveManager", isAuthenticated, async (req, res) => {
+    const managerID = req.body.managerID;
+    const userID = req.body.userID;
+    const notificationID = req.body.notificationID;
+
+    console.log("userID: " + userID);
+    console.log("managerID: " + managerID);
+    console.log("notificationID: " + notificationID);
+
+    try {
+        await axios.post(`${API_URL}/users/assignManager/${managerID}?userID=${userID}&notificationID=${notificationID}`);
+        res.redirect("/notification");
+    } catch (err) {
+        console.log("ASSIGNing Manager error: ", err);
+        res.status(500).send("Error assigning manager");
+    }
+});
+
+
+
 
 
 

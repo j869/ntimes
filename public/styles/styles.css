@@ -38,9 +38,6 @@ body {
     slate gray #364958
 */
 
-.text-small {
-  font-size: 0.9rem !important;
-}
 
 
 
@@ -77,6 +74,7 @@ body {
 
 .bgprimary {
   background-color: #248232;
+  background-color: #248232;
 }
 
 .bgtertiary {
@@ -110,12 +108,12 @@ body {
 }
 */
 
-/*
+
 section {
   background-color: #462302;
   color: #fcfffc;
 }
-*/
+
   
 
 .titlebar {
@@ -141,9 +139,14 @@ section {
   color: #040F0F;
   border-color: #040F0F;
   border-width: 1.5px;
+  background-color: #fcfffc;
+  color: #040F0F;
+  border-color: #040F0F;
+  border-width: 1.5px;
 }
 
 .btndark:hover {
+  background-color: #040F0F;
   background-color: #040F0F;
   color: #fcfffc;
 

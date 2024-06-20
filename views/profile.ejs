@@ -22,7 +22,7 @@ if (userData) {
 }
 
 
-let incorrectPass = status == 404 ? true : false;
+let incorrectPass = status == 404 ? true : false; 
 %>
 
 
@@ -31,7 +31,19 @@ let incorrectPass = status == 404 ? true : false;
 
 <!-- INPUT PASSWORD  -->
 
+<% if (status == "noManager" ) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 50px;">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <strong>No Manager</strong> <br> Please Assign your Manager First!
+  </div>
 
+  <script>
+    var alertList = document.querySelectorAll(".alert");
+    alertList.forEach(function (alert) {
+      new bootstrap.Alert(alert);
+    });
+  </script>
+<%}%>
 
 <div class="modal fade " id="inputPasswordModal" tabindex="-1" aria-labelledby="inputPasswordLabel"
     aria-hidden="true">
@@ -117,9 +129,15 @@ let incorrectPass = status == 404 ? true : false;
             <div class="col-sm-3">
               <h6 class="mb-0">Manager</h6>
             </div>
+            <%if(myManager != undefined || myManager != null){%>
             <div class="col-sm-9 text-secondary">
               <%= `${myManager.first_name} ${myManager.last_name}`%>
             </div>
+            <%}else {%>
+              <div class="col-sm-9 text-secondary">
+                No Assigned
+              </div>
+            <%}%>
           </div>
           
           <hr />
@@ -153,6 +171,7 @@ let incorrectPass = status == 404 ? true : false;
 
                   <tbody>
                     <% userSchedule[0] && userSchedule[0].schedule_day.forEach((schedule, index) => { %>
+                     
                     <tr>
                       <td><%= schedule%></td>
                       <td>

@@ -1,4 +1,5 @@
 import { pool } from "./middleware.js";
+import { createNotification } from "./controllers/notificationController.js";
 
 //--------------------------------
 //----  ts_timesheet_t
@@ -140,7 +141,7 @@ const getCurrentYearTimesheetsForUser = (req, res) => {
   });
 };
 
-const createTimesheet = (req, res) => {
+const createTimesheet = async (req, res) => {
   console.log("ct1   ");
   const {
     person_id,
@@ -169,6 +170,8 @@ const createTimesheet = (req, res) => {
     status,
     on_duty,
   } = req.body;
+
+
 
   pool.query(
     "DELETE FROM ts_timesheet_t WHERE work_date = $1",
@@ -215,19 +218,35 @@ const createTimesheet = (req, res) => {
       console.log(`ct3      `);
 
       // Execute the query
-      pool.query(query, values, (error, result) => {
+      pool.query(query, values, async (error, result) => {
         if (error) {
           console.error("Error creating timesheet:", error);
           return res.status(500).json({ error: "Error creating timesheet" });
         }
-        console.log("ct4");
+        
+        
         const timesheetId = result.rows[0].id;
+        
+        // Assuming you have the required body for the notification controller
+        const notificationReq = {
+          body: {
+            title: "Timesheet Submitted",
+            message: `Your timesheet for the week has been submitted and is pending approval.`,
+            senderId: person_id,
+            receiverId: person_id,
+            timesheetId: timesheetId,
+          }
+        };
+       await createNotification(notificationReq, res)
+
         console.log("ct9 Successfully created timesheet with ID:", timesheetId);
         return res.status(201).json({
           id: timesheetId,
           message: `Added timesheet with ID ${timesheetId}`,
         });
       });
+
+
     }
   );
 };
@@ -499,9 +518,14 @@ const createUser = (req, res) => {
               .json({ messages: ["Error adding user to the database"] });
           } })
 
-          
 
-          !error && pool.query("INSERT INTO user_work_schedule (user_id, schedule_id) VALUES ($1, $2)", [userId, 1], (error, result) => {
+          // the schedule id of the flexible time is "0"
+          const defaultScheduleQuery = `
+          INSERT INTO user_work_schedule (user_id, schedule_id, disable_til, disable_flexi, disable_rdo)
+          VALUES ($1, 0, false, false, true)
+          `
+
+          !error && pool.query(defaultScheduleQuery, [userId], (error, result) => {
             if (error) {
               console.error("Adding User Error:", error);
               return res
