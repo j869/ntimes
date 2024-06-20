@@ -240,6 +240,33 @@ WHERE
 }
 
 
+const checkMyManger = async(req, res) => {
+
+  const person_id = req.params.id
+    // console.log("ct4");
+    pool.query(`
+    SELECT
+  staff_hierarchy.*
+  FROM
+  staff_hierarchy
+  WHERE
+  user_id = $1
+  `, [person_id], (error, result) => {
+  
+  
+  if (error) {
+  console.error("Error fetching Manager:", error);
+  return res.status(500).json({ error: "Error creating timesheet" });
+  } else {
+
+    res.status(200).json(result.rows)
+  
+  }
+  
+  }) 
+}
+
+
 const assignManager =  async (req, res) => {
 		
 	const userId = res.body.userID
@@ -336,6 +363,7 @@ export {
   editProfile,
   getMyManager,
   getManager, 
-  assignManager
+  assignManager, 
+  checkMyManger, 
 
 };

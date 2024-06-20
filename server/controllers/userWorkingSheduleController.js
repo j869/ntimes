@@ -8,7 +8,8 @@ const getUserScheduleById = (req, res) => {
 
 
     const query = `SELECT
-	work_schedule.*
+	work_schedule.*, 
+    user_work_schedule.*
 FROM
 	work_schedule
 	INNER JOIN
@@ -17,13 +18,22 @@ FROM
 		work_schedule."id" = user_work_schedule.schedule_id
 WHERE
 	user_work_schedule.user_id = $1
-    
-    
 	`   
 
+    pool.query(query, [userId], (error, result) => {
+        if (error) {
+          console.error("Database error:", error);
+          res.status(500).json(error);
+          return;
+        }
+
+        
+    
+        res.status(200).json(result.rows);
+      });
+
     
 
-queryDatabase(query, [userId], res, "User fetched successfully");
 
 }
 

@@ -122,9 +122,23 @@ const createProfileRoutes = (isAuthenticated) => {
     const allDateSchedules = [];
     const payPeriods = [];
 
+    // Limit the date range to the current year
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1);
+    const endOfYear = new Date(currentYear, 11, 31);
+
+    // Adjust the start date if it's before the current year
+    if (startDate < startOfYear) {
+        startDate = startOfYear;
+    }
+
+    // Adjust the end date if it's after the current year
+    if (endDate > endOfYear) {
+        endDate = endOfYear;
+    }
 
     let currentDate = new Date(startDate);
-    // Populate allDateSchedules with all scheduled days within the date range
+    // Populate allDateSchedules with all scheduled days within the current year date range
     while (currentDate <= endDate) {
         const dayOfWeek = currentDate.getDay();
         if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
@@ -132,7 +146,6 @@ const createProfileRoutes = (isAuthenticated) => {
         }
         currentDate.setDate(currentDate.getDate() + 1);
     }
-
 
     let i = allDateSchedules.length - 1;
     let payDayIndex = scheduleDays.length;
@@ -142,7 +155,7 @@ const createProfileRoutes = (isAuthenticated) => {
     while (i > 1) {
         if (i > scheduleDays.length - 1) {
             payPeriods.push(allDateSchedules[payDayIndex]);
-            payDayIndex += scheduleDays.length
+            payDayIndex += scheduleDays.length;
             i -= scheduleDays.length;
         } else {
             payPeriods.push(allDateSchedules[allDateSchedules.length - 1]);
@@ -175,7 +188,7 @@ router.get("/", isAuthenticated, async (req, res) => {
     // Check if userScheduleResponse.data is empty
     if (!userScheduleResponse.data || userScheduleResponse.data.length === 0) {
         res.render("profile.ejs", {
-            status: req.query.staus,
+            status: req.query.status,
             user: req.user,
             payPeriods: [],
             userSchedule: [],

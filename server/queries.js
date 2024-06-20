@@ -171,6 +171,8 @@ const createTimesheet = async (req, res) => {
     on_duty,
   } = req.body;
 
+
+
   pool.query(
     "DELETE FROM ts_timesheet_t WHERE work_date = $1",
     [work_date],
@@ -221,31 +223,7 @@ const createTimesheet = async (req, res) => {
           console.error("Error creating timesheet:", error);
           return res.status(500).json({ error: "Error creating timesheet" });
         }
-        // console.log("ct4");
-        pool.query(`
-        SELECT
-	staff_hierarchy.*
-FROM
-	staff_hierarchy
-WHERE
-	 user_id = $1
-        `, [person_id], (error, result) => {
-
-          
-            if (error) {
-              console.error("Error fetching Manager:", error);
-              return res.status(500).json({ error: "Error creating timesheet" });
-            }
-            
-
-            if (result.rows[0].length == 0) {
-              res.redirect("/profile")
-            }
-
-            
-
-          
-        }) 
+        
         
         const timesheetId = result.rows[0].id;
         
@@ -540,9 +518,14 @@ const createUser = (req, res) => {
               .json({ messages: ["Error adding user to the database"] });
           } })
 
-          
 
-          !error && pool.query("INSERT INTO user_work_schedule (user_id, schedule_id) VALUES ($1, $2)", [userId, 1], (error, result) => {
+          // the schedule id of the flexible time is "0"
+          const defaultScheduleQuery = `
+          INSERT INTO user_work_schedule (user_id, schedule_id, disable_til, disable_flexi, disable_rdo)
+          VALUES ($1, 0, false, false, true)
+          `
+
+          !error && pool.query(defaultScheduleQuery, [userId], (error, result) => {
             if (error) {
               console.error("Adding User Error:", error);
               return res
