@@ -340,18 +340,31 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
   }
 
   try {
+    const myManager = await axios.get(`${API_URL}/users/checkMyManger/${userId}`)
+
+   if(myManager.data.length == 0) { 
+    return res.redirect("/profile?status=noManager") // Use return to stop further execution
+   }
+
     const locationResponse = await axios.get(`${API_URL}/location`);
     const userScheduleResponse = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     let userSchedules = [];
+    let allDateSchedules = [];
 
-    if (!userScheduleResponse.data.length < 1) {
+    console.log("the user schedule", userScheduleResponse.data)
+
+    if (!userScheduleResponse.data.length < 1 ) {
       const scheduleDays = userScheduleResponse.data[0].schedule_day;
       const paidHours = userScheduleResponse.data[0].paid_hours;
       const startDate = new Date(userScheduleResponse.data[0].start_date);
       const endDate = new Date(userScheduleResponse.data[0].end_date);
 
+    
+
       userSchedules = getPayPeriods(startDate, endDate, scheduleDays, paidHours);
       console.log("user schedules: ", userSchedules);
+
+
     }
 
     function getDayOfWeekName(dayOfWeek) {
@@ -360,7 +373,7 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
     }
 
     function getPayPeriods(startDate, endDate, scheduleDays, paidHours) {
-      const allDateSchedules = [];
+      
 
       let currentDate = new Date(startDate);
       let i = 0;
@@ -391,7 +404,15 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
           if (date == new Date(currentDate).toISOString().split("T")[0]) {
             allDateSchedules.push({
               date: new Date(currentDate).toISOString().split("T")[0],
-              paidHour: paidHour
+              paidHour: paidHour,
+              start_date: userScheduleResponse.data[0].start_date,
+              end_date: userScheduleResponse.data[0].end_date,
+              user_id: userScheduleResponse.data[0].user_id,
+              schedule_id: userScheduleResponse.data[0].schedule_id,
+              disable_til: userScheduleResponse.data[0].disable_til,
+              disable_flexi: userScheduleResponse.data[0].disable_flexi,
+              disable_rdo: userScheduleResponse.data[0].disable_rdo
+            
             });
           }
         }
@@ -1294,6 +1315,7 @@ const registerUser = async (userData) => {
       role,
       verificationToken,
       verified_email,
+
     });
 
     // Extract the newly inserted user_id from the result

@@ -31,7 +31,19 @@ let incorrectPass = status == 404 ? true : false;
 
 <!-- INPUT PASSWORD  -->
 
+<% if (status == "noManager" ) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 50px;">
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <strong>No Manager</strong> <br> Please Assign your Manager First!
+  </div>
 
+  <script>
+    var alertList = document.querySelectorAll(".alert");
+    alertList.forEach(function (alert) {
+      new bootstrap.Alert(alert);
+    });
+  </script>
+<%}%>
 
 <div class="modal fade " id="inputPasswordModal" tabindex="-1" aria-labelledby="inputPasswordLabel"
     aria-hidden="true">

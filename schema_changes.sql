@@ -122,6 +122,38 @@ CREATE TABLE "ts_issue" (
 
 
 
+CREATE TABLE "user_work_schedule" (
+  "user_id" int4 NOT NULL,
+  "schedule_id" int4 DEFAULT 0,
+  "disable_til" bool DEFAULT false,
+  "disable_flexi" bool DEFAULT false,
+  "disable_rdo" bool DEFAULT false
+);
+
+
+
+CREATE TABLE "work_schedule" (
+  "id" int4 NOT NULL DEFAULT nextval('work_schedule_id_seq'::regclass),
+  "schedule_day" varchar(255)[] COLLATE "pg_catalog"."default",
+  "paid_hours" varchar(255)[] COLLATE "pg_catalog"."default",
+  "start_date" timestamp(6),
+  "end_date" timestamp(6)
+)
+;
+
+-- ----------------------------
+-- Records of work_schedule
+-- ----------------------------
+INSERT INTO "work_schedule" VALUES (1, '{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}', '{0,7.60,7.60,4.0,4.0,7.6,0,0,7.60,7.60,7.60,7.60,7.60,0}', '2023-12-31 18:31:18', '2024-12-31 18:31:28');
+INSERT INTO "work_schedule" VALUES (0, '{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday}', '{0,0,0,0,0,0,0,0,0,0,0,0,0,0}', '2009-12-27 23:25:32', '2070-12-27 23:26:18');
+
+
+
+
+
+
+
+
 
 
 
