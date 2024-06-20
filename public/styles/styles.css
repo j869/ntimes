@@ -38,6 +38,9 @@ body {
     slate gray #364958
 */
 
+.text-small {
+  font-size: 0.9rem !important;
+}
 
 
 
@@ -52,7 +55,7 @@ body {
   width: 100%;
 }
 
-.nav-item:hover a { 
+.sidebar .nav-item:hover a { 
    color: #fcfffc;
   background: #2ba84a;
 }
@@ -107,10 +110,12 @@ body {
 }
 */
 
+/*
 section {
   background-color: #462302;
   color: #fcfffc;
 }
+*/
   
 
 .titlebar {
