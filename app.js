@@ -1207,9 +1207,13 @@ app.get("/login", (req, res) => {
   console.log("li9   ");
 });
 
+
+
+
 app.post("/login", function (req, res, next) {
   console.log("lg1   ", req.body);
-  passport.authenticate("local", function (err, user, info) {
+
+  passport.authenticate("local", async function (err, user, info) {
     if (err) {
       console.log("lg12   ", err);
       return next(err);
@@ -1217,7 +1221,7 @@ app.post("/login", function (req, res, next) {
     if (!user) {
       console.log("lg13   ", info);
 
-      if (info && info.messages[0] == "Incorrect password.") {
+      if (info && info.message === "Incorrect password.") {
         req.flash(
           "messages",
           "Invalid username or password. Please try again."
@@ -1230,30 +1234,33 @@ app.post("/login", function (req, res, next) {
       }
       return res.redirect("/login");
     }
+
     req.logIn(user, async function (err) {
       if (err) {
         console.log("lg20   ", err);
         return next(err);
       }
 
-      console.log("lg3   ", err);
-      const isManager = await axios.get(
-        `${API_URL}/users/userInfo/${req.user.id}`
-      );
-      console.log("lg31   ", isManager.data[0]);
+      try {
+        console.log("lg3   ", err);
+        const response = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+        const userInfo = response.data[0];
+        console.log("lg31   ", userInfo);
 
-      req.session.userInfo = isManager.data[0];
+        req.session.userInfo = userInfo;
 
-      if (
-        isManager.data[0] != undefined &&
-        isManager.data[0].position == "manager"
-      ) {
-        console.log("lg40   ", err);
-        return res.redirect("/timesheet/pending");
+        if (userInfo && userInfo.position === "manager") {
+          console.log("lg40   ", err);
+          return res.redirect("/timesheet/pending");
+        }
+
+        console.log("lg9   ", err);
+        const dateVariable = new Date().toISOString().split("T")[0];
+        return res.redirect(`/timesheetEntry?date=${dateVariable}`);
+      } catch (err) {
+        console.error('Error fetching user info:', err);
+        return next(err);
       }
-
-      console.log("lg9   ", err);
-      return res.redirect("/time");
     });
   })(req, res, next);
 });
