@@ -112,10 +112,12 @@ INSERT INTO "issues" VALUES ('issue4', 'check', 'The User work more than 10 days
 INSERT INTO "issues" VALUES ('issue5', 'check', 'The User work more than 7 days in a row', 5);
 
 
-CREATE TABLE "ts_issue" (
-  "ts_id" int4
-  "issue_code" varchar(255) 
-)
+  CREATE TABLE "ts_issue" (  
+    "ts_id" int4, 
+    "issue_code" varchar(255) 
+  )
+
+  
 
 
 

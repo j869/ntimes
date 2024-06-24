@@ -21,7 +21,7 @@ const deleteLocation = (req, res) => {
 const getAllLocation = (req, res) => {
   console.log("lag1");
   const query = `SELECT "location".* FROM "location" ORDER BY "location".location_name ASC`;
-
+  
   queryDatabase(query, [], res, "All locations fetched successfully");
 };
 

@@ -22,7 +22,7 @@ import {
 
 
 import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet } from "./controllers/managerController.js";
-import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager, assignManager, checkMyManger } from "./controllers/userController.js";
+import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager, assignManager, checkMyManger, checkMyManagement, addPersonelleInfo } from "./controllers/userController.js";
 
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
@@ -32,6 +32,7 @@ import {
   getIndividualTimesheetsById,
   getPendingIndividualTimesheet,
   getTFR,
+  getTimesheetById,
   postDayOff
  } from "./controllers/timeSheetsController.js";
 
@@ -111,7 +112,7 @@ app.get("/notification/delete/:notificationID", deleteNotification);
 
 
 // Define other routes
-app.get("/users", db.getUsers);
+app.get("/usersByOrg/:orgID", db.getUsers);
 app.get("/login/:username", db.getUserByUsername);
 app.get("/users/:id", db.getUserById);
 app.post("/users", db.createUser);
@@ -124,10 +125,12 @@ app.get("/users/userInfo/:userID",getUserInfo);
 app.get("/users/isManager/:userID", isManager);
 app.post("/users/check", checkUserExist);
 app.post("/users/update", editProfile);
-app.get("/users/getManager/:userID", getManager );
+app.get("/users/getManager/:orgID", getManager );
 app.get("/users/getMyManager/:userID", getMyManager);
 app.post("/users/assignManager/:managerID", assignManager)
 app.get("/users/checkMyManger/:id" , checkMyManger);
+app.put("/users/checkMyManagement" , checkMyManagement);
+app.put("/users/addPersonelleInfo/:userID" , addPersonelleInfo);
 
 
 // FOR TIMESHEETS ROUTES
@@ -142,6 +145,7 @@ app.post("/timesheets/checkTimeSheetsExist", checkTimesheetExist);
 app.post("/timesheets/getTimesheetById/:id", getIndividualTimesheetsById);
 app.get("/timesheets/getPendingTimesheetById/:id", getPendingIndividualTimesheet);
 app.put("/timesheets/edit/:id", editTimesheet);
+app.get("/timesheets/getTimesheetById/:id", getTimesheetById);
 
 
 app.listen(port, () => {

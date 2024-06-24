@@ -228,7 +228,6 @@ const runManager = (req, res, next) => {
     if (
       allowedRoutes.includes(req.path) ||
       req.path.startsWith("/deleteTimesheet/") ||
-     
       req.path.startsWith("/timesheets/")
     ) {
       next();
@@ -1041,16 +1040,29 @@ app.get("/approveTimesheet/:id", async (req, res) => {
 
 app.get("/users", isAdmin, async (req, res) => {
   console.log("u1    Admin route: Rendering settings page...");
-  const result = await axios.get(`${API_URL}/users`);
+  req.user = req.session.userInfo;
+  console.log("USER ASDASDASD", req.user)
+  if(req.user.org_id == null || req.user.org_id == undefined) {
+    return res.redirect("/profile?status=noOrganization")
+  }
+  const result = await axios.get(`${API_URL}/usersByOrg/${req.user.org_id}`);
   console.log("u2    ", result.data);
+
+// req.user = req.session.userInfo
+//   console.log("A:LDJKASLKDJAS:LKD JAS:LKD JASDMK ASD:KL AS ", req.user)
+
+  
   res.render("settings.ejs", {
     user: req.user,
+    userInfo: req.session.userInfo,
     users: result.data,
     title: "Users",
     messages: req.flash("messages"),
   });
+
   console.log("u9  all users displayed on screen ");
 });
+
 
 app.get("/users/:id", isAuthenticated, async (req, res) => {
   console.log("v1      Protected route: Fetching user data...", req.params);
@@ -1217,7 +1229,7 @@ app.post("/login", function (req, res, next) {
     if (!user) {
       console.log("lg13   ", info);
 
-      if (info && info.messages[0] == "Incorrect password.") {
+      if (info && info.messages[0] === "Incorrect password.") {
         req.flash(
           "messages",
           "Invalid username or password. Please try again."
@@ -1237,26 +1249,38 @@ app.post("/login", function (req, res, next) {
       }
 
       console.log("lg3   ", err);
-      const isManager = await axios.get(
-        `${API_URL}/users/userInfo/${req.user.id}`
-      );
-      console.log("lg31   ", isManager.data[0]);
+      try {
+        const isManager = await axios.get(
+          `${API_URL}/users/userInfo/${req.user.id}`
+        );
+        console.log("lg31   ", isManager.data[0]);
 
-      req.session.userInfo = isManager.data[0];
+        req.session.userInfo = isManager.data[0];
+        
+        if (req.session.userInfo === undefined) {
+          await axios.put(`${API_URL}/users/addPersonelleInfo/${req.user.id}`)
 
-      if (
-        isManager.data[0] != undefined &&
-        isManager.data[0].position == "manager"
-      ) {
-        console.log("lg40   ", err);
-        return res.redirect("/timesheet/pending");
+        }
+
+        if (
+          req.session.userInfo &&
+          req.session.userInfo.position === "manager"
+        ) {
+          console.log("lg40   ", err);
+          return res.redirect("/timesheet/pending");
+        }
+
+      
+        console.log("lg9   ", err);
+        return res.redirect("/time");
+      } catch (error) {
+        console.log("lg32   ", error);
+        return next(error);
       }
-
-      console.log("lg9   ", err);
-      return res.redirect("/time");
     });
   })(req, res, next);
 });
+
 
 app.get("/logout", (req, res) => {
   console.log("lo1    user is logging out");
@@ -1274,7 +1298,7 @@ app.get("/register", (req, res) => {
   });
 });
 
-const registerUser = async (userData) => {
+const registerUser = async (userData, orgID) => {
   try {
     let { username, email, password, role, verificationToken, verified_email } =
       userData;
@@ -1364,12 +1388,14 @@ app.post("/register", async (req, res) => {
   try {
     let { email, password } = req.body;
     console.log("gp1   ", req.body);
-    await registerUser({ email, password, role: "user" });
+    await registerUser({ email, password, role: "user",  });
     //req.flash('messages', 'User registered successfully. Please check your email for verification.');
     req.flash(
       "messages",
       "Registration successful. Please check your email for verification."
     );
+
+    
     console.log("gp9 registered user ok");
     res.redirect("/login");
   } catch (error) {

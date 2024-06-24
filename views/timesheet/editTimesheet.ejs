@@ -56,6 +56,7 @@
 
         <div class="col-md-12">
             <div class="row">
+            <%if(userWorkSchedule[0].schedule_id != 0) {%>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label id="variance_lbl" for="flexi_accrued">Variance:</label>
@@ -67,8 +68,13 @@
                         <label id="variance_type_lbl" for="variance_type">Variance Type:</label>
 
                         <select id="variance_type" name="variance_type" class="form-control mandatory">
-                            <option value="flexi">Flexitime</option>
-                            <option value="til">TIL</option>
+                            <% if(userWorkSchedule[0].disable_flexi == false ) { %>
+                                <option value="flexi">Flexitime</option>
+                             <%}%>
+ 
+                             <% if(userWorkSchedule[0].disable_til == false ) { %>
+                                 <option value="til">TIL</option>
+                              <%}%>
                             <option value="overtime">Overtime</option>
                             <option value="leave">Leave</option>
                             <option value="mixed">Custom Variance</option>
@@ -91,6 +97,29 @@
                         </script>
                     </div>
                 </div>
+            <% } else {%>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label id="variance_lbl" for="flexi_accrued"></label>
+                        <input type="hidden" id="variance" name="variance" class="form-control readonly" readonly>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label id="variance_type_lbl" for="variance_type"></label>
+                        <select id="variance_type" style="display: none;" name="variance_type" class="form-control mandatory">
+                        
+                            
+                        
+
+                           
+                            <option value="overtime">Overtime</option>
+                            <option value="leave">Leave</option>
+                            <option value="mixed">Custom Variance</option>
+                        </select>
+                    </div>
+                </div>
+            <%} %>
             </div>
             <div class="form-group">
                 <label for="notes">Notes:</label>
@@ -174,6 +203,11 @@
 
         const workDateInput = document.getElementById('work_date');
         const forDate = '<%= locals.forDate %>'; 
+
+        const schedule_id = <%= userWorkSchedule[0].schedule_id%>
+
+
+
            
         console.log('b2   forDate', forDate);
         if (forDate) {
@@ -281,6 +315,7 @@
 
                 } else {
 
+                    if(schedule_id != 0){ 
                     varianceInput.value = varianceHours;
                     commentTextarea.setAttribute("required", "required");
                     console.log('a33    ', commentTextarea.attributes);
@@ -290,7 +325,7 @@
                     document.getElementById('variance_type').style.display = 'block';
                     document.getElementById('variance_type_lbl').style.display = 'block';
                     commentTextarea.classList.add('mandatory');
-
+                    }
                 };
 
                 if (varianceHours > 0) {

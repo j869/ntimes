@@ -183,6 +183,9 @@ const editProfile = async (req, res) => {
 
 const getManager = async (req,res) => { 
 // console.log("AKSJDHASJKDHASJKLDHASJKLDHAKLSJDHAKLSJHDKLAJSDHASKLJDH")
+const orgID = req.params.orgID;
+
+console.log("orgID: ", orgID)
 	const query = `SELECT
 	users."id", 
 	users.username, 
@@ -197,10 +200,10 @@ FROM
 	ON 
 		personelle.person_id = users."id"
 		
-	WHERE position = 'manager'`
+	WHERE position = 'manager' AND org_id = $1`
 
 	try {
-		const result = await pool.query(query, []);
+		const result = await pool.query(query, [orgID]);
 		res.status(200).json(result.rows);
 	} catch (error) {
 		console.error('Error fetching manager:', error);
@@ -353,6 +356,50 @@ const assignManager =  async (req, res) => {
 	 
   }
 
+  const checkMyManagement = (req, res) => { 
+    const {tsId, managerId} = req.body
+
+    const query = `
+    SELECT
+	ts_timesheet_t.id
+FROM
+	ts_timesheet_t
+	INNER JOIN
+	staff_hierarchy
+	ON 
+		ts_timesheet_t.person_id = staff_hierarchy.user_id
+	WHERE 
+	
+	ts_timesheet_t.id = $1 AND manager_id = $2
+    `
+
+    pool.query(query, [tsId, managerId], (err, result) => {
+
+      if(err) {
+        console.log("Checking management Error:", err)
+        return res.status(500).json(err)
+      } else { 
+        return res.status(200).json(result.rows)
+      }
+
+    })
+    
+  }
+
+  
+  const addPersonelleInfo = (req , res) => { 
+    const userId = req.params.userID;
+    const query =   `INSERT INTO personelle (person_id, position) VALUES ($1 , 'user')`
+
+    pool.query(query, [userId], (err, result) => {
+      if(err) {
+        console.log("Adding personelle info Error:", err)
+        return res.status(500).json(err)
+      } else { 
+        return res.status(200).json()
+      } 
+    })
+  }
 
 
 export {
@@ -365,5 +412,7 @@ export {
   getManager, 
   assignManager, 
   checkMyManger, 
+  checkMyManagement,
+  addPersonelleInfo, 
 
 };
