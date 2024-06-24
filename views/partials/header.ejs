@@ -98,11 +98,12 @@
 
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bgprimary">
           <div class="sidebar d-flex flex-column align-items-center align-items-sm-start px-3 pt-3 min-vh-100" style="overflow: hidden;">
-            <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
+            <a href="/time" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto">
               <span class="d-none d-sm-inline"><img class="logo" src="../images/new2.png" alt="logo"></span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
               
+              <!-- Home tab
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Home' ) { %>
                   <a href="/" class="nav-link active" id="active">
@@ -112,6 +113,7 @@
                           <i class="bi bi-house-fill"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
                       </a>
               </li>
+              -->
               <li class="nav-item">
                 <% if (locals.title && locals.title==='Notification' ) { %>
                   <a href="/notification" class="nav-link active d-flex position-relative" id="active">
@@ -119,7 +121,7 @@
                       <a href="/notification" class="nav-link link-light d-flex position-relative">
                         <% } %>
                           <i class="bi bi-bell"></i> <span
-                            class="ms-1 d-none d-sm-inline">Notification</span>
+                            class="ms-1 d-none d-sm-inline">Notifications</span>
                             <span
                             id="notification-indicator"
                             class="badge bg-danger"

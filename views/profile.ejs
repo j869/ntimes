@@ -26,7 +26,11 @@ let incorrectPass = status == 404 ? true : false;
 %>
 
 
-<h1>Profile</h1>
+<div class="main col py-3 px-4 sticky-top titlebar">
+  <h1 class="pagetitle pb-2">Profile</h1>
+</div>
+
+<div class="pt-0 mx-4">
 
 
 <!-- INPUT PASSWORD  -->
@@ -57,7 +61,7 @@ let incorrectPass = status == 404 ? true : false;
       <div class="modal-body">
      
         <div class="mb-3">
-          <label for="inputPasswordRole" class="form-label">Input Password</label>
+          <label for="inputPasswordRole" class="form-label text-black">Input Password</label>
           <input type="hidden" name="email" value="<%= email%>">
           <input type="password" class="form-control" id="inputPasswordRole" name="password" <%if(incorrectPass){%> style="border: solid red 2px; background:#ff000031"  <%}%> required>
           <%if(incorrectPass){%><label for="inputPasswordRole" class="form-label" style="color: red;">Incorrect Password</label><%}%>
@@ -79,7 +83,7 @@ let incorrectPass = status == 404 ? true : false;
 
 <div class="main-body">
   <div class="row gutters-sm">
-    <div class="col-md-4 mb-3">
+    <div class="col-md-5 mb-3">
       <div class="card">
         <div class="card-body">
           <div class="d-flex flex-column align-items-center text-center">
@@ -99,7 +103,7 @@ let incorrectPass = status == 404 ? true : false;
         </div>
       </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       <div class="card mb-3">
         <div class="card-body">
           <div class="row">
@@ -154,7 +158,7 @@ let incorrectPass = status == 404 ? true : false;
       </div>
     </div>
     <div class="d-flex flex-row gap-3 w-100">
-      <div class="col-sm-5 mb-3 w-50">
+      <div class="col-sm-6 md-6 mb-3 w-50">
         <div class="card">
           <div class="card-body">
             <!-- Table showing name and totalHours -->
@@ -199,7 +203,7 @@ let incorrectPass = status == 404 ? true : false;
         </div>
         
       </div>
-      <div class="col-sm-5 mb-3 w-45">
+      <div class="col-sm-6 mb-3 w-45">
         <div class="card">
           <div class="card-body">
             <div class="w-100 flex">

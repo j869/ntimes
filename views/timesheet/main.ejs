@@ -172,11 +172,11 @@
 </div>
 
 <div class="main col py-3 px-4 sticky-top titlebar">
-  <h1 class="pagetitle pb-2">Timesheet</h1>
-  <div class="row pb-2">
-    <div class="col-auto">
+  <h1 class="pagetitle p-0 m-0">Timesheet</h1>
+  <div class="row p-0">
+    <div class="col-auto pt-4">
       <a href="/timesheetEntry" class="btn btnprimary" id="addTimesheetBtn">
-        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> PV Timesheet</a>
+        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i> New Timesheet</a>
     </div>
     <!-- <div class="col-auto">
       <a href="/emergencyEntry" class="btn btndark" id="addEmergencyBtn">
@@ -184,30 +184,31 @@
     </div>   -->
  
 
-    <div class="col-auto">
+    <div class="col-auto pt-4">
       <a href="/plannedLeave" class="btn btndark" id="addLeaveBtn">
         <i class="fas fa-door-open                          "></i> Planned Leave</a>
     </div>
 
-    <div class="col-auto">
-
+    <div class="col-auto pt-4">
       <div class="btn btndark" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="fas fa-door-open"></i> Leave for a day</a>
       </div>
     </div>
+
+    
+      <div class="col-auto ms-auto">
+        <label for="monthSelect">Select Month:</label>
+        <select id="monthSelect" class="form-select">
+          <!-- Options will be populated by JavaScript -->
+        </select>
+      </div>
+  
     
     
     <!-- Add other buttons if needed -->
      
   </div>
-  <div class="row pb-2">
-    <div class="col-auto ms-auto">
-      <label for="monthSelect">Select Month:</label>
-      <select id="monthSelect" class="form-select">
-        <!-- Options will be populated by JavaScript -->
-      </select>
-    </div>
-  </div>
+
 
 </div>
 
