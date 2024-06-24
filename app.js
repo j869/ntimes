@@ -1219,9 +1219,13 @@ app.get("/login", (req, res) => {
   console.log("li9   ");
 });
 
+
+
+
 app.post("/login", function (req, res, next) {
   console.log("lg1   ", req.body);
-  passport.authenticate("local", function (err, user, info) {
+
+  passport.authenticate("local", async function (err, user, info) {
     if (err) {
       console.log("lg12   ", err);
       return next(err);
@@ -1242,6 +1246,7 @@ app.post("/login", function (req, res, next) {
       }
       return res.redirect("/login");
     }
+
     req.logIn(user, async function (err) {
       if (err) {
         console.log("lg20   ", err);
@@ -1392,7 +1397,7 @@ app.post("/register", async (req, res) => {
     //req.flash('messages', 'User registered successfully. Please check your email for verification.');
     req.flash(
       "messages",
-      "Registration successful. Please check your email for verification."
+      "Please check your email for verification."
     );
 
     

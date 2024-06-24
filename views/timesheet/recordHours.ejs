@@ -23,15 +23,18 @@
                 </div>
                 <div class="form-group">
                     <label for="time_lunch">Time Lunch (min):</label>
-                    <input type="number" value="30" id="time_lunch" name="time_lunch" class="form-control" required value="30">
+                    <input type="number" value="30" id="time_lunch" name="time_lunch" class="form-control" required
+                        value="30">
                 </div>
                 <div class="form-group">
                     <label for="time_extra_break">Break (min):</label>
-                    <input type="number"  value="0" id="time_extra_break" name="time_extra_break" class="form-control" required value="0">
+                    <input type="number" value="0" id="time_extra_break" name="time_extra_break" class="form-control"
+                        required value="0">
                 </div>
                 <div class="form-group">
                     <label for="time_total">Time Total:</label>
-                    <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly value="08:00">
+                    <input type="text" id="time_total" name="time_total" class="form-control readonly" readonly
+                        value="08:00">
                 </div>
 
         </div>
@@ -176,24 +179,24 @@
 
     </section>
 
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>
 
 
-<script>
-    
+        <script>
 
-    // document.addEventListener('DOMContentLoaded', function () {
-//         const userLocation = '= userLocation %>';
-//         console.log('User Location:', userLocation);
-//         // You can use the userLocation variable in your script logic here
-//     });
-// <
-    console.log("a1")
 
-    document.addEventListener('DOMContentLoaded', function () {
-        //set Work Date
+            // document.addEventListener('DOMContentLoaded', function () {
+            //         const userLocation = '= userLocation %>';
+            //         console.log('User Location:', userLocation);
+            //         // You can use the userLocation variable in your script logic here
+            //     });
+            // <
+            console.log("a1")
 
-        console.log("b1")
+            document.addEventListener('DOMContentLoaded', function () {
+                //set Work Date
+
+                console.log("b1")
 
         const workDateInput = document.getElementById('work_date');
         const forDate = '<%= locals.forDate %>'; 
@@ -318,110 +321,110 @@
 
                 };
 
-                if (varianceHours > 0) {
-                    // console.log('long day.  overtime, no leave');
-                    varianceSelect.querySelector('option[value="leave"]').style.display = 'none';
-                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
-                };
+                        if (varianceHours > 0) {
+                            // console.log('long day.  overtime, no leave');
+                            varianceSelect.querySelector('option[value="leave"]').style.display = 'none';
+                            varianceSelect.querySelector('option[value="overtime"]').style.display = 'block';
+                        };
 
-                if (varianceHours < 0) { 
-                    // console.log('short day.  leave, not overtime');
-                    varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
-                    varianceSelect.querySelector('option[value="overtime"]').style.display = 'none';
-                }
-
-                // Handle other input values based on variance type
-                let flexiHours = 0;
-                console.log('d3     varianceSelect.value', varianceSelect.value, varianceSelect.value === 'overtime')
-                switch(varianceSelect.value) {
-                    case 'flexi':
-                        flexiHours = varianceHours;
-                        break;
-                    case 'til':
-                        tilHours = varianceHours;
-                        break;
-                    case 'overtime':
-                        console.log('d33    varianceHours', varianceHours);
-                        if (varianceHours > 0) {   // available on a long day only
-                            overtimeHours = varianceHours;    
-                        } else {
-                            overtimeHours = 0;
+                        if (varianceHours < 0) {
+                            // console.log('short day.  leave, not overtime');
+                            varianceSelect.querySelector('option[value="leave"]').style.display = 'block';
+                            varianceSelect.querySelector('option[value="overtime"]').style.display = 'none';
                         }
-                        console.log('d34   overtimeHours', overtimeHours);
-                        break;
-                    case 'leave':
-                        console.log('d35   varianceHours', varianceHours);
-                        if (varianceHours < 0) {    //short day only
-                            leaveHours = varianceHours;
-                        } else {
-                            leaveHours = 0;
-                        }
-                        console.log('d36    leaveHours', leaveHours);
-                        break;
-                    case 'mixed':
-                        console.log('d37    Selected option: Mixed');
-                        break;
-                    default:
-                        console.log('d38    Invalid option');
-                        break;
-                }
 
-                // Handle flexitime option
-                if (varianceSelect.value === 'flexi') {
-                    const flexiAccruedInput = document.getElementById('flexi_accrued');
-                    const flexiTakenInput = document.getElementById('flexi_taken');
-                    flexiAccruedInput.value = "";
-                    flexiTakenInput.value = "";
-                    if (flexiHours < 0) {
-                        flexiTakenInput.value = Math.abs(flexiHours);
-                    } else if (flexiHours > 0) {
-                        flexiAccruedInput.value = Math.abs(flexiHours);
+                        // Handle other input values based on variance type
+                        let flexiHours = 0;
+                        console.log('d3     varianceSelect.value', varianceSelect.value, varianceSelect.value === 'overtime')
+                        switch (varianceSelect.value) {
+                            case 'flexi':
+                                flexiHours = varianceHours;
+                                break;
+                            case 'til':
+                                tilHours = varianceHours;
+                                break;
+                            case 'overtime':
+                                console.log('d33    varianceHours', varianceHours);
+                                if (varianceHours > 0) {   // available on a long day only
+                                    overtimeHours = varianceHours;
+                                } else {
+                                    overtimeHours = 0;
+                                }
+                                console.log('d34   overtimeHours', overtimeHours);
+                                break;
+                            case 'leave':
+                                console.log('d35   varianceHours', varianceHours);
+                                if (varianceHours < 0) {    //short day only
+                                    leaveHours = varianceHours;
+                                } else {
+                                    leaveHours = 0;
+                                }
+                                console.log('d36    leaveHours', leaveHours);
+                                break;
+                            case 'mixed':
+                                console.log('d37    Selected option: Mixed');
+                                break;
+                            default:
+                                console.log('d38    Invalid option');
+                                break;
+                        }
+
+                        // Handle flexitime option
+                        if (varianceSelect.value === 'flexi') {
+                            const flexiAccruedInput = document.getElementById('flexi_accrued');
+                            const flexiTakenInput = document.getElementById('flexi_taken');
+                            flexiAccruedInput.value = "";
+                            flexiTakenInput.value = "";
+                            if (flexiHours < 0) {
+                                flexiTakenInput.value = Math.abs(flexiHours);
+                            } else if (flexiHours > 0) {
+                                flexiAccruedInput.value = Math.abs(flexiHours);
+                            }
+                        }
+
+                        // Handle tiltime option
+                        if (varianceSelect.value === 'til') {
+                            const tilAccruedInput = document.getElementById('til_accrued');
+                            const tilTakenInput = document.getElementById('til_taken');
+                            tilAccruedInput.value = "";
+                            tilTakenInput.value = "";
+                            if (tilHours < 0) {
+                                tilTakenInput.value = Math.abs(tilHours);
+                            } else if (tilHours > 0) {
+                                tilAccruedInput.value = Math.abs(tilHours);
+                            }
+                        }
+
+                        // Handle overtime option
+                        if (varianceSelect.value === 'overtime') {
+                            const overtimeInput = document.getElementById('time_overtime');
+                            overtimeInput.value = "";
+                            if (overtimeHours > 0) {
+                                overtimeInput.value = Math.abs(overtimeHours);
+                            }
+                        }
+
+                        // Handle leave option
+                        console.log('varianceSelect.value', varianceSelect.value);
+                        if (varianceSelect.value === 'leave') {
+                            const leaveInput = document.getElementById('time_leave');
+                            leaveInput.value = "";
+                            if (leaveHours < 0) {
+                                console.log('leaveHours', leaveHours);
+                                leaveInput.value = Math.abs(leaveHours);
+                            }
+                        }
+
+
+                        // Calculate and set time total
+                        const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                        const formattedHours = hours.toString().padStart(2, '0');
+                        const formattedMinutes = minutes.toString().padStart(2, '0');
+                        const formattedTimeTotal = `${formattedHours}:${formattedMinutes}`;
+                        timeTotalInput.value = formattedTimeTotal;
                     }
                 }
-
-                // Handle tiltime option
-                if (varianceSelect.value === 'til') {
-                    const tilAccruedInput = document.getElementById('til_accrued');
-                    const tilTakenInput = document.getElementById('til_taken');
-                    tilAccruedInput.value = "";
-                    tilTakenInput.value = "";
-                    if (tilHours < 0) {
-                        tilTakenInput.value = Math.abs(tilHours);
-                    } else if (tilHours > 0) {
-                        tilAccruedInput.value = Math.abs(tilHours);
-                    }
-                }                
-
-                // Handle overtime option
-                if (varianceSelect.value === 'overtime' ) {
-                    const overtimeInput = document.getElementById('time_overtime');
-                    overtimeInput.value = "";
-                    if (overtimeHours > 0) {
-                        overtimeInput.value = Math.abs(overtimeHours);
-                    } 
-                }     
-
-                // Handle leave option
-                console.log('varianceSelect.value', varianceSelect.value);
-                if (varianceSelect.value === 'leave' ) {
-                    const leaveInput = document.getElementById('time_leave');
-                    leaveInput.value = "";
-                    if (leaveHours < 0) {
-                        console.log('leaveHours', leaveHours);
-                        leaveInput.value = Math.abs(leaveHours);
-                    } 
-                }     
-                
-
-                // Calculate and set time total
-                const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                const formattedHours = hours.toString().padStart(2, '0');
-                const formattedMinutes = minutes.toString().padStart(2, '0');
-                const formattedTimeTotal = `${formattedHours}:${formattedMinutes}`;
-                timeTotalInput.value = formattedTimeTotal;
-            }
-        }
 
         // Listen for changes in the time start and time finish inputs
         const paidHour = <%= userWorkSchedule[0].paidHour %>; 
@@ -443,10 +446,10 @@
         timeFinishInput.value = startTime.toTimeString().slice(0, 5);
         console.log("Start", startTime.toTimeString().slice(0, 5))
 
-        // Trigger the calculateTimeTotal function on page load
-        calculateTimeTotal();
+                // Trigger the calculateTimeTotal function on page load
+                calculateTimeTotal();
 
-    });
+            });
 
-    console.log("a9")
-</script>
+            console.log("a9")
+        </script>
