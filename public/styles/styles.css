@@ -52,7 +52,7 @@ body {
   width: 100%;
 }
 
-.nav-item:hover a { 
+.sidebar .nav-item:hover a { 
    color: #fcfffc;
   background: #2ba84a;
 }
@@ -73,6 +73,7 @@ body {
 }
 
 .bgprimary {
+  background-color: #248232;
   background-color: #248232;
 }
 
@@ -107,14 +108,16 @@ body {
 }
 */
 
+
 section {
-  background-color: #462302;
+  background-color: #2e1e0f;
   color: #fcfffc;
 }
+
   
 
 .titlebar {
-  background-color: #462302;
+  background-color: #2e1e0f;
 }
 
 .sticky-table-header {
@@ -136,9 +139,14 @@ section {
   color: #040F0F;
   border-color: #040F0F;
   border-width: 1.5px;
+  background-color: #fcfffc;
+  color: #040F0F;
+  border-color: #040F0F;
+  border-width: 1.5px;
 }
 
 .btndark:hover {
+  background-color: #040F0F;
   background-color: #040F0F;
   color: #fcfffc;
 

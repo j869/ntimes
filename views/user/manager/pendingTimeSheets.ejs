@@ -182,12 +182,12 @@
   <% } %>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const markAllBtn = document.getElementById("markAllBtn");
-    const approveMarkBtn = document.getElementById("approveMarkBtn");
-    const rejectMarkBtn = document.getElementById("rejectMarkBtn");
-    const markCheckboxes = document.querySelectorAll(".mark-checkbox");
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const markAllBtn = document.getElementById("markAllBtn");
+          const approveMarkBtn = document.getElementById("approveMarkBtn");
+          const rejectMarkBtn = document.getElementById("rejectMarkBtn");
+          const markCheckboxes = document.querySelectorAll(".mark-checkbox");
 
     markAllBtn.addEventListener("click", () => {
       let isMarkChecked = false;
@@ -208,17 +208,17 @@
         });
       }
 
-      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-      if (markedCheckboxes.length > 0) {
-        approveMarkBtn.style.display = "block";
-        rejectMarkBtn.style.display = "block";
-        markAllBtn.textContent = "Unmark All";
-      } else {
-        approveMarkBtn.style.display = "none";
-        rejectMarkBtn.style.display = "none";
-        markAllBtn.textContent = "Mark All";
-      }
-    });
+            const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+            if (markedCheckboxes.length > 0) {
+              approveMarkBtn.style.display = "block";
+              rejectMarkBtn.style.display = "block";
+              markAllBtn.textContent = "Unmark All";
+            } else {
+              approveMarkBtn.style.display = "none";
+              rejectMarkBtn.style.display = "none";
+              markAllBtn.textContent = "Mark All";
+            }
+          });
 
     approveMarkBtn.addEventListener("click", () => {
       const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");

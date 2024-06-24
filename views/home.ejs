@@ -1,8 +1,9 @@
 <%- include('partials/header', {userInfo: userInfo}) %>
 
-  <div class="d-flex py-3 justify-content-center">
+
+  <section class="d-flex vh-100 justify-content-center align-items-center">
     <div class="container pt-2 m-0 loginprompt">
-      <img src="../images/new.png"/>
+      <img src="../images/new.png" />
       <hr>
       <% if (user) { %>
         <p>Hello, <%= user.username %>.</p>
@@ -11,6 +12,9 @@
           <a class="btn btndark btn-lg" href="/register" role="button">Register</a>
           <a class="btn btnprimary btn-lg" href="/login" role="button">Login</a>
           <% } %>
+            <div class="d-flex justify-content-center pt-3">
+              <p class="text-center text-dark">Not signed up yet?&nbsp;<a href="/register">Register</a></p>
+            </div>
     </div>
   </section>
 
