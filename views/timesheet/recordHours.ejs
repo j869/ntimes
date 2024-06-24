@@ -55,7 +55,7 @@
 
        
         <div class="col-md-12">
-            <div class="row">
+            <div class="row"> 
             <%if(userWorkSchedule[0].schedule_id != 0) {%>
                 <div class="col-md-3">
                     <div class="form-group">
@@ -199,6 +199,7 @@
         const forDate = '<%= locals.forDate %>'; 
            
         const schedule_id = <%= userWorkSchedule[0].schedule_id%>
+        
         console.log('b2   forDate', forDate);
         if (forDate) {
             const year = forDate.substring(0, 4);  // Convert forDate to a Date object

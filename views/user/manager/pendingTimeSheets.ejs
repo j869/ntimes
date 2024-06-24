@@ -109,8 +109,10 @@
               <td><%= timesheet.location_name %></td>
               <td><%= timesheet.activity %></td>
               <% if (timesheet.id) { %>
-                <td style="display: flex; flex-direction: row;">
-
+                <td style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 5px;">
+                  
+                    
+                  
                   <%if(timesheetIssuesFiltered.length == 0) {%>
                   <form action="/timesheet/approveTs?page=pending" method="post">
                     <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
@@ -130,7 +132,10 @@
                       <i class="fa fa-solid fa-trash" aria-hidden="true"></i>
                     </button>
                   </form>
-                 
+                  
+                  <a href="/timesheets/<%= timesheet.id%>"><i class="fa-solid fa-eye view-icon"
+                    aria-hidden="true"></i></a>
+           
                 </td>
                 <td>
                   <%if(timesheetIssuesFiltered.length == 0) {%>

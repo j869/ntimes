@@ -22,7 +22,7 @@ const createProfileRoutes = (isAuthenticated) => {
       await axios.post(`${API_URL}/users/update`, { firstName, lastName, email, username, password: hashedPassword, userId, managerID });
       res.redirect("/profile");
     } catch (error) {
-      console.error("Error updating user profile:", error);
+      console.error("Error updating user profile:", error); 
       res.status(500).send("Internal Server Error");
     }
   })
@@ -67,13 +67,28 @@ const createProfileRoutes = (isAuthenticated) => {
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
     const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
     const userInfo = req.session.userInfo;
+    console.log("USERINFO ASKDJHASKLJDHASJKLDHKLAJSDHKLAJSDHJKLASHDKLJASHDK", data.data[0])
+
+    if(data.data[0] == undefined ) {
+        return res.redirect('/profile?status=noOrganization');
+    }
+    console.log("THE USER INFORMATION PART", userInfo)
+    
+    if(data.data[0].org_id == undefined || data.data[0].org_id == null ) {
+       return res.redirect('/profile?status=noOrganization');
+    }
+
+
+
+    console.log("User info", userInfo);
   
 
     const myManager = await axios.get(`${API_URL}/users/getMyManager/${req.user.id}`);  
-    const managers = await axios.get(`${API_URL}/users/getManager/${req.user.id}`);  
+    const managers = await axios.get(`${API_URL}/users/getManager/${data.data[0].org_id}`);  
 
     // console.log("Managers", managers.data)
 //    console.log("MyManager" , myManager)
+
 
     try {
         if(checkUser == true) { 
@@ -267,7 +282,7 @@ router.get("/", isAuthenticated, async (req, res) => {
             messages: req.flash(""),
             title: "Pending Timesheets",
             individaulSchedTotalHours: individaulSchedTotalHours,
-        });
+        }); 
     } catch (error) {
         console.error("Error fetching individual total hours:", error);
         res.status(500).send("Internal Server Error");
