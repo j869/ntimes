@@ -145,6 +145,56 @@ const createManagerRoutes = (isAuthenticated) => {
 
   })
 
+  // MOVE TO PENDING 
+
+  router.post("/pendingTs", isAuthenticated, async (req ,res) => {
+    console.log("mrp1     ")
+    const ts_id = req.body.ts_id
+    const back_page = req.query.page
+  try {
+    await axios.post(`${API_URL}/timesheet/pendingTs/${req.user.id}`, {ts_id});
+
+    res.redirect(`/timesheet/${back_page}?status=202`);
+
+    
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res.redirect(`/timesheet/${back_page}?status=500`);
+
+    res
+      .status(500)
+      .json({ success: false, error: "Error updating location" });
+  }
+
+
+  })
+
+  router.post("/multiplePendingTs", isAuthenticated, async(req,res) => {
+    const ts_ids = JSON.parse(req.body.ids)
+    const back_page = req.query.page
+
+    // console.log("gwawad", ts_ids)
+
+
+  try {
+
+    await Promise.all(ts_ids.map(ts_id => 
+      axios.post(`${API_URL}/timesheet/pendingTs/${req.user.id}`, {ts_id})
+    ));
+
+    res.redirect(`/timesheet/${back_page}?status=202`);
+
+    
+  } catch (error) {
+    console.error("Error updating location:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Error updating location" });
+  }
+
+  })
+
+// REJECT THE TIMESHEET
   router.post("/rejectTs", isAuthenticated, async (req ,res) => {
     console.log("mrj1     ")
     const ts_id = req.body.ts_id
@@ -191,6 +241,8 @@ const createManagerRoutes = (isAuthenticated) => {
       title: "Rejected Timesheets",
     });
   });
+
+  
 
 
   router.post("/approveManager", isAuthenticated, async (req, res) => {

@@ -10,6 +10,8 @@ import {
   editLocation,
   deleteLocation,
   addLocation,
+  getAllLocationByOrgId,
+  getRecentLocationByUserId,
 } from "./controllers/locationControllers.js";
 
 import {
@@ -21,8 +23,8 @@ import {
 } from "./controllers/activitiesControllers.js";
 
 
-import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet } from "./controllers/managerController.js";
-import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager, assignManager, checkMyManger, checkMyManagement, addPersonelleInfo } from "./controllers/userController.js";
+import { getApproveTimeSheet, getRejectTimeSheet, getPendingTimeSheet, approveTimesheet, rejectTimesheet, pendingTimesheet } from "./controllers/managerController.js";
+import { isManager, getUserInfo, checkUserExist, editProfile, getManager, getMyManager, assignManager, checkMyManger, checkMyManagement, addPersonelleInfo, addOrganizationToPersonelle } from "./controllers/userController.js";
 
 import { getAllHolidays } from "./controllers/publicHollidayController.js";
 
@@ -76,7 +78,7 @@ app.get("/publicHolidays", getAllHolidays);
 
 // ROUTES FOR ACTIVITIES Manager
 app.get("/activities/:id", getActivitiesByUserId);
-app.get("/activities", getAllActivities);
+app.put("/activities/:orgId", getAllActivities);
 app.put("/createActivity", createActivity);
 app.put("/updateActivity/:id", updateActivity);
 app.post("/deleteActivity", deleteActivity);
@@ -84,6 +86,10 @@ app.post("/deleteActivity", deleteActivity);
 // Define routes using the imported controllers
 app.get("/location/:id", getLocationById);
 app.get("/location", getAllLocation);
+app.get("/location/byOrg/:id", getAllLocationByOrgId ); 
+app.get("/location/getRecentLocation/:userID", getRecentLocationByUserId);
+
+
 app.put("/editlocation/:id", editLocation);
 app.post("/deletelocation", deleteLocation);
 app.put("/addlocation", addLocation);
@@ -94,6 +100,7 @@ app.get("/timesheet/approved/:userID", getApproveTimeSheet);
 app.get("/timesheet/reject/:userID", getRejectTimeSheet);
 app.post("/timesheet/rejectTs/:userID",rejectTimesheet );
 app.post("/timesheet/approveTs/:userID", approveTimesheet);
+app.post("/timesheet/pendingTs/:userID", pendingTimesheet);
 
 app.get("/timesheet/getAllIssues", getAllIssues);
 app.put("/timesheet/scanIssues", scanIssues);
@@ -131,6 +138,8 @@ app.post("/users/assignManager/:managerID", assignManager)
 app.get("/users/checkMyManger/:id" , checkMyManger);
 app.put("/users/checkMyManagement" , checkMyManagement);
 app.put("/users/addPersonelleInfo/:userID" , addPersonelleInfo);
+app.put("/users/addOrganizationToPersonelle" , addOrganizationToPersonelle);
+
 
 
 // FOR TIMESHEETS ROUTES

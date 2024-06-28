@@ -27,6 +27,7 @@ console.log("inf9");
 
 
 
+
 //STATUS if ts_user_t.role_id = 1 then it is NORMAL USER
 //STATUS if ts_user_t.role_id = 2 then it is MANAGER USER
 
@@ -93,6 +94,7 @@ const checkUserExist = async (req, res) => {
     }
 
 }
+
 
 // PROFILE PART
 const editProfile = async (req, res) => { 
@@ -163,9 +165,6 @@ const editProfile = async (req, res) => {
         console.log("error in updateing or insterting the manager: ", err);
       }
     });
-  
-
-    
 
     try {
         await pool.query(`
@@ -402,6 +401,43 @@ FROM
   }
 
 
+  const addOrganizationToPersonelle = (req, res) => {
+
+    const {person_id, position, org_id} = req.body
+  
+  pool.query(`INSERT INTO personelle (person_id , position, org_id) VALUES ($1, $2, $3)`, [person_id , position, org_id], (err, result)=> {
+    if(!err){
+      console.log("uc1" , result);
+      
+    }
+   })
+  }
+
+
+
+  // ADMIN FUNCTIONS 
+
+  const adminEditUser = (req, res) => {
+
+    const { email, username, password, userId, role} = req.body;
+
+    console.log("req.body.email:", email);
+    console.log("req.body.username:", username);
+    console.log("req.body.password:", password);
+    console.log("req.body.userIdm:", userId);
+
+
+    if (!email ||!username || !role ) {
+        return res.status(400).json({ error: 'Important fields must be filled out.' });
+    }
+
+
+
+
+  }
+  
+
+
 export {
   
   getUserInfo,
@@ -414,5 +450,6 @@ export {
   checkMyManger, 
   checkMyManagement,
   addPersonelleInfo, 
-
+  addOrganizationToPersonelle,
+  adminEditUser
 };

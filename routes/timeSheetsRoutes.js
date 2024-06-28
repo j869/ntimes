@@ -55,6 +55,8 @@ const createTimesheetRoutes = (isAuthenticated) => {
       //   res.redirect("/time");
       // }
 
+      console.log("CT1", data.data[0])
+
       res.render("timesheet/individualTimeSheet.ejs", {
         title: "Timesheet",
         user: req.user,
@@ -182,9 +184,10 @@ const createTimesheetRoutes = (isAuthenticated) => {
       const selectedDate = date;
 
       if (false) {
+
       } else {
         if (userSchedules.length == 0) {
-          console.log(true);
+          // console.log(true);
           res.redirect("/time?m=noSchedule");
         } else {
           console.log("selectedDate", selectedDate);
