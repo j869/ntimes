@@ -179,6 +179,7 @@
 --     updated_at TIMESTAMP WITH TIME ZONE
 -- );
 
+
 -- Recipient Table
 -- CREATE TABLE recipient (
 --     id SERIAL PRIMARY KEY,
@@ -211,4 +212,10 @@ INSERT INTO "organizations" VALUES ('Org 2', 'The Org 2', 2);
 
 
 ALTER TABLE personelle
+ADD COLUMN org_id INT;
+
+ALTER TABLE activities 
+ADD COLUMN org_id INT;
+
+ALTER TABLE location
 ADD COLUMN org_id INT;

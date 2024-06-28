@@ -166,7 +166,9 @@ const isAdmin = (req, res, next) => {
     return next();
   } else {
     console.log("iad3   user is admin");
-    return res.status(403).json({ messages: ["Permission denied"] });
+    // res.status(403).json({ messages: ["Permission denied"] });
+    console.log("iad3 STATUS: PERMISSION DENIED")
+    return res.redirect("/login");
   }
 };
 
@@ -207,7 +209,9 @@ const runManager = (req, res, next) => {
     "/timesheet/approveTs",
     "/timesheet/multipleApproveTs",
     "/timesheet/multipleRejectTs",
+    "/timesheet/multiplePendingTs",
     "/timesheet/rejectTs",
+    "/timesheet/pendingTs",
     "/time",
     "/profile",
     "/profile/update",
@@ -232,7 +236,11 @@ const runManager = (req, res, next) => {
     ) {
       next();
     } else {
-      res.status(403).json({ messages: ["Permission denied"] });
+      // res.status(403).json({ messages: ["Permission denied"] });
+    console.log("iad3 STATUS: PERMISSION DENIED")
+
+      return res.redirect("/login");
+      
     }
     console.log("rm4    ");
   } else {
@@ -379,18 +387,21 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
       let paidHour = 0;
       while (currentDate <= endDate) {
         const dayOfWeek = currentDate.getDay();
-        if (getDayOfWeekName(dayOfWeek) == "Sunday" || getDayOfWeekName(dayOfWeek) == "Saturday") { 
 
-          if (i <= paidHours.length - 1) {
-            paidHour = paidHours[i] == 0 ? 7.6 : paidHours[i];
-            if (i == paidHours.length - 1) {
-              i = 0;
-            } else {
-              i += 1;
-            }
-          }
+        // if (getDayOfWeekName(dayOfWeek) == "Sunday" || getDayOfWeekName(dayOfWeek) == "Saturday") { 
+
+        //   if (i <= paidHours.length - 1) {
+        //     paidHour = paidHours[i] == 0 ? 7.6 : paidHours[i];
+        //     if (i == paidHours.length - 1) {
+        //       i = 0;
+        //     } else {
+        //       i += 1;
+        //     }
+        //   }
           
-        } else if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
+        // } else if
+
+        if (scheduleDays.includes(getDayOfWeekName(dayOfWeek))) {
           if (i <= paidHours.length - 1) {
             paidHour = paidHours[i];
             if (i == paidHours.length - 1) {
@@ -430,6 +441,9 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
       { date: selectedDate, userID: userId }
     );
 
+   const recentLocation = await axios.get(`${API_URL}/location/getRecentLocation/${req.user.id}`);
+
+
     if (timesheetExists.data.timesheetExists) {
       res.redirect("/time?m=dateAlreadyExist");
     } else {
@@ -442,6 +456,7 @@ app.get("/timesheetEntry", isAuthenticated, async (req, res) => {
           userWorkSchedule: userSchedules,
           selectedDate: selectedDate,
           location: location,
+          recentLocation: recentLocation.data,
           title: "Enter Timesheet",
           messages: req.flash("messages"),
         });
@@ -1040,12 +1055,21 @@ app.get("/approveTimesheet/:id", async (req, res) => {
 
 app.get("/users", isAdmin, async (req, res) => {
   console.log("u1    Admin route: Rendering settings page...");
-  req.user = req.session.userInfo;
-  console.log("USER ASDASDASD", req.user)
-  if(req.user.org_id == null || req.user.org_id == undefined) {
-    return res.redirect("/profile?status=noOrganization")
-  }
-  const result = await axios.get(`${API_URL}/usersByOrg/${req.user.org_id}`);
+  
+
+  const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+
+    if(data.data[0] == undefined ) {
+        return res.redirect('/profile?status=noOrganization');
+    }
+
+    
+    if(data.data[0].org_id == undefined || data.data[0].org_id == null ) {
+       return res.redirect('/profile?status=noOrganization');
+    }
+
+
+  const result = await axios.get(`${API_URL}/usersByOrg/${data.data[0].org_id}`);
   console.log("u2    ", result.data);
 
 // req.user = req.session.userInfo
@@ -1054,7 +1078,7 @@ app.get("/users", isAdmin, async (req, res) => {
   
   res.render("settings.ejs", {
     user: req.user,
-    userInfo: req.session.userInfo,
+    userInfo: data.data[0],
     users: result.data,
     title: "Users",
     messages: req.flash("messages"),
@@ -1119,7 +1143,23 @@ app.post(
     body("role").notEmpty().withMessage("Role is required"),
   ],
   async (req, res) => {
+
+    
     try {
+
+      const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
+
+      if(data.data[0] == undefined ) {
+          return res.redirect('/profile?status=noOrganization');
+      }
+  
+      
+      if(data.data[0].org_id == undefined || data.data[0].org_id == null ) {
+         return res.redirect('/profile?status=noOrganization');
+      }
+
+      
+
       console.log("pau1   add user ", req.body);
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -1130,6 +1170,7 @@ app.post(
 
       const { username, email, password, role } = req.body;
       const userData = {
+        org_id: data.data[0].org_id,
         username,
         email,
         password,
@@ -1140,7 +1181,20 @@ app.post(
       console.log("pau3");
 
       // Register the user using the registerUser function
-      const userID = await registerUser(userData);
+      const userID = await registerUser(userData).catch((error) => {
+        if (error.response && error.response.status === 400) {
+          return res.redirect("/users?status=400");
+        } else {
+          throw error;
+        }
+      }); 
+
+      // await axios.put(`${API_URL}/users/addOrganizationToPersonelle`, {
+      //   person_id: userID,
+      //   position: 'user',
+      //   org_id: data.data[0].org_id,
+      // })
+      
       console.log("pau4");
 
       req.flash("messages", "User added successfully");
@@ -1220,8 +1274,6 @@ app.get("/login", (req, res) => {
 });
 
 
-
-
 app.post("/login", function (req, res, next) {
   console.log("lg1   ", req.body);
 
@@ -1274,8 +1326,6 @@ app.post("/login", function (req, res, next) {
           console.log("lg40   ", err);
           return res.redirect("/timesheet/pending");
         }
-
-      
         console.log("lg9   ", err);
         return res.redirect("/time");
       } catch (error) {
@@ -1305,7 +1355,7 @@ app.get("/register", (req, res) => {
 
 const registerUser = async (userData, orgID) => {
   try {
-    let { username, email, password, role, verificationToken, verified_email } =
+    let {org_id, username, email, password, role, verificationToken, verified_email } =
       userData;
     console.log("ru1 ", userData);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -1339,6 +1389,7 @@ const registerUser = async (userData, orgID) => {
     // Insert a new user record into the users table with the verification token
     const result = await axios.post(`${API_URL}/users`, {
       username,
+      org_id,
       email,
       password: hashedPassword,
       role,
@@ -1377,7 +1428,7 @@ const registerUser = async (userData, orgID) => {
   } catch (error) {
     if (error.response && error.response.status === 400) {
       // Email already registered
-      console.log("ru7 ");
+      console.log("ru7 Error: ", error.response);
       throw new Error("Email already registered");
     } else if (error.response && error.response.status === 500) {
       console.log("ru8 ");

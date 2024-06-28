@@ -65,18 +65,23 @@ const createProfileRoutes = (isAuthenticated) => {
 
 
     const data = await axios.get(`${API_URL}/users/userInfo/${req.user.id}`);
-    const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
-    const userInfo = req.session.userInfo;
-    console.log("USERINFO ASKDJHASKLJDHASJKLDHKLAJSDHKLAJSDHJKLASHDKLJASHDK", data.data[0])
+
 
     if(data.data[0] == undefined ) {
         return res.redirect('/profile?status=noOrganization');
     }
-    console.log("THE USER INFORMATION PART", userInfo)
+
     
     if(data.data[0].org_id == undefined || data.data[0].org_id == null ) {
        return res.redirect('/profile?status=noOrganization');
     }
+
+
+
+    const userSchedule = await axios.get(`${API_URL}/userSchedule/${req.user.id}`);
+    const userInfo = req.session.userInfo;
+    console.log("USERINFO ASKDJHASKLJDHASJKLDHKLAJSDHKLAJSDHJKLASHDKLJASHDK", data.data[0])
+
 
 
 
