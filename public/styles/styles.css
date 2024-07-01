@@ -236,12 +236,16 @@ background-color: lightblue;
   background: transparent;
 }
 
+.time-sheet-container th {
+  background: white;
+}
+
 .time-sheet-container .holiday {
   background-color: #2b8ba8;
 }
 
 .time-sheet-container .weekend {
-  background-color: #f08800;
+  background-color: #8179fc;
 }
 
 .leave_day_off_modal label span {

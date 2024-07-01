@@ -1,104 +1,105 @@
 <%- include('partials/header') %>
 
-    <section class="col py-3">
-        <div class="container pt-2 m-0 bglight">
-            <h1 class="page-title mb-4">User Records</h1>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
+    <div class="main col py-3 px-4 sticky-top titlebar">
+        <h1 class="pagetitle p-0 mb-3">Users</h1>
+    </div>
+    <div class="table-responsive pt-0 mx-4 rounded mb-3">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Flexi Balance</th>
+                        <th scope="col">RDO Balance</th>
+                        <th scope="col">TIL Balance</th>
+                        <th scope="col">Total Leave</th>
+                        <th scope="col">Total Overtime</th>
+                        <th scope="col">Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user=> { %>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Username</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Password</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Flexi Balance</th>
-                            <th scope="col">RDO Balance</th>
-                            <th scope="col">TIL Balance</th>
-                            <th scope="col">Total Leave</th>
-                            <th scope="col">Total Overtime</th>
-                            <th scope="col">Edit</th>
+                            <td scope="row">
+                                <%= user.id %>
+                            </td>
+                            <td>
+                                <%= user.username %>
+                            </td>
+                            <td>
+                                <%= user.email %>
+                            </td>
+                            <td>
+                                <% if (user.password) { %>
+                                    <%= user.password.substring(0, 10) + (user.password.length> 10 ? '...' : '') %>
+                                        <% } else { %>
+                                            N/A
+                                            <% } %>
+                            </td>
+                            <td>
+                                <%= user.role %>
+                            </td>
+                            <td>
+                                <%= user.flexi_balance %>
+                            </td>
+                            <td>
+                                <%= user.rdo_balance %>
+                            </td>
+                            <td>
+                                <%= user.til_balance %>
+                            </td>
+                            <td>
+                                <%= user.total_leave %>
+                            </td>
+                            <td>
+                                <%= user.total_overtime %>
+                            </td>
+                            <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i
+                                        class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <% users.forEach(user=> { %>
-                            <tr>
-                                <td scope="row">
-                                    <%= user.id %>
-                                </td>
-                                <td>
-                                    <%= user.username %>
-                                </td>
-                                <td>
-                                    <%= user.email %>
-                                </td>
-                                <td>
-                                    <% if (user.password) { %>
-                                        <%= user.password.substring(0, 10) + (user.password.length> 10 ? '...' : '') %>
-                                    <% } else { %>
-                                        N/A
-                                    <% } %>
-                                </td>
-                                <td>
-                                    <%= user.role %>
-                                </td>
-                                <td>
-                                    <%= user.flexi_balance %>
-                                </td>
-                                <td>
-                                    <%= user.rdo_balance %>
-                                </td>
-                                <td>
-                                    <%= user.til_balance %>
-                                </td>
-                                <td>
-                                    <%= user.total_leave %>
-                                </td>
-                                <td>
-                                    <%= user.total_overtime %>
-                                </td>
-                                <td><a href="<%= config.baseUrl %>/users/<%= user.id %>"><i
-                                            class="fa-solid fa-pen edit-icon" aria-hidden="true"></i></a></td>
-                            </tr>
                         <% }); %>
-                    </tbody>
-                    
-                </table>
-            </div>
-        </div>
-    </section>
+                </tbody>
 
-    <section class="main col pt-3 mx-4">
-        <div class="pt-2 m-0">
-            <h1>Add User</h1>
-            <div class="row justify-content-left">
-                <div class="col-lg-6 col-md-8 col-sm-10">
-                    <form action="/addUser" method="POST">
-                        <div class="form-group">
-                            <label for="username">Username:</label>
-                            <input class="form-control mb-2" type="text" id="username" name="username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input class="form-control mb-2" type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password:</label>
-                            <input class="form-control mb-2" type="password" id="password" name="password" required>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="role">Role:</label>
-                            <select id="role" name="role" class="form-select" required>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                        <button class="btn btndark" type="submit">Add User</button>
-                    </form>
+            </table>
+        </div>
+
+
+
+        <div class="main col pt-3 mx-4">
+            <div class="pt-2 m-0">
+                <h1>Add User</h1>
+                <div class="row justify-content-left">
+                    <div class="col-lg-6 col-md-8 col-sm-10">
+                        <form action="/addUser" method="POST">
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input class="form-control mb-2" type="text" id="username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input class="form-control mb-2" type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input class="form-control mb-2" type="password" id="password" name="password" required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label for="role">Role:</label>
+                                <select id="role" name="role" class="form-select" required>
+                                    <option value="admin">Admin</option>
+                                    <option value="user">User</option>
+                                </select>
+                            </div>
+                            <button class="btn btnprimary" type="submit">Add User</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
 
     <%- include('partials/footer') %>

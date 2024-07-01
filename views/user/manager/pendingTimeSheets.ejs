@@ -5,10 +5,14 @@
     margin: 2rem 0rem 1rem;
   }
 
-  .table-image td,
-  .table-image th {
-    vertical-align: middle;
+  .table-image {
+
+    td,
+    th {
+      vertical-align: middle;
+    }
   }
+
 
   table tbody td,
   table tbody th,
@@ -18,261 +22,294 @@
   }
 </style>
 
-<div id="liveAlertPlaceholder"></div>
-<button type="button" class="btn btn-primary" style="display: none;" id="liveAlertBtn"></button>
+  <div id="liveAlertPlaceholder"></div>
+  <button type="button" class="btn btn-primary" style="display: none;" id="liveAlertBtn"></button>
 
-<% if (statusMessage != "" && statusMessage != undefined) { %>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const button = document.getElementById("liveAlertBtn");
-      button.click();
-    });
+  <% if (statusMessage !="" && statusMessage !=undefined) { %>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const button = document.getElementById("liveAlertBtn");
+        button.click();
+      });
 
-    const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
 
-    const appendAlert = (message, type) => {
-      const wrapper = document.createElement('div');
-      wrapper.innerHTML = `
+      const appendAlert = (message, type) => {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
         <div class="alert alert-${type} alert-dismissible" role="alert">
           <div>${message}</div>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       `;
 
-      alertPlaceholder.append(wrapper);
-    };
+        alertPlaceholder.append(wrapper);
+      };
 
-    const alertTrigger = document.getElementById('liveAlertBtn');
-    const alertMessage = '<%=statusMessage%>';
-    let alertType;
+      const alertTrigger = document.getElementById('liveAlertBtn');
+      const alertMessage = '<%=statusMessage%>';
+      let alertType;
 
-    if (alertMessage == "Something went wrong. Try Again!") {
-      alertType = 'danger';
-    } else if (alertMessage == "Update Successfully!") {
-      alertType = 'success';
-    }
-
-    if (alertTrigger) {
-      alertTrigger.addEventListener('click', () => {
-        appendAlert(alertMessage, alertType);
-      });
-    }
-  </script>
-<% } %>
-
-<div class="main col py-3 px-4 sticky-top titlebar">
-  <h1 class="pagetitle pb-2">Pending Timesheets</h1>
-</div>
-
-
-
-
-
-<div class="pt-0 mx-4">
-  <% if (data.length === 0) { %>
-    <div class="alert alert-info" role="alert">No Pending Timesheets</div>
-  <% } else { %>
-    <div class="time-sheet-container table-responsive">
-      <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2 pb-2">
-        <button id="markAllBtn" class="btn btndark">Mark all</button>
-        <button id="approveMarkBtn" class="btn btnprimary" style="display: none;">Approve marked</button>
-        <button id="rejectMarkBtn" class="btn btn-danger" style="display: none;">Reject marked</button>
-      </div>
-      <table class="table" id="timesheetTable">
-        <thead>
-          <tr>
-            <th scope="col" class="hidden">User Email</th>
-            <th scope="col">Work Date</th>
-            <th scope="col">Time Start</th>
-            <th scope="col">Time Finish</th>
-            <th scope="col">Time Total</th>
-            <th scope="col" class="hidden">Location Name</th>
-            <th scope="col">Activity</th>
-            <th scope="col">Actions</th>
-            <th scope="col">Mark</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% data.forEach((timesheet, index) => { %>
-
-            <% let timesheetIssuesFiltered = timesheetIssues.filter(issue => issue.ts_id === timesheet.id) %>
-
-            <tr style="<%= timesheetIssuesFiltered.length != 0 ? "background-color: rgb(255, 211, 211);" : "" %>" class="<%= timesheet.status === 'approved' ? 'table-success ' : '' %> <%= timesheet.holiday_name != null ? 'holiday' : '' %>">
-              <th class="hidden" style="background: none;" scope="row"><%= timesheet.username %></th>
-              <td class="work-date" style="width: 200px;">
-                <%= new Date(timesheet.work_date).toDateString() %> </br>
-                <%= timesheet.holiday_name %>
-              </td>
-              <td><%= timesheet.time_start %></td>
-              <td><%= timesheet.time_finish %></td>
-              <td><%= timesheet.time_total %></td>
-              <td><%= timesheet.location_name %></td>
-              <td><%= timesheet.activity %></td>
-              <% if (timesheet.id) { %>
-                <td style="display: flex; flex-direction: row;">
-
-                  <%if(timesheetIssuesFiltered.length == 0) {%>
-                  <form action="/timesheet/approveTs?page=pending" method="post">
-                    <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
-                    <button class=" btn btn-success d-flex justify-content-center align-center" style="height: 30px; width:  30px;" " type="submit" >
-                      <i class="fa-solid fa-check" aria-hidden="true"></i>
-                    </button>
-                  </form>
-                  <%} else {%>
-                    <button class="expand-btn btn btn-danger d-flex justify-content-center align-center" style="height: 30px; width:  30px;" data-bs-toggle="collapse" data-bs-target="#expandRow<%= index %>" aria-expanded="false" aria-controls="expandRow<%= index %>">
-                      <i class="fa-solid fa-check m-auto" aria-hidden="true"></i>
-                    </button>
-                
-                  <%}%>
-                  <form action="/timesheet/rejectTs?page=pending" method="post">
-                    <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
-                    <button class="delete-icon" type="submit" style="border: none; background-color: transparent;">
-                      <i class="fa fa-solid fa-trash" aria-hidden="true"></i>
-                    </button>
-                  </form>
-                 
-                </td>
-                <td>
-                  <%if(timesheetIssuesFiltered.length == 0) {%>
-                  <input type="checkbox" style="height: 20px;" name="mark" value="<%= timesheet.id %>" class="mark-checkbox">
-                  <%}%>
-                </td>
-              <% } else { %>
-                <td>&nbsp;</td>
-              <% } %>
-            </tr>
-
-            
-
-            <tr class="collapse" id="expandRow<%= index %>" style="">
-              <td style="width: 100%;"  colspan="8">
-                
-                <div class="issues-container w-100 d-flex flex-column" style="color: red; padding: 10px;">
-                  <div style=" font-weight: bold; text-align: left; font-size: 1.2rem;">Timesheet Issues</div>
-                  <div style=" font-weight: light; text-align: left; color: gray;" >* Check all to Approve Timesheet</div>
-                  <form action="/timesheet/approveTs?page=pending" method="post">
-                    <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
-                   
-                  <ol class="w-100 m-2">
-                   
-                    <% timesheetIssuesFiltered.forEach(issue => { %>
-                      <li class="d-flex flex-row justify-content-between" style="background-color: transparent; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='lightgray'" onmouseout="this.style.backgroundColor='transparent'">
-                        <label for="<%= issue.issue_code %>" style="margin-left: 20px;"><%= issue.issue_message %></label>  <input style="width: 20px;   <%= issue.issue_type != "check" ? "display:none; checked": ""%>" type="checkbox" name="<%= issue.issue_id %>" id="<%= issue.issue_code %>"   <%= issue.issue_type == "check" ? "required": ""%>>
-                      </li>
-
-                    <% }); %>
-                    
-                  </ol>
-                  <button class=" btn btn-success " type="submit"  > Approve 
-                    <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  </button>
-                </form>
-                </div>
-              </td> 
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    </div>
-  <% } %>
-</div>
-
-      <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const markAllBtn = document.getElementById("markAllBtn");
-          const approveMarkBtn = document.getElementById("approveMarkBtn");
-          const rejectMarkBtn = document.getElementById("rejectMarkBtn");
-          const markCheckboxes = document.querySelectorAll(".mark-checkbox");
-
-    markAllBtn.addEventListener("click", () => {
-      let isMarkChecked = false;
-
-      markCheckboxes.forEach(checkbox => {
-        if (checkbox.checked == true) {
-          isMarkChecked = true;
-        }
-      });
-
-      if (isMarkChecked) {
-        markCheckboxes.forEach(checkbox => {
-          checkbox.checked = false;
-        });
-      } else {
-        markCheckboxes.forEach(checkbox => {
-          checkbox.checked = true;
-        });
+      if (alertMessage == "Something went wrong. Try Again!") {
+        alertType = 'danger';
+      } else if (alertMessage == "Update Successfully!") {
+        alertType = 'success';
       }
 
-            const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-            if (markedCheckboxes.length > 0) {
-              approveMarkBtn.style.display = "block";
-              rejectMarkBtn.style.display = "block";
-              markAllBtn.textContent = "Unmark All";
-            } else {
-              approveMarkBtn.style.display = "none";
-              rejectMarkBtn.style.display = "none";
-              markAllBtn.textContent = "Mark All";
-            }
-          });
+      if (alertTrigger) {
+        alertTrigger.addEventListener('click', () => {
+          appendAlert(alertMessage, alertType);
+        });
+      }
+    </script>
+    <% } %>
 
-    approveMarkBtn.addEventListener("click", () => {
-      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-      const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
-      console.log(markedIds);
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/timesheet/multipleApproveTs?page=pending';
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'ids';
-      input.value = JSON.stringify(markedIds);
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-    });
+      <div class="main col py-3 pb-0 px-4 sticky-top titlebar">
+        <h1 class="pagetitle pb-00">Pending Timesheets</h1>
 
-    rejectMarkBtn.addEventListener("click", () => {
-      const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-      const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
-      console.log(markedIds);
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/timesheet/multipleRejectTs?page=approved';
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'ids';
-      input.value = JSON.stringify(markedIds);
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-    });
 
-    markCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener("change", () => {
-        const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
-        if (markedCheckboxes.length > 0) {
-          approveMarkBtn.style.display = "block";
-          rejectMarkBtn.style.display = "block";
-          markAllBtn.textContent = "Unmark All";
-        } else {
-          approveMarkBtn.style.display = "none";
-          rejectMarkBtn.style.display = "none";
-          markAllBtn.textContent = "Mark All";
-        }
-      });
-    });
-  });
-</script>
+      </div>
 
-<script>
-  function confirmDelete(locationId) {
-    $("#confirmationModal").modal("show");
-    $("#confirmDeleteBtn").on("click", function () {
-      // Redirect to delete endpoint
-      window.location.href = `/deletelocation/${locationId}`;
-    });
-  }
-</script>
 
-<%- include('../../partials/footer') %>
 
+
+
+      <div class="pt-0 mx-4">
+        <% if (data.length===0) { %>
+          <div class="alert alert-info" role="alert">No Pending Timesheets</div>
+          <% } else { %>
+            <div class="table-responsive">
+              <div class="w-100 mark-buttons d-flex justify-content-start flex-row-reverse gap-2 pb-2">
+                <button id="markAllBtn" class="btn btndark">Mark all</button>
+                <button id="approveMarkBtn" class="btn btnprimary" style="display: none;">Approve marked</button>
+                <button id="rejectMarkBtn" class="btn btn-danger" style="display: none;">Reject marked</button>
+              </div>
+              
+              <div class="table-responsive pt-0 rounded mb-3">
+                <table class="table mb-0" id="timesheetTable">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="hidden">User Email</th>
+                      <th scope="col">Work Date</th>
+                      <th scope="col">Time Start</th>
+                      <th scope="col">Time Finish</th>
+                      <th scope="col">Time Total</th>
+                      <th scope="col" class="hidden">Location Name</th>
+                      <th scope="col">Activity</th>
+                      <th scope="col">Actions</th>
+                      <th scope="col">Mark</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% data.forEach((timesheet, index)=> { %>
+
+                      <% let timesheetIssuesFiltered=timesheetIssues.filter(issue=> issue.ts_id === timesheet.id) %>
+
+                        <tr style="<%= timesheetIssuesFiltered.length != 0 ? " background-color: rgb(255, 211, 211);"
+                          : "" %>" class="<%= timesheet.status==='approved' ? 'table-success ' : '' %>
+                            <%= timesheet.holiday_name !=null ? 'holiday' : '' %>">
+                              <th class="hidden" style="background: none;" scope="row">
+                                <%= timesheet.username %>
+                              </th>
+                              <td class="work-date" style="width: 200px;">
+                                <%= new Date(timesheet.work_date).toDateString() %> </br>
+                                  <%= timesheet.holiday_name %>
+                              </td>
+                              <td>
+                                <%= timesheet.time_start %>
+                              </td>
+                              <td>
+                                <%= timesheet.time_finish %>
+                              </td>
+                              <td>
+                                <%= timesheet.time_total %>
+                              </td>
+                              <td>
+                                <%= timesheet.location_name %>
+                              </td>
+                              <td>
+                                <%= timesheet.activity %>
+                              </td>
+                              <% if (timesheet.id) { %>
+                                <td style="display: flex; flex-direction: row;">
+
+                                  <%if(timesheetIssuesFiltered.length==0) {%>
+                                    <form action="/timesheet/approveTs?page=pending" method="post">
+                                      <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
+                                      <button class=" btn btn-success d-flex justify-content-center align-center"
+                                        style="height: 30px; width:  30px;" " type=" submit">
+                                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                      </button>
+                                    </form>
+                                    <%} else {%>
+                                      <button
+                                        class="expand-btn btn btn-danger d-flex justify-content-center align-center"
+                                        style="height: 30px; width:  30px;" data-bs-toggle="collapse"
+                                        data-bs-target="#expandRow<%= index %>" aria-expanded="false"
+                                        aria-controls="expandRow<%= index %>">
+                                        <i class="fa-solid fa-check m-auto" aria-hidden="true"></i>
+                                      </button>
+
+                                      <%}%>
+                                        <form action="/timesheet/rejectTs?page=pending" method="post">
+                                          <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
+                                          <button class="delete-icon" type="submit"
+                                            style="border: none; background-color: transparent;">
+                                            <i class="fa fa-solid fa-trash" aria-hidden="true"></i>
+                                          </button>
+                                        </form>
+
+                                </td>
+                                <td>
+                                  <%if(timesheetIssuesFiltered.length==0) {%>
+                                    <input type="checkbox" style="height: 20px;" name="mark" value="<%= timesheet.id %>"
+                                      class="mark-checkbox">
+                                    <%}%>
+                                </td>
+                                <% } else { %>
+                                  <td>&nbsp;</td>
+                                  <% } %>
+                        </tr>
+
+
+
+                        <tr class="collapse" id="expandRow<%= index %>" style="">
+                          <td style="width: 100%;" colspan="8">
+
+                            <div class="issues-container w-100 d-flex flex-column" style="color: red; padding: 10px;">
+                              <div style=" font-weight: bold; text-align: left; font-size: 1.2rem;">Timesheet Issues
+                              </div>
+                              <div style=" font-weight: light; text-align: left; color: gray;">* Check all to Approve
+                                Timesheet</div>
+                              <form action="/timesheet/approveTs?page=pending" method="post">
+                                <input type="hidden" name="ts_id" value="<%= timesheet.id %>">
+
+                                <ol class="w-100 m-2">
+
+                                  <% timesheetIssuesFiltered.forEach(issue=> { %>
+                                    <li class="d-flex flex-row justify-content-between"
+                                      style="background-color: transparent; transition: background-color 0.3s;"
+                                      onmouseover="this.style.backgroundColor='lightgray'"
+                                      onmouseout="this.style.backgroundColor='transparent'">
+                                      <label for="<%= issue.issue_code %>" style="margin-left: 20px;">
+                                        <%= issue.issue_message %>
+                                      </label> <input style="width: 20px;   <%= issue.issue_type != " check"
+                                        ? "display:none; checked" : "" %>" type="checkbox" name="<%= issue.issue_id %>"
+                                        id="<%= issue.issue_code %>" <%= issue.issue_type=="check" ? "required" : "" %>>
+                                    </li>
+
+                                    <% }); %>
+
+                                </ol>
+                                <button class=" btn btn-success " type="submit"> Approve
+                                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                </button>
+                              </form>
+                            </div>
+                          </td>
+                        </tr>
+                        <% }); %>
+                  </tbody>
+                </table>
+              </div>
+              <% } %>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const markAllBtn = document.getElementById("markAllBtn");
+                const approveMarkBtn = document.getElementById("approveMarkBtn");
+                const rejectMarkBtn = document.getElementById("rejectMarkBtn");
+                const markCheckboxes = document.querySelectorAll(".mark-checkbox");
+
+                markAllBtn.addEventListener("click", () => {
+                  let isMarkChecked = false;
+
+                  markCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked == true) {
+                      isMarkChecked = true;
+                    }
+                  });
+
+                  if (isMarkChecked) {
+                    markCheckboxes.forEach(checkbox => {
+                      checkbox.checked = false;
+                    });
+                  } else {
+                    markCheckboxes.forEach(checkbox => {
+                      checkbox.checked = true;
+                    });
+                  }
+
+                  const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+                  if (markedCheckboxes.length > 0) {
+                    approveMarkBtn.style.display = "block";
+                    rejectMarkBtn.style.display = "block";
+                    markAllBtn.textContent = "Unmark All";
+                  } else {
+                    approveMarkBtn.style.display = "none";
+                    rejectMarkBtn.style.display = "none";
+                    markAllBtn.textContent = "Mark All";
+                  }
+                });
+
+                approveMarkBtn.addEventListener("click", () => {
+                  const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+                  const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
+                  console.log(markedIds);
+                  const form = document.createElement('form');
+                  form.method = 'POST';
+                  form.action = '/timesheet/multipleApproveTs?page=pending';
+                  const input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = 'ids';
+                  input.value = JSON.stringify(markedIds);
+                  form.appendChild(input);
+                  document.body.appendChild(form);
+                  form.submit();
+                });
+
+                rejectMarkBtn.addEventListener("click", () => {
+                  const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+                  const markedIds = Array.from(markedCheckboxes).map(checkbox => checkbox.value);
+                  console.log(markedIds);
+                  const form = document.createElement('form');
+                  form.method = 'POST';
+                  form.action = '/timesheet/multipleRejectTs?page=approved';
+                  const input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = 'ids';
+                  input.value = JSON.stringify(markedIds);
+                  form.appendChild(input);
+                  document.body.appendChild(form);
+                  form.submit();
+                });
+
+                markCheckboxes.forEach(checkbox => {
+                  checkbox.addEventListener("change", () => {
+                    const markedCheckboxes = document.querySelectorAll(".mark-checkbox:checked");
+                    if (markedCheckboxes.length > 0) {
+                      approveMarkBtn.style.display = "block";
+                      rejectMarkBtn.style.display = "block";
+                      markAllBtn.textContent = "Unmark All";
+                    } else {
+                      approveMarkBtn.style.display = "none";
+                      rejectMarkBtn.style.display = "none";
+                      markAllBtn.textContent = "Mark All";
+                    }
+                  });
+                });
+              });
+            </script>
+
+            <script>
+              function confirmDelete(locationId) {
+                $("#confirmationModal").modal("show");
+                $("#confirmDeleteBtn").on("click", function () {
+                  // Redirect to delete endpoint
+                  window.location.href = `/deletelocation/${locationId}`;
+                });
+              }
+            </script>
+
+            <%- include('../../partials/footer') %>

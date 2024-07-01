@@ -26,11 +26,14 @@
     }
   </style>
 
-  <section class="main col pt-3 mx-4">
+<div class="main col py-3 pb-0 px-4 sticky-top titlebar">
     <h1 class="page-title mb-4">Activity Manager</h1>
     <button type="button" class="btn btnprimary mb-3" data-bs-toggle="modal" data-bs-target="#addActivityModal">
       <i class="fa-solid fa-circle-plus"></i> Add Activity
     </button>
+</div>
+
+
 
     <!-- Add Activity Modal -->
     <div class="modal fade" id="addActivityModal" tabindex="-1" aria-labelledby="addActivityModalLabel"
@@ -246,7 +249,8 @@
       </div>
       <% }) %>
 
-        <table class="table table-bordered">
+      <div class="table-responsive pt-0 mx-4 rounded mb-3">
+        <table class="table mb-0">
           <thead>
             <tr>
               <th scope="col">ID</th>
@@ -293,5 +297,6 @@
               <% }) %>
           </tbody>
         </table>
-  </section>
+      </div>
+
   <%- include('../../partials/footer') %>
